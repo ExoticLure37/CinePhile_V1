@@ -13,7 +13,7 @@ function SignUp() {
             </div>
 
             <div className='flex mb-auto justify-between
-            h-screen text-white items-center bg-[url(\\../images/projectV-cover.jpg)] bg-cover w-full'>
+            h-screen text-white items-center w-full'>
                 <span className='mx-auto'>Lorem, ipsum dolor sit amet
                     adipisicing elit. <br />At consequuntur facilis vero illum officia
                     similique ipsum <br />quos quo quam ratione?
