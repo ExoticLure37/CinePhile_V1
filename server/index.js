@@ -4,6 +4,9 @@ dotenv.config();
 const cors = require('cors');
 const userModel = require('./middleware/authMiddleware');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+
+const userRoutes = require('./routes/userRoutes.js')
 
 
 const app = express();
@@ -12,6 +15,11 @@ app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true
 }));
+
+app.use(express.json());
+app.use(cookieParser());
+
+app.use("/user", userRoutes);
 
 app.listen(process.env.PORT, (error) => {
     console.log(`Sever started at port ${process.env.PORT}`);
