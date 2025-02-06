@@ -23,7 +23,11 @@ const userSchema = new mongoose.Schema({
     {
       _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     }
-  ]
+  ],
+  verified: {
+    type: Boolean,
+    default: false
+  }
 });
 
 // Hhash passwd

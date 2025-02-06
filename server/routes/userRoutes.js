@@ -1,9 +1,10 @@
 const express = require("express")
 const { authUser } = require("../middleware/authMiddleware");
-const { register, login, resetPassword } = require("../controllers/userControllers");
+const { register, login, resetPassword, verifyToken } = require("../controllers/userControllers");
 
 const router = express.Router();
 
+router.get("/:id/verify/:token", verifyToken);
 router.post("/register", register);
 router.post("/login", login);
 router.patch("/reset-password", authUser, resetPassword);

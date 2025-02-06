@@ -2,6 +2,9 @@ const userModel = require("../models/userModel");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt")
+const tokenModel = require("../models/token")
+const sendEmail = require("../utils/sendEmail")
+const crypto = require("crypto")
 
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
 
@@ -11,22 +14,59 @@ const register = async (req, res) => {
 
         const userEmail = await userModel.findOne({ email: email });
 
-        if (userEmail) return res.status(400).json({ message: "Email already exists!!" });
+        if (userEmail)
+            return res.status(400).json({ message: "Email already exists!!" });
 
         const userName = await userModel.findOne({ username: username });
 
-        if (userName) return res.status(400).json({ message: "Username already exists!!" });
+        if (userName)
+            return res.status(400).json({ message: "Username already exists!!" });
 
-        if (!fullname || !username || !email || !password) return res.status(400).json({ message: "All fields are required!!" });
+        if (!fullname || !username || !email || !password)
+            return res.status(400).json({ message: "All fields are required!!" });
 
-        if (!validator.isEmail(email)) return res.status(400).json({ message: "Not a valid email!!" });
-        if (!validator.isStrongPassword(password)) return res.status(400).json({ message: "Weak Password!!" })
+        if (!validator.isEmail(email))
+            return res.status(400).json({ message: "Not a valid email!!" });
+        if (!validator.isStrongPassword(password))
+            return res.status(400).json({ message: "Weak Password!!" })
 
         const user = await userModel.create({ fullname, username, email, password });
 
-        const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '1d' });
-        res.cookie('token', token, { httpOnly: true, secure: true })
-        res.status(201).json({ fullname: user.fullname, email: user.email, username: user.username });
+        const tk = await tokenModel.create({
+            userId: user._id,
+            token: crypto.randomBytes(32).toString("hex")
+        })
+
+        const url = `${process.env.BASE_URL}/users/${user._id}/verify/${tk.token}`
+
+        await sendEmail(user.email, "Verify Email", url)
+
+        res.status(201).json({ message: "Verification email sent to your registered email!!" });
+    }
+    catch (err) {
+        return res.status(500).json({ message: "Internal Server Error", error: err.message })
+    }
+}
+
+const verifyToken = async (req, res) => {
+    try {
+        const user = await userModel.findOne({ _id: req.params.id })
+
+        if (!user)
+            return res.status(400).json({ message: "Invalid Link" });
+
+        const token = await tokenModel.findOne({
+            userId: req.params.id,
+            token: req.params.token
+        })
+
+        if (!token)
+            return res.status(400).json({ message: "Invalid Link" })
+
+        await userModel.updateOne({ _id: user._id, verified: true })
+        await token.remove();
+
+        return res.status(200).json({ message: "Email verified successfully" })
     }
     catch (err) {
         return res.status(500).json({ message: "Internal Server Error", error: err.message })
@@ -39,11 +79,30 @@ const login = async (req, res) => {
 
         const user = await userModel.findOne({ email: email });
 
-        if (!user) return res.status(400).json({ message: "No email exists!!" })
+        if (!user)
+            return res.status(400).json({ message: "No email exists!!" })
 
         const matchPassword = await bcrypt.compare(password, user.password);
 
-        if (!matchPassword) return res.status(400).json({ message: "Wrong Password!!!" })
+        if (!matchPassword)
+            return res.status(400).json({ message: "Wrong Password!!!" })
+
+        if (!user.verified) {
+            const token = await tokenModel.findOne({ userId: user._id })
+
+            if (!token) {
+                const tk = await tokenModel.create({
+                    userId: user._id,
+                    token: crypto.randomBytes(32).toString("hex")
+                })
+
+                const url = `${process.env.BASE_URL}/users/${user._id}/verify/${tk.token}`
+
+                await sendEmail(user.email, "Verify Email", url)
+            }
+
+            return res.status(400).send({ message: "An email has been sent to your account" })
+        }
 
         const tokenExpiry = rememberMe ? "7d" : "1d";
 
@@ -88,4 +147,4 @@ const resetPassword = async (req, res) => {
     }
 }
 
-module.exports = { register, login, resetPassword };
+module.exports = { register, login, resetPassword, verifyToken };
