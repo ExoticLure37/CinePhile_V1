@@ -4,7 +4,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt")
 const tokenModel = require("../models/token")
 const sendEmail = require("../utils/sendEmail")
-const crypto = require("crypto")
+const crypto = require("crypto");
+const { error } = require("console");
 
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
 
@@ -147,4 +148,136 @@ const resetPassword = async (req, res) => {
     }
 }
 
-module.exports = { register, login, resetPassword, verifyToken };
+const addFriend = async (req, res) => {
+    try {
+        const _id = req.user._id;
+        const { friendsId } = req.body;
+
+        const isFriends = await userModel.findOne({
+            _id: friendsId,
+            friends: { $elemMatch: { _id: friendsId } }
+        });
+
+        if (isFriends)
+            return res.status(400).json({ message: "Already friends" });
+
+        const isRequestPending = await userModel.findOne({
+            _id: friendsId,
+            requests_sent: { $elemMatch: { _id: friendsId } }
+        })
+
+        if (isRequestPending)
+            return res.status(400).json({ message: "Request already sent" })
+
+        const user = await userModel.findOne({
+            _id: _id
+        })
+
+        user.requests_sent.push({ _id: friendsId })
+
+        await user.save();
+
+        const targetUser = await userModel.findOne({ _id: friendsId })
+
+        targetUser.pending_requests.push({ _id: _id });
+
+        await targetUser.save();
+
+        return res.status(200).json({ message: "Friend request sent successfully!!" });
+    }
+    catch (err) {
+        return res.status(500).json({ message: "Internal Server Error", error: err.message })
+    }
+}
+
+const acceptFriendRequest = async (req, res) => {
+    try {
+        const _id = req.user._id;
+
+        const { friendId } = req.body;
+
+        await userModel.findByIdAndUpdate(_id, {
+            $pull: { pending_requests: friendId },
+            $push: { friends: { _id: friendId } }
+        })
+
+        await userModel.findByIdAndUpdate(friendId, {
+            $pull: { requests_sent: _id },
+            $push: { friends: { _id: _id } }
+        })
+
+        return res.status(200).json({ message: "Friend request accepted" })
+    }
+    catch (err) {
+        return res.status(500).json({ message: "Internal server error", error: err.message })
+    }
+}
+
+const rejectFriendRequest = async (req, res) => {
+    try {
+        const _id = req.user._id;
+
+        const { friendId } = req.body;
+
+        await userModel.findByIdAndUpdate(_id, {
+            $pull: { pending_requests: friendId }
+        })
+
+        await userModel.findByIdAndUpdate(friendId, {
+            $pull: { requests_sent: _id }
+        })
+
+        return res.status(200).json({ message: "Friend request rejected" })
+    }
+    catch (err) {
+        return res.status(500).json({ message: "Internal server error", error: err.message })
+    }
+}
+
+const cancelFriendRequest = async (req, res) => {
+    try {
+        const _id = req.user._id;
+
+        const { friendId } = req.body;
+
+        await userModel.findByIdAndUpdate(_id, {
+            $pull: { requests_sent: friendId }
+        })
+
+        await userModel.findByIdAndUpdate(friendId, {
+            $pull: { pending_request: _id }
+        })
+
+        return res.status(200).json({ message: "Friend request rejected" })
+    }
+    catch (err) {
+        return res.status(500).json({ message: "Internal server error", error: err.message })
+    }
+}
+
+const removeFriend = async (req, res) => {
+    try {
+        const _id = req.user._id;
+
+        const { friendId } = req.body;
+
+        await userModel.findByIdAndUpdate(_id, {
+            $pull: { friends: friendId }
+        })
+
+        await userModel.findByIdAndUpdate(friendId, {
+            $pull: { friends: _id }
+        })
+
+        return res.status(200).json({ message: "Friend request rejected" })
+    }
+    catch (err) {
+        return res.status(500).json({ message: "Internal server error", error: err.message })
+    }
+}
+
+module.exports = {
+    register, login, resetPassword, verifyToken,
+    addFriend, acceptFriendRequest, rejectFriendRequest,
+    cancelFriendRequest, removeFriend
+};
