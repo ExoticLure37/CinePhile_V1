@@ -4,7 +4,7 @@ const { register, login, resetPassword, verifyToken, addFriend, acceptFriendRequ
 
 const router = express.Router();
 
-router.get("/:id/verify/:token", verifyToken);
+router.get("/verify/:token", verifyToken);
 router.post("/register", register);
 router.post("/login", login);
 router.patch("/reset-password", authUser, resetPassword);
