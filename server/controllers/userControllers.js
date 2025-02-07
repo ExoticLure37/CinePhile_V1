@@ -1,10 +1,12 @@
 const userModel = require("../models/userModel");
+const tempUserModel = require("../models/tempUserModel");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt")
 const tokenModel = require("../models/token")
 const sendEmail = require("../utils/sendEmail")
 const crypto = require("crypto")
+// const redisClient = require("../utils/redisClient");
 
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
 
@@ -30,16 +32,15 @@ const register = async (req, res) => {
         if (!validator.isStrongPassword(password))
             return res.status(400).json({ message: "Weak Password!!" })
 
-        const user = await userModel.create({ fullname, username, email, password });
 
-        const tk = await tokenModel.create({
-            userId: user._id,
-            token: crypto.randomBytes(32).toString("hex")
-        })
+        const token = crypto.randomBytes(32).toString("hex");
 
-        const url = `${process.env.BASE_URL}/users/${user._id}/verify/${tk.token}`
+        // await redisClient.setEx(`verify:${token}`, 3600, JSON.stringify({ fullname, username, email, password }));//expires in x time
+        await tempUserModel.create({ fullname, username, email, password, token });
 
-        await sendEmail(user.email, "Verify Email", url)
+        const url = `${process.env.BASE_URL}/user/verify/${token}`
+
+        await sendEmail(email, "Verify Your Email", url);
 
         res.status(201).json({ message: "Verification email sent to your registered email!!" });
     }
@@ -50,23 +51,20 @@ const register = async (req, res) => {
 
 const verifyToken = async (req, res) => {
     try {
-        const user = await userModel.findOne({ _id: req.params.id })
+        const token = req.params.token;
+        // const userData = await redisClient.get(`verify:${token}`);
+        const userData = await tempUserModel.findOne({ token });
+        if (!userData)
+            return res.status(400).json({ message: "Invalid or expired verification link!" });
 
-        if (!user)
-            return res.status(400).json({ message: "Invalid Link" });
+        const { fullname, username, email, password } = userData;
 
-        const token = await tokenModel.findOne({
-            userId: req.params.id,
-            token: req.params.token
-        })
+        await userModel.create({ fullname, username, email, password });
 
-        if (!token)
-            return res.status(400).json({ message: "Invalid Link" })
+        //remove data from Redis after verification
+        // await redisClient.del(`verify:${token}`);
 
-        await userModel.updateOne({ _id: user._id, verified: true })
-        await token.remove();
-
-        return res.status(200).json({ message: "Email verified successfully" })
+        return res.status(200).json({ message: "Email verified successfully! You can now log in." });
     }
     catch (err) {
         return res.status(500).json({ message: "Internal Server Error", error: err.message })
@@ -86,23 +84,6 @@ const login = async (req, res) => {
 
         if (!matchPassword)
             return res.status(400).json({ message: "Wrong Password!!!" })
-
-        if (!user.verified) {
-            const token = await tokenModel.findOne({ userId: user._id })
-
-            if (!token) {
-                const tk = await tokenModel.create({
-                    userId: user._id,
-                    token: crypto.randomBytes(32).toString("hex")
-                })
-
-                const url = `${process.env.BASE_URL}/users/${user._id}/verify/${tk.token}`
-
-                await sendEmail(user.email, "Verify Email", url)
-            }
-
-            return res.status(400).send({ message: "An email has been sent to your account" })
-        }
 
         const tokenExpiry = rememberMe ? "7d" : "1d";
 
