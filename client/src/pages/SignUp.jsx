@@ -1,127 +1,94 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
-//import toast from "react-toastify"
-import { toast } from 'react-toastify'
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 function SignUp() {
-    const [state, setState] = useState('Sign Up'); // to change the state from sign up to llog in
-    // const [email, setEmail] = useState('');
-    // const [password, setPassword] = useState('');
-    // const [name, setName] = useState('');
-    // const [userName, setUserName] = useState('');
-    const backendUrl="http://localhost:5000/user/register"
+  const [formData, setFormData] = useState({
+    fullname: "",
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [error, setError] = useState("");
 
-    const navigate = useNavigate()
+  const navigate = useNavigate();
+  const backendUrl = "http://localhost:5000/user/register";
 
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-        fullname: '',
-        username: '',
-        confirmPassword: '',
-    })
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    
+    if (!formData.fullname || !formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
+      toast.error("All fields are required!");
+      return;
+    }
 
-    const submitHandler = async (e) => {
-        e.preventDefault()
-        //console.log("HELLO")
-        // console.log(formData.fullname)
-        // console.log(formData.username)
-        // console.log(formData.email)
-        // console.log(formData.password)
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match!");
+      return;
+    }
 
-        if (!formData.fullname || !formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
-            toast.error("All fields are required!");
-            return;
-        }
+    try {
+      await axios.post(backendUrl, formData);
+      toast.success("Account created successfully! Redirecting...");
+      setTimeout(() => navigate("/signin"), 2000);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  };
 
-        //console.log("FIRST")
-        if (formData.password !== formData.confirmPassword) {
-            //console.log("DONE")
-            toast.error("Passwords do not match!");
-            //console.log("TOAST")
-            return;
-        }
-        try {
-            console.log("Sending Data:", formData);
-            const response = await axios.post(backendUrl, formData);
-            console.log(response)
-            toast.success("Account created successfully! Redirecting...");
-            //console.log("HI")
-            setTimeout(() => navigate('/signin'), 2000);
-        } catch (error) {
-            toast.error(error.response?.data?.message || "Something went wrong");
-        }
+  return (
+    <div className="h-screen flex flex-col items-center justify-center bg-[#141414] text-white px-4">
+      {/* Netflix-style Header */}
+      <div className="w-full flex justify-between items-center py-4 px-6 bg-[#E50914] rounded-lg">
+        <h1 className="text-2xl font-bold">projectV</h1>
+        <span className="text-white font-large">Sign Up</span>
+      </div>
 
+      {/* Netflix-style Sign-in Form */}
+      <div className="w-full max-w-md bg-[#1F1F1F] p-8 rounded-lg shadow-lg mt-6">
+        <h1 className="text-3xl font-bold text-center mb-6">Sign Up</h1>
 
-    };
+        {error && <p className="text-red-500 text-center">{error}</p>}
 
-    return (
-
-        <div className='h-screen flex flex-col'>
-            <div className='h-14 w-screen flex justify-between 
-            items-center mb-auto
-            bg-red-600'>
-                <h1 className='ml-5 text-lg'>projectV</h1>
-
-                <span className='mr-2'>Sign Up</span>
+        <form onSubmit={submitHandler} className="flex flex-col gap-4">
+          {Object.entries(formData).map(([key, value]) => (
+            <div className="flex flex-col" key={key}>
+              <label className="mb-1 text-sm font-semibold">{key.charAt(0).toUpperCase() + key.slice(1)}</label>
+              <input
+                className="rounded-md p-3 bg-[#333] text-white border border-gray-600 focus:outline-none focus:border-white"
+                type={key.includes("password") ? "password" : "text"}
+                name={key}
+                placeholder={`Enter your ${key}`}
+                value={value}
+                onChange={handleChange}
+                required
+              />
             </div>
+          ))}
 
-            <div className='flex mb-auto justify-between
-            h-screen text-white items-center w-full'>
-                <span className='mx-auto'>Lorem, ipsum dolor sit amet
-                    adipisicing elit. <br />At consequuntur facilis vero illum officia
-                    similique ipsum <br />quos quo quam ratione?
-                    Lorem, ipsum dolor sit amet
-                    adipisicing elit. <br />At consequuntur facilis vero illum officia
-                    similique ipsum <br />quos quo quam ratione?
-                    Lorem, ipsum dolor sit amet
-                    adipisicing elit. <br />At consequuntur facilis vero illum officia
-                    similique ipsum <br />quos quo quam ratione?</span>
+          <button
+            type="submit"
+            className="bg-[#E50914] text-white py-3 rounded-md font-semibold hover:bg-[#b2070e] transition-all duration-200"
+          >
+            Create Account
+          </button>
+        </form>
 
-                <form onSubmit={submitHandler}  action="" className='flex flex-col gap-2 mx-auto  '>
-                    <h1 className='text-3xl font-bold'>Welcome to projectV</h1>
-
-                    <span>First Name</span>
-                    <input className='rounded-sm pl-1 text-white' type="text" placeholder='First Name'
-                    name='fullname'
-                        onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })} required value={formData.fullname} />
-
-                    <span>User Name</span>
-                    <input className='rounded-sm pl-1 text-white' type="text" placeholder='user Name'
-                    name='username'
-                        onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })} required value={formData.username} />
-
-                    <span>E-mail</span>
-                    <input className='rounded-sm pl-1 text-white' type="text" placeholder='E-mail'
-                    name='email'
-                        onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })} required value={formData.email} />
-
-                    <span>Password</span>
-                    <input className='rounded-sm pl-1 text-white' type="password" placeholder='Password'
-                    name='password'
-                        onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })} required value={formData.password} />
-
-                    <span>Confirm Password</span>
-                    <input className='rounded-sm pl-1 text-white' type="password" placeholder='ConfirmPassword'
-                    name='confirmPassword'
-                        onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })} required value={formData.confirmPassword} />
-
-
-
-                    <button className='bg-red-600 rounded-sm hover:bg-red-500'>Create Account</button>
-
-                    <span className='mx-auto'>Already having a Account?</span>
-                    <Link to="/signin"><button className='bg-red-600 rounded-sm hover:bg-red-500 w-full'>Sign-In</button>
-                    </Link>
-                </form>
-            </div>
-
+        <div className="text-center mt-6">
+          <span className="text-gray-400">Already have an account?</span>
+          <Link to="/signin">
+            <button className="block w-full mt-2 text-white font-semibold hover:underline">Sign in now.</button>
+          </Link>
         </div>
-    )
+      </div>
+    </div>
+  );
 }
 
-export default SignUp
+export default SignUp;
