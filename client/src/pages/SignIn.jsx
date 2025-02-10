@@ -24,17 +24,11 @@ function SignIn() {
         { withCredentials: true }
       );
 
-      alert("Login Successful!");
-      // navigate("/dashboard"); // Redirect after successful login
-      console.log(email);
-      console.log(password);
-      console.log(rememberMe);
+      // alert("Login Successful!");
+      navigate("/home"); // Redirect after successful login
     } catch (err) {
       console.log(err.response?.data?.message || "Login Failed!");
     }
-    //  } catch (err) {
-    //    console.log(err);
-    //  }
   };
 
   return (
