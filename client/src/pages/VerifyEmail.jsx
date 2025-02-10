@@ -21,7 +21,7 @@ const VerifyEmail = () => {
 
     return (
         <div className="flex items-center justify-center h-screen bg-white text-black text-3xl">
-            <VerifiedIcon className="h-96"/>
+            <VerifiedIcon sx={{ fontSize: 200 }} />
             <h2>Email Verified</h2>
         </div>
     )

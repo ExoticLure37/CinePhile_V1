@@ -11,6 +11,7 @@
     "client": "file:",
     "cookie": "^1.0.2",
     "cra-template": "1.2.0",
+    "framer-motion": "^12.4.2",
     "icons": "^1.0.0",
     "react": "^19.0.0",
     "react-app-rewired": "^2.2.1",
