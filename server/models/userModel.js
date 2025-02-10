@@ -27,7 +27,17 @@ const userSchema = new mongoose.Schema({
   verified: {
     type: Boolean,
     default: false
-  }
+  },
+  pending_requests: [
+    {
+      _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    }
+  ],
+  requests_sent: [
+    {
+      _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    }
+  ]
 });
 
 // Hhash passwd
