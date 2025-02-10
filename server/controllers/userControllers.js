@@ -37,6 +37,7 @@ const register = async (req, res) => {
 
         // await redisClient.setEx(`verify:${token}`, 3600, JSON.stringify({ fullname, username, email, password }));//expires in x time
         await tempUserModel.create({ fullname, username, email, password, token });
+        // await userModel.create({ fullname, username, email, password });
 
         const url = `${process.env.BASE_URL}/user/verify/${token}`
 
