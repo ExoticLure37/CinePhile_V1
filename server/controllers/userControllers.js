@@ -11,7 +11,9 @@ const crypto = require("crypto")
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
 
 const register = async (req, res) => {
+    console.log("HELLO")
     try {
+        console.log("Received Data:", req.body);
         const { fullname, username, email, password } = req.body;
 
         const userEmail = await userModel.findOne({ email: email });
