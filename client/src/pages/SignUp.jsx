@@ -28,19 +28,13 @@ function SignUp() {
       return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match!");
-      return;
+    const submitHandler = async (e) => {
+        e.preventDefault()
+        if (!formData.fullname || !formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
+            toast.error("All fields are required!");
+            return;
+        }
     }
-
-    try {
-      await axios.post(backendUrl, formData);
-      toast.success("Account created successfully! Redirecting...");
-      setTimeout(() => navigate("/signin"), 2000);
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
-    }
-  };
 
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-[#141414] text-white px-4">
@@ -89,6 +83,7 @@ function SignUp() {
       </div>
     </div>
   );
+}
 }
 
 export default SignUp;

@@ -20,6 +20,8 @@ function SignIn() {
       );
 
       alert("Login Successful!");
+      // alert("Login Successful!");
+      navigate("/home"); // Redirect after successful login
     } catch (err) {
       console.log(err.response?.data?.message || "Login Failed!");
     }
