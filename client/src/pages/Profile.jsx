@@ -1,5 +1,7 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
+import Sidebar from '../components/Sidebar'
+import { Outlet } from 'react-router-dom'
 
 const Profile = () => {
   return (
@@ -14,7 +16,7 @@ const Profile = () => {
             </div>
 
             <div>
-
+                <Outlet/>
             </div>
         </div>
     </div>
