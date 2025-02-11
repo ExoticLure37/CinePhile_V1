@@ -2,265 +2,292 @@ const userModel = require("../models/userModel");
 const tempUserModel = require("../models/tempUserModel");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt")
-const tokenModel = require("../models/token")
-const sendEmail = require("../utils/sendEmail")
-const crypto = require("crypto")
+const bcrypt = require("bcrypt");
+const tokenModel = require("../models/token");
+const sendEmail = require("../utils/sendEmail");
+const crypto = require("crypto");
 // const redisClient = require("../utils/redisClient");
 
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
 
 const register = async (req, res) => {
-    // console.log("HELLO")
-    try {
-        // console.log("Received Data:", req.body);
-        const { fullname, username, email, password } = req.body;
+  // console.log("HELLO")
+  try {
+    // console.log("Received Data:", req.body);
+    const { fullname, username, email, password } = req.body;
 
-        const userEmail = await userModel.findOne({ email: email });
+    const userEmail = await userModel.findOne({ email: email });
 
-        if (userEmail)
-            return res.status(400).json({ message: "Email already exists!!" });
+    if (userEmail)
+      return res.status(400).json({ message: "Email already exists!!" });
 
-        const userName = await userModel.findOne({ username: username });
+    const userName = await userModel.findOne({ username: username });
 
-        if (userName)
-            return res.status(400).json({ message: "Username already exists!!" });
+    if (userName)
+      return res.status(400).json({ message: "Username already exists!!" });
 
-        if (!fullname || !username || !email || !password)
-            return res.status(400).json({ message: "All fields are required!!" });
+    if (!fullname || !username || !email || !password)
+      return res.status(400).json({ message: "All fields are required!!" });
 
-        if (!validator.isEmail(email))
-            return res.status(400).json({ message: "Not a valid email!!" });
-        if (!validator.isStrongPassword(password))
-            return res.status(400).json({ message: "Weak Password!!" })
+    if (!validator.isEmail(email))
+      return res.status(400).json({ message: "Not a valid email!!" });
+    if (!validator.isStrongPassword(password))
+      return res.status(400).json({ message: "Weak Password!!" });
 
+    const token = crypto.randomBytes(32).toString("hex");
 
-        const token = crypto.randomBytes(32).toString("hex");
+    // await redisClient.setEx(`verify:${token}`, 3600, JSON.stringify({ fullname, username, email, password }));//expires in x time
+    await tempUserModel.create({ fullname, username, email, password, token });
+    // await userModel.create({ fullname, username, email, password });
 
-        // await redisClient.setEx(`verify:${token}`, 3600, JSON.stringify({ fullname, username, email, password }));//expires in x time
-        await tempUserModel.create({ fullname, username, email, password, token });
-        // await userModel.create({ fullname, username, email, password });
+    const url = `${process.env.BASE_URL}/user/verify/${token}`;
 
-        const url = `${process.env.BASE_URL}/user/verify/${token}`
+    await sendEmail(email, "Verify Your Email", url);
 
-        await sendEmail(email, "Verify Your Email", url);
-
-        res.status(201).json({ message: "Verification email sent to your registered email!!" });
-    }
-    catch (err) {
-        return res.status(500).json({ message: "Internal Server Error", error: err.message })
-    }
-}
+    res
+      .status(201)
+      .json({ message: "Verification email sent to your registered email!!" });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: err.message });
+  }
+};
 
 const verifyToken = async (req, res) => {
-    try {
-        const token = req.params.token;
-        // const userData = await redisClient.get(`verify:${token}`);
-        const userData = await tempUserModel.findOne({ token });
-        if (!userData)
-            return res.status(400).json({ message: "Invalid or expired verification link!" });
+  try {
+    const token = req.params.token;
+    // const userData = await redisClient.get(`verify:${token}`);
+    const userData = await tempUserModel.findOne({ token });
+    if (!userData)
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired verification link!" });
 
-        const { fullname, username, email, password } = userData;
+    const { fullname, username, email, password } = userData;
 
-        await userModel.create({ fullname, username, email, password });
+    await userModel.create({ fullname, username, email, password });
 
-        //remove data from Redis after verification
-        // await redisClient.del(`verify:${token}`);
+    //remove data from Redis after verification
+    // await redisClient.del(`verify:${token}`);
 
-        return res.status(200).json({ message: "Email verified successfully! You can now log in." });
-    }
-    catch (err) {
-        return res.status(500).json({ message: "Internal Server Error", error: err.message })
-    }
-}
+    return res
+      .status(200)
+      .json({ message: "Email verified successfully! You can now log in." });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: err.message });
+  }
+};
 
 const login = async (req, res) => {
-    try {
-        const { email, password, rememberMe } = req.body;
+  try {
+    const { email, password, rememberMe } = req.body;
 
-        const user = await userModel.findOne({ email: email });
+    const user = await userModel.findOne({ email: email });
 
-        if (!user)
-            return res.status(400).json({ message: "No email exists!!" })
+    if (!user) return res.status(400).json({ message: "No email exists!!" });
 
-        const matchPassword = await bcrypt.compare(password, user.password);
+    const matchPassword = await bcrypt.compare(password, user.password);
 
-        if (!matchPassword)
-            return res.status(400).json({ message: "Wrong Password!!!" })
+    if (!matchPassword)
+      return res.status(400).json({ message: "Wrong Password!!!" });
 
-        const tokenExpiry = rememberMe ? "7d" : "1d";
+    const tokenExpiry = rememberMe ? "7d" : "1d";
 
-        const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: tokenExpiry });
+    const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+      expiresIn: tokenExpiry,
+    });
 
-        res.cookie('token', token, {
-            httpOnly: true, secure: true,
-            maxAge: rememberMe ? 7 * 24 * 60 * 60 * 1000 : 1 * 24 * 60 * 60 * 1000
-        });
-        return res.status(200).json({ fullname: user.fullname, email: user.email, username: user.username });
-    }
-    catch (er) {
-        return res.status(500).json({ message: "Internal Server Error", error: er.message })
-    }
-}
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      maxAge: rememberMe ? 7 * 24 * 60 * 60 * 1000 : 1 * 24 * 60 * 60 * 1000,
+    });
+    return res.status(200).json({
+      fullname: user.fullname,
+      email: user.email,
+      username: user.username,
+    });
+  } catch (er) {
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: er.message });
+  }
+};
 
 const resetPassword = async (req, res) => {
-    try {
-        const { oldPassword, newPassword } = req.body;
+  try {
+    const { oldPassword, newPassword } = req.body;
 
-        const _id = req.user._id;
-        const user = await userModel.findById(_id);
+    const _id = req.user._id;
+    const user = await userModel.findById(_id);
 
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        const isMatch = await bcrypt.compare(oldPassword, user.password);
-
-        if (!isMatch) return res.status(400).json({ message: "Wrong Password!!!" })
-
-        if (!validator.isStrongPassword(newPassword))
-            return res.status(400).json({ message: "New password is weak!!" });
-
-        user.password = newPassword;
-        await user.save();
-
-        res.status(200).json({ message: 'Password updated successfully' });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
-    catch (err) {
-        return res.status(500).json({ message: "Internal Server Error", error: err.message });
-    }
-}
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isMatch) return res.status(400).json({ message: "Wrong Password!!!" });
+
+    if (!validator.isStrongPassword(newPassword))
+      return res.status(400).json({ message: "New password is weak!!" });
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: err.message });
+  }
+};
 
 const addFriend = async (req, res) => {
-    try {
-        const _id = req.user._id;
-        const { friendsId } = req.body;
+  try {
+    const _id = req.user._id;
+    const { friendsId } = req.body;
 
-        const isFriends = await userModel.findOne({
-            _id: friendsId,
-            friends: { $elemMatch: { _id: friendsId } }
-        });
+    const isFriends = await userModel.findOne({
+      _id: friendsId,
+      friends: { $elemMatch: { _id: friendsId } },
+    });
 
-        if (isFriends)
-            return res.status(400).json({ message: "Already friends" });
+    if (isFriends) return res.status(400).json({ message: "Already friends" });
 
-        const isRequestPending = await userModel.findOne({
-            _id: friendsId,
-            requests_sent: { $elemMatch: { _id: friendsId } }
-        })
+    const isRequestPending = await userModel.findOne({
+      _id: friendsId,
+      requests_sent: { $elemMatch: { _id: friendsId } },
+    });
 
-        if (isRequestPending)
-            return res.status(400).json({ message: "Request already sent" })
+    if (isRequestPending)
+      return res.status(400).json({ message: "Request already sent" });
 
-        const user = await userModel.findOne({
-            _id: _id
-        })
+    const user = await userModel.findOne({
+      _id: _id,
+    });
 
-        user.requests_sent.push({ _id: friendsId })
+    user.requests_sent.push({ _id: friendsId });
 
-        await user.save();
+    await user.save();
 
-        const targetUser = await userModel.findOne({ _id: friendsId })
+    const targetUser = await userModel.findOne({ _id: friendsId });
 
-        targetUser.pending_requests.push({ _id: _id });
+    targetUser.pending_requests.push({ _id: _id });
 
-        await targetUser.save();
+    await targetUser.save();
 
-        return res.status(200).json({ message: "Friend request sent successfully!!" });
-    }
-    catch (err) {
-        return res.status(500).json({ message: "Internal Server Error", error: err.message })
-    }
-}
+    return res
+      .status(200)
+      .json({ message: "Friend request sent successfully!!" });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: err.message });
+  }
+};
 
 const acceptFriendRequest = async (req, res) => {
-    try {
-        const _id = req.user._id;
+  try {
+    const _id = req.user._id;
 
-        const { friendId } = req.body;
+    const { friendId } = req.body;
 
-        await userModel.findByIdAndUpdate(_id, {
-            $pull: { pending_requests: friendId },
-            $push: { friends: { _id: friendId } }
-        })
+    await userModel.findByIdAndUpdate(_id, {
+      $pull: { pending_requests: friendId },
+      $push: { friends: { _id: friendId } },
+    });
 
-        await userModel.findByIdAndUpdate(friendId, {
-            $pull: { requests_sent: _id },
-            $push: { friends: { _id: _id } }
-        })
+    await userModel.findByIdAndUpdate(friendId, {
+      $pull: { requests_sent: _id },
+      $push: { friends: { _id: _id } },
+    });
 
-        return res.status(200).json({ message: "Friend request accepted" })
-    }
-    catch (err) {
-        return res.status(500).json({ message: "Internal server error", error: err.message })
-    }
-}
+    return res.status(200).json({ message: "Friend request accepted" });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
+  }
+};
 
 const rejectFriendRequest = async (req, res) => {
-    try {
-        const _id = req.user._id;
+  try {
+    const _id = req.user._id;
 
-        const { friendId } = req.body;
+    const { friendId } = req.body;
 
-        await userModel.findByIdAndUpdate(_id, {
-            $pull: { pending_requests: friendId }
-        })
+    await userModel.findByIdAndUpdate(_id, {
+      $pull: { pending_requests: friendId },
+    });
 
-        await userModel.findByIdAndUpdate(friendId, {
-            $pull: { requests_sent: _id }
-        })
+    await userModel.findByIdAndUpdate(friendId, {
+      $pull: { requests_sent: _id },
+    });
 
-        return res.status(200).json({ message: "Friend request rejected" })
-    }
-    catch (err) {
-        return res.status(500).json({ message: "Internal server error", error: err.message })
-    }
-}
+    return res.status(200).json({ message: "Friend request rejected" });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
+  }
+};
 
 const cancelFriendRequest = async (req, res) => {
-    try {
-        const _id = req.user._id;
+  try {
+    const _id = req.user._id;
 
-        const { friendId } = req.body;
+    const { friendId } = req.body;
 
-        await userModel.findByIdAndUpdate(_id, {
-            $pull: { requests_sent: friendId }
-        })
+    await userModel.findByIdAndUpdate(_id, {
+      $pull: { requests_sent: friendId },
+    });
 
-        await userModel.findByIdAndUpdate(friendId, {
-            $pull: { pending_request: _id }
-        })
+    await userModel.findByIdAndUpdate(friendId, {
+      $pull: { pending_request: _id },
+    });
 
-        return res.status(200).json({ message: "Friend request rejected" })
-    }
-    catch (err) {
-        return res.status(500).json({ message: "Internal server error", error: err.message })
-    }
-}
+    return res.status(200).json({ message: "Friend request rejected" });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
+  }
+};
 
 const removeFriend = async (req, res) => {
-    try {
-        const _id = req.user._id;
+  try {
+    const _id = req.user._id;
 
-        const { friendId } = req.body;
+    const { friendId } = req.body;
 
-        await userModel.findByIdAndUpdate(_id, {
-            $pull: { friends: friendId }
-        })
+    await userModel.findByIdAndUpdate(_id, {
+      $pull: { friends: friendId },
+    });
 
-        await userModel.findByIdAndUpdate(friendId, {
-            $pull: { friends: _id }
-        })
+    await userModel.findByIdAndUpdate(friendId, {
+      $pull: { friends: _id },
+    });
 
-        return res.status(200).json({ message: "Friend request rejected" })
-    }
-    catch (err) {
-        return res.status(500).json({ message: "Internal server error", error: err.message })
-    }
-}
+    return res.status(200).json({ message: "Friend request rejected" });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
+  }
+};
 
 module.exports = {
-    register, login, resetPassword, verifyToken,
-    addFriend, acceptFriendRequest, rejectFriendRequest,
-    cancelFriendRequest, removeFriend
+  register,
+  login,
+  resetPassword,
+  verifyToken,
+  addFriend,
+  acceptFriendRequest,
+  rejectFriendRequest,
+  cancelFriendRequest,
+  removeFriend,
 };

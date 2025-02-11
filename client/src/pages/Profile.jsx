@@ -12,7 +12,7 @@ const Profile = () => {
 
         <div>
             <div>
-                <Sidebar/>
+                {/* <Sidebar/> */}
             </div>
 
             <div>

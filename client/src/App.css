@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap");
 
 * {
-  font-family: 'Poppins', sans-serif;
+   font-family: "Poppins", sans-serif;
 }
 
 .App {
@@ -17,6 +17,22 @@
    .App-logo {
       animation: App-logo-spin infinite 20s linear;
    }
+}
+
+/*verifyEmail css*/
+@keyframes beat {
+   0%,
+   100% {
+      transform: scale(0.8);
+   }
+   50% {
+      transform: scale(0.9);
+   }
+}
+
+.verify {
+   /* transform: rotate(180deg); */
+   animation: beat 1.3s infinite ease-in-out;
 }
 
 .App-header {

@@ -4,7 +4,7 @@ import storage from 'redux-persist/lib/storage'
 import userReducer from './user/userSlice'
 
 const userPersistConfig = {
-    key: 'user',
+    key: 'userProfile',
     storage,
 }
 
@@ -12,7 +12,7 @@ const persistedUserReducer = persistReducer(userPersistConfig, userReducer);
 
 const store = configureStore({
     reducer: {
-        user: persistedUserReducer,
+        userProfile: persistedUserReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
