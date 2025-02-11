@@ -30,7 +30,7 @@ function SignIn() {
   return (
     <div className="h-screen flex flex-col items-center bg-[#141414] text-white px-4 w-full">
       {/* Netflix-style Header */}
-      <div className="w-full mt-5 flex justify-between items-center py-4 px-6 bg-[#E50914] rounded-lg">
+      <div className="w-full mt-7 flex justify-between items-center py-4 px-6 bg-[#E50914] rounded-lg">
         <h1 className="text-2xl font-bold">projectV</h1>
         <span className="text-white text-lg">Sign In</span>
       </div>
