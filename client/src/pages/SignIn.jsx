@@ -30,7 +30,7 @@ function SignIn() {
       dispatch(setUserProfile({
         fullname: res.data.fullname,
         username: res.data.username,
-        email: res.data.username
+        email: res.data.email
       }))
 
       navigate("/home"); // Redirect after successful login

@@ -11,7 +11,7 @@ const Profile = () => {
     console.log(curUser)
 
   return (
-    curUser.name?
+    curUser.fullname?
     <div>
         <div>
             <Navbar/>

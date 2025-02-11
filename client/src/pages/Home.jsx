@@ -1,5 +1,6 @@
 import React from "react";
 import Navbar from "../components/Navbar";
+import { useSelector } from "react-redux";
 
 function Home() {
     const currentUser = useSelector((state) => state.userProfile);
