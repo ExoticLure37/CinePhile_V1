@@ -22,22 +22,15 @@ function SignUp() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.fullname || !formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
       toast.error("All fields are required!");
       return;
     }
-
-    const submitHandler = async (e) => {
-        e.preventDefault()
-        if (!formData.fullname || !formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
-            toast.error("All fields are required!");
-            return;
-        }
-    }
+  }
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-[#141414] text-white px-4">
+    <div className="h-screen flex flex-col items-center bg-[#141414] text-white px-4">
       {/* Netflix-style Header */}
       <div className="w-full flex justify-between items-center py-4 px-6 bg-[#E50914] rounded-lg">
         <h1 className="text-2xl font-bold">projectV</h1>
@@ -45,7 +38,7 @@ function SignUp() {
       </div>
 
       {/* Netflix-style Sign-in Form */}
-      <div className="w-full max-w-md bg-[#1F1F1F] p-8 rounded-lg shadow-lg mt-6">
+      <div className="w-full max-w-md bg-[#1F1F1F] p-8 rounded-lg shadow-lg my-auto">
         <h1 className="text-3xl font-bold text-center mb-6">Sign Up</h1>
 
         {error && <p className="text-red-500 text-center">{error}</p>}
@@ -84,6 +77,6 @@ function SignUp() {
     </div>
   );
 }
-}
+
 
 export default SignUp;
