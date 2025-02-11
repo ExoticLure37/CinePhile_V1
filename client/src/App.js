@@ -16,7 +16,10 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/home" element={<Home />} />
         <Route path="/friends" element={<Friends />} />
+        <Route path="/dashboard" element={<Profile />} />
         <Route path="/user/verify/:token" element={<VerifyEmail />} />
+
+
       </Routes>
     </div>
   );
