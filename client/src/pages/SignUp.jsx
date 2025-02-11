@@ -27,12 +27,6 @@ function SignUp() {
 
     const submitHandler = async (e) => {
         e.preventDefault()
-        //console.log("HELLO")
-        // console.log(formData.fullname)
-        // console.log(formData.username)
-        // console.log(formData.email)
-        // console.log(formData.password)
-
         if (!formData.fullname || !formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
             toast.error("All fields are required!");
             return;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // ✅ Correct
 import axios from "axios";
 
 function SignIn() {
@@ -7,6 +7,8 @@ function SignIn() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,6 +22,8 @@ function SignIn() {
       );
 
       alert("Login Successful!");
+      // alert("Login Successful!");
+      navigate("/home"); // Redirect after successful login
     } catch (err) {
       console.log(err.response?.data?.message || "Login Failed!");
     }
