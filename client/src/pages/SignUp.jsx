@@ -27,6 +27,16 @@ function SignUp() {
       toast.error("All fields are required!");
       return;
     }
+
+    try {
+      console.log(formData)
+      const response = await axios.post(backendUrl,formData);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+
+    //const response=axios.post(backendUrl)
   };
 
   return (
