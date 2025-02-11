@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux"
+import { setUserProfile } from "../redux/user/userSlice"
 import axios from "axios";
 
 function SignIn() {
@@ -8,6 +10,8 @@ function SignIn() {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
 
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -15,11 +19,19 @@ function SignIn() {
     setError("");
 
     try {
-      await axios.post(
+      const res = await axios.post(
         "http://localhost:5000/user/login",
         { email, password, rememberMe },
         { withCredentials: true }
       );
+
+      console.log(res.data);
+
+      dispatch(setUserProfile({
+        fullname: res.data.fullname,
+        username: res.data.username,
+        email: res.data.username
+      }))
 
       navigate("/home"); // Redirect after successful login
     } catch (err) {

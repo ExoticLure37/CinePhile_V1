@@ -38,7 +38,7 @@ function SignUp() {
       </div>
 
       {/* Netflix-style Sign-in Form */}
-      <div className="w-full max-w-sm bg-[#1F1F1F] p-6 rounded-lg shadow-lg mt-6">
+      <div className="w-full max-w-md bg-[#1F1F1F] px-10 py-6 rounded-lg shadow-lg mt-6">
         <h1 className="text-2xl font-bold text-center mb-4">Sign Up</h1>
 
         {error && <p className="text-red-500 text-center">{error}</p>}
@@ -63,7 +63,7 @@ function SignUp() {
 
           <button
             type="submit"
-            className="bg-[#E50914] text-white py-2 rounded-md font-semibold hover:bg-[#b2070e] transition-all duration-200"
+            className="bg-[#E50914] mt-2 text-white py-3 rounded-md font-semibold hover:bg-[#b2070e] transition-all duration-200"
           >
             Create Account
           </button>
