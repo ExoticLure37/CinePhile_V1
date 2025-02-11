@@ -7,6 +7,7 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.4.3",
     "@mui/material": "^6.4.3",
+    "@reduxjs/toolkit": "^2.5.1",
     "axios": "^1.7.9",
     "client": "file:",
     "cookie": "^1.0.2",
@@ -17,9 +18,11 @@
     "react-app-rewired": "^2.2.1",
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",
+    "react-redux": "^9.2.0",
     "react-router-dom": "^7.1.5",
     "react-scripts": "^5.0.1",
     "react-toastify": "^11.0.3",
+    "redux-persist": "^6.0.0",
     "toastify": "^2.0.1"
   },
   "scripts": {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -9,6 +9,8 @@ function SignIn() {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const navigate=useNavigate();
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,24 +23,22 @@ function SignIn() {
         { withCredentials: true }
       );
 
-      alert("Login Successful!");
-      // alert("Login Successful!");
       navigate("/home"); // Redirect after successful login
     } catch (err) {
-      console.log(err.response?.data?.message || "Login Failed!");
+      setError(err.response?.data?.message || "Login Failed!");
     }
   };
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-[#141414] text-white px-4">
+    <div className="h-screen flex flex-col items-center bg-[#141414] text-white px-4 w-full">
       {/* Netflix-style Header */}
-      <div className="w-full flex justify-between items-center py-4 px-6 bg-[#E50914] rounded-lg">
+      <div className="w-full mt-5 flex justify-between items-center py-4 px-6 bg-[#E50914] rounded-lg">
         <h1 className="text-2xl font-bold">projectV</h1>
-        <span className="text-white font-large">Sign In</span>
+        <span className="text-white text-lg">Sign In</span>
       </div>
 
       {/* Netflix-style Sign-in Form */}
-      <div className="w-full max-w-md bg-[#1F1F1F] p-8 rounded-lg shadow-lg mt-6">
+      <div className="w-full max-w-md bg-[#1F1F1F] p-8 rounded-lg shadow-lg mt-20">
         <h1 className="text-3xl font-bold text-center mb-6">Sign In</h1>
 
         {error && <p className="text-red-500 text-center">{error}</p>}
@@ -47,7 +47,7 @@ function SignIn() {
           <div className="flex flex-col">
             <label className="mb-1 text-sm font-semibold">E-mail</label>
             <input
-              className="rounded-md p-3 bg-[#333] text-white border border-gray-600 focus:outline-none focus:border-white"
+              className="w-full rounded-md p-3 bg-[#333] text-white border border-gray-600 focus:outline-none focus:border-white"
               type="email"
               placeholder="Enter your email"
               value={email}
@@ -59,7 +59,7 @@ function SignIn() {
           <div className="flex flex-col">
             <label className="mb-1 text-sm font-semibold">Password</label>
             <input
-              className="rounded-md p-3 bg-[#333] text-white border border-gray-600 focus:outline-none focus:border-white"
+              className="w-full rounded-md p-3 bg-[#333] text-white border border-gray-600 focus:outline-none focus:border-white"
               type="password"
               placeholder="Enter your password"
               value={password}
@@ -85,7 +85,7 @@ function SignIn() {
 
           <button
             type="submit"
-            className="bg-[#E50914] text-white py-3 rounded-md font-semibold hover:bg-[#b2070e] transition-all duration-200"
+            className="w-full bg-[#E50914] text-white py-3 rounded-md font-semibold hover:bg-[#b2070e] transition-all duration-200"
           >
             Sign In
           </button>
