@@ -40,7 +40,7 @@ function SignUp() {
   };
 
   return (
-    <div className="h-screen flex flex-col justify-center items-center bg-[#141414] text-white px-4">
+    <div className="h-screen overflow-x-hidden overflow-hidden overflow-y-hidden flex flex-col justify-center items-center bg-[#141414] text-white px-4">
       {/* Netflix-style Header */}
       <div className="w-full flex justify-between items-center py-4 px-6 bg-[#E50914] rounded-lg">
         <h1 className="text-2xl font-bold">projectV</h1>
