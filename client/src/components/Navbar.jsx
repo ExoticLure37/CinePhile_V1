@@ -44,7 +44,9 @@ const Navbar = () => {
       </div>
 
       <div className="flex items-center px-32 justify-between border-b-2 py-4 border-slate-200 h-7 ">
-        <span>Home</span>
+        <a href="/home">
+          <span>Home</span>
+        </a>
         <a href="./friends">
           <span>Friends</span>
         </a>
