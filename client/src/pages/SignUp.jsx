@@ -34,7 +34,7 @@ function SignUp() {
       {/* Netflix-style Header */}
       <div className="w-full flex justify-between items-center py-4 px-6 bg-[#E50914] rounded-lg">
         <h1 className="text-2xl font-bold">projectV</h1>
-        <span className="text-white font-large">Sign Up</span>
+        <span className="text-white font-large"></span>
       </div>
 
       {/* Netflix-style Sign-in Form */}
