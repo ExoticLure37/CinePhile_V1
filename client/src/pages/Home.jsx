@@ -7,7 +7,8 @@ function Home() {
     console.log(currentUser);
     return (
         <div className='h-screen flex flex-col'>
-            <div className="navbar bg-red-600">
+            <div className="navbar w-full flex justify-between items-center
+             py-2 px-6 text-white bg-[#E50914]">
                 <div className="flex-1">
                     <a className="btn btn-ghost text-xl">projectV</a>
                 </div>
@@ -36,12 +37,103 @@ function Home() {
                 </div>
             </div>
 
-            <div className='flex items-center px-32 justify-between border-b-2 py-4 border-slate-200 h-7 '>
+            <div className='flex items-center px-32 justify-between 
+            py-4 text-white bg-slate-200 bg-opacity-20 sticky top-0 z-40 h-10'>
                 <span>Home</span>
                 <span>Friends</span>
                 <span>Friends Watchlist</span>
                 <span>Manage Watchlist</span>
                 <span>Calendar</span>
+            </div>
+
+            <div className='flex flex-col mt-8 gap-10 ml-10'>
+                <div className='flex flex-col gap-5'>
+                    <span className='font-bold text-4xl'>Watching</span>
+
+                    <div className='flex gap-8'>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div className='flex flex-col gap-5'>
+                    <span className='font-bold text-4xl'>Trending</span>
+
+                    <div className='flex gap-8'>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div className='flex flex-col gap-5'>
+                    <span className='font-bold text-4xl'>Upcoming</span>
+
+                    <div className='flex gap-8'>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div className='flex flex-col gap-5'>
+                    <span className='font-bold text-4xl'>Latest</span>
+
+                    <div className='flex gap-8'>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                        <div className='bg-red-600 h-60 w-1/6 rounded-md'>
+
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     )
