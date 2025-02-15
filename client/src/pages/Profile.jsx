@@ -1,9 +1,10 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
 import Sidebar from '../components/Sidebar'
-import { Outlet } from 'react-router-dom'
+//import { Outlet } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import Error from '../components/Error'
+//import Dashboard from '../components/Dashboard'
 
 const Profile = () => {
 
@@ -20,10 +21,6 @@ const Profile = () => {
         <div>
             <div>
                 <Sidebar/>
-            </div>
-
-            <div>
-                <Outlet/>
             </div>
         </div>
     </div>
