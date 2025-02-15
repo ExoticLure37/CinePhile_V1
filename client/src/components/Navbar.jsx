@@ -1,8 +1,18 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../redux/user/userSlice";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const currentUser = useSelector((state) => state.userProfile)
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  const logoutHandler = () => {
+    dispatch(logout());
+    navigate("/signin")
+  }
 
   return (
     <div className="navbar w-full flex justify-between items-center
@@ -23,17 +33,17 @@ const Navbar = () => {
             tabindex="0"
             className="menu menu-sm dropdown-content bg-black rounded-box z-50 mt-3 w-52 p-2 shadow">
             <li>
-              <a>
-                {currentUser.username}
-              </a>
+              {currentUser.username !== '' ? <a>{currentUser.username}</a> : <Link to={'/signin'}>Login</Link>}
             </li>
             <li><a>My List</a></li>
             <li><a>Contact</a></li>
             <li><a>Settings</a></li>
+
+            {currentUser.username !== '' && < li><a onClick={logoutHandler}>Logout</a></li>}
           </ul>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
