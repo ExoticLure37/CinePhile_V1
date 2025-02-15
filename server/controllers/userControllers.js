@@ -6,6 +6,8 @@ const bcrypt = require("bcrypt")
 const tokenModel = require("../models/token")
 const sendEmail = require("../utils/sendEmail")
 const crypto = require("crypto")
+const mongoose = require("mongoose");
+
 // const redisClient = require("../utils/redisClient");
 
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
@@ -256,8 +258,32 @@ const removeFriend = async (req, res) => {
     }
 }
 
+const searchFriend = async (req, res) => {
+    try {
+        const id = req.query.id;
+        const username = req.query.username;
+
+        if(id && !mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid user ID." });
+        }
+        const user = await userModel.findOne({
+            $or: [{ _id: id }, { username: username }]
+        }).select("_id fullname username email");
+        
+        // console.log(user)
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        return res.status(200).json(user);
+    } catch (err) {
+        return res.status(500).json({ message: "Internal server error", error: err.message });
+    }
+};
+
+
 module.exports = {
     register, login, resetPassword, verifyToken,
     addFriend, acceptFriendRequest, rejectFriendRequest,
-    cancelFriendRequest, removeFriend
+    cancelFriendRequest, removeFriend,searchFriend
 };
