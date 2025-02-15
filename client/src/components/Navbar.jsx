@@ -46,7 +46,7 @@ const Navbar = () => {
         <span>Manage Watchlist</span>
         <span>Calendar</span>
       </div>
-    </>
+    
 
     </div>
   );
