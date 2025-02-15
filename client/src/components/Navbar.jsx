@@ -1,47 +1,39 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const currentUser = useSelector((state) => state.userProfile)
 
   return (
-    <>
-      <div className="w-full flex justify-between items-center py-4 px-6 bg-[#E50914] rounded-lg text-white">
-        <h1 className="text-2xl font-bold">projectV</h1>
-
-        <div className="flex items-center gap-4">
-          <span className="text-lg font-medium hidden sm:block">Welcome</span>
-
-          <div className="relative">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="btn btn-ghost btn-circle avatar"
-            >
-              <div className="w-10 rounded-full">
-                <img
-                  alt="User Avatar"
-                  src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                />
-              </div>
-            </button>
-            {isOpen && (
-              <ul className="absolute right-0 mt-3 w-48 bg-[#1F1F1F] text-white rounded-lg shadow-lg p-2">
-                <li className="py-2 px-3 hover:bg-[#333] rounded-md cursor-pointer">
-                  My Account
-                </li>
-                <li className="py-2 px-3 hover:bg-[#333] rounded-md cursor-pointer">
-                  My List
-                </li>
-                <li className="py-2 px-3 hover:bg-[#333] rounded-md cursor-pointer">
-                  Contact
-                </li>
-                <li className="py-2 px-3 hover:bg-[#333] rounded-md cursor-pointer">
-                  Settings
-                </li>
-              </ul>
-            )}
+    <div className="navbar w-full flex justify-between items-center
+             py-2 px-6 text-white bg-[#E50914]">
+      <div className="flex-1">
+        <a className="btn btn-ghost text-xl">projectV</a>
+      </div>
+      <div className="flex-none gap-2">
+        <div className="dropdown dropdown-end">
+          <div tabindex="0" role="button" className="btn btn-ghost btn-circle avatar">
+            <div className="w-10 rounded-full">
+              <img
+                alt="Tailwind CSS Navbar component"
+                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+            </div>
           </div>
+          <ul
+            tabindex="0"
+            className="menu menu-sm dropdown-content bg-black rounded-box z-50 mt-3 w-52 p-2 shadow">
+            <li>
+              <a>
+                {currentUser.username}
+              </a>
+            </li>
+            <li><a>My List</a></li>
+            <li><a>Contact</a></li>
+            <li><a>Settings</a></li>
+          </ul>
         </div>
       </div>
+
 
       <div className="flex items-center px-32 justify-between border-b-2 py-4 border-slate-200 h-7 ">
         <a href="/home">
@@ -55,6 +47,8 @@ const Navbar = () => {
         <span>Calendar</span>
       </div>
     </>
+
+    </div>
   );
 };
 
