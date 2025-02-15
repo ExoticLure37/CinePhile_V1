@@ -4,7 +4,7 @@ import Sidebar from '../components/Sidebar'
 //import { Outlet } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import Error from '../components/Error'
-import Dashboard from '../components/Dashboard'
+//import Dashboard from '../components/Dashboard'
 
 const Profile = () => {
 
@@ -21,7 +21,6 @@ const Profile = () => {
         <div>
             <div>
                 <Sidebar/>
-                <Dashboard/>
             </div>
         </div>
     </div>
