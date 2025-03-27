@@ -33,7 +33,7 @@ const Navbar = () => {
             tabindex="0"
             className="menu menu-sm dropdown-content bg-black rounded-box z-50 mt-3 w-52 p-2 shadow">
             <li>
-              {currentUser.username !== '' ? <a>{currentUser.username}</a> : <Link to={'/signin'}>Login</Link>}
+              {currentUser.username !== '' ? <a onClick={() => navigate("/dashboard")}>{currentUser.username}</a> : <Link to={'/signin'}>Login</Link>}
             </li>
             <li><a>My List</a></li>
             <li><a>Contact</a></li>

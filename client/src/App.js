@@ -18,8 +18,6 @@ function App() {
         <Route path="/friends" element={<Friends />} />
         <Route path="/dashboard" element={<Profile />} />
         <Route path="/user/verify/:token" element={<VerifyEmail />} />
-
-
       </Routes>
     </div>
   );
