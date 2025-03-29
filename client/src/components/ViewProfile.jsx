@@ -1,124 +1,101 @@
-import { RiEditBoxLine } from "react-icons/ri"
-import { useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { useSelector } from "react-redux";
+import { useState } from "react";
 import IconBtn from "./IconBtn";
-import profileimage from "../image/photo.jpg"
-
-// import { formattedDate } from "../../../utils/dateFormatter"
-// import IconBtn from "../../Common/IconBtn"
+import EditPersonalDetailsModal from "./EditPersonalDetailsModal";
+import EditAccountSettingsModal from "./EditAccountSettingsModal";
+import profileimage from "../image/photo.jpg";
 
 export default function ViewProfile() {
   const user = useSelector((state) => state.userProfile);
-  const navigate = useNavigate()
+  const [showPersonalModal, setShowPersonalModal] = useState(false);
+  const [showAccountModal, setShowAccountModal] = useState(false);
+
+  console.log("showPersonalModal:", showPersonalModal);
+  console.log("showAccountModal:", showAccountModal);
 
   return (
-    <>
-      <h1 className="mb-14 text-3xl font-medium text-richblack-5">
-        My Profile
-      </h1>
-      <div className="flex items-center justify-between rounded-md border-[1px] border-richblack-700 bg-richblack-800 p-8 px-12">
-        <div className="flex items-center gap-x-4">
+    <div className="max-w-4xl mx-auto p-6">
+      <h1 className="mb-10 text-4xl font-bold text-white">My Profile</h1>
+
+      {/* Profile Card */}
+      <div className="flex flex-col sm:flex-row items-center justify-between bg-gradient-to-r from-gray-800 to-gray-900 p-6 rounded-xl shadow-lg">
+        <div className="flex items-center gap-6">
           <img
             src={profileimage}
             alt={`profile-${user.fullname}`}
-            className="aspect-square w-[78px] rounded-full object-cover"
+            className="w-20 h-20 rounded-full object-cover border-2 border-blue-500"
           />
-          <div className="space-y-1">
-            <p className="text-lg font-semibold text-richblack-5">
-              {user.fullname}
+          <div>
+            <p className="text-2xl font-semibold text-white">{user.fullname}</p>
+            <p className="text-sm text-gray-400">
+              {user.gender || "Not Provided"}
             </p>
-            <p className="text-sm text-richblack-300">{user.email}</p>
-          </div>
-        </div>
-        <IconBtn
-          text="Edit"
-          onclick={() => {
-            navigate("/settings/editprofile")
-          }}
-        >
-          <RiEditBoxLine />
-        </IconBtn>
-      </div>
-      <div className="my-10 flex flex-col gap-y-10 rounded-md border-[1px] border-richblack-700 bg-richblack-800 p-8 px-12">
-        <div className="flex w-full items-center justify-between">
-          <p className="text-lg font-semibold text-richblack-5">About</p>
-          <IconBtn
-            text="Edit"
-            onclick={() => {
-              navigate("/dashboard/settings")
-            }}
-          >
-            <RiEditBoxLine />
-          </IconBtn>
-        </div>
-        <p
-          className={`${
-            user.email
-              ? "text-richblack-5"
-              : "text-richblack-400"
-          } text-sm font-medium`}
-        >
-          {user.email ?? "Write Something About Yourself"}
-        </p>
-      </div>
-      <div className="my-10 flex flex-col gap-y-10 rounded-md border-[1px] border-richblack-700 bg-richblack-800 p-8 px-12">
-        <div className="flex w-full items-center justify-between">
-          <p className="text-lg font-semibold text-richblack-5">
-            Personal Details
-          </p>
-          <IconBtn
-            text="Edit"
-            onclick={() => {
-              navigate("/dashboard/settings")
-            }}
-          >
-            <RiEditBoxLine />
-          </IconBtn>
-        </div>
-        <div className="flex max-w-[500px] justify-between">
-          <div className="flex flex-col gap-y-5">
-            <div>
-              <p className="mb-2 text-sm text-richblack-600">Name</p>
-              <p className="text-sm font-medium text-richblack-5">
-                {user.fullname}
-              </p>
-            </div>
-            <div>
-              <p className="mb-2 text-sm text-richblack-600">Email</p>
-              <p className="text-sm font-medium text-richblack-5">
-                {user.email}
-              </p>
-            </div>
-            <div>
-              <p className="mb-2 text-sm text-richblack-600">Gender</p>
-              <p className="text-sm font-medium text-richblack-5">
-                {user.email ?? "Add Gender"}
-              </p>
-            </div>
-          </div>
-          <div className="flex flex-col gap-y-5">
-            <div>
-              <p className="mb-2 text-sm text-richblack-600">User Id</p>
-              <p className="text-sm font-medium text-richblack-5">
-                {user.username}
-              </p>
-            </div>
-            <div>
-              <p className="mb-2 text-sm text-richblack-600">Phone Number</p>
-              <p className="text-sm font-medium text-richblack-5">
-                {user.fullname ?? "Add Contact Number"}
-              </p>
-            </div>
-            <div>
-              <p className="mb-2 text-sm text-richblack-600">Date Of Birth</p>
-              <p className="text-sm font-medium text-richblack-5">
-                {user.fullname??
-                  "Add Date Of Birth"}
-              </p>
-            </div>
           </div>
         </div>
       </div>
-    </>
-  )
+
+      {/* Personal Details */}
+      <div className="my-10 bg-gray-800 p-6 rounded-xl shadow-lg">
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-xl font-semibold text-white">Personal Details</p>
+          <IconBtn text="Edit" onClick={() => setShowPersonalModal(true)} />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-gray-200">
+          <div>
+            <p className="text-sm text-gray-400">Name</p>
+            <p className="text-lg font-medium">{user.fullname}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-400">Gender</p>
+            <p className="text-lg font-medium">
+              {user.gender || "Not Provided"}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-400">Date of Birth</p>
+            <p className="text-lg font-medium">{user.dob || "Not Provided"}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Account Settings */}
+      <div className="bg-gray-800 p-6 rounded-xl shadow-lg">
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-xl font-semibold text-white">Account Settings</p>
+          <IconBtn text="Edit" onClick={() => setShowAccountModal(true)} />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-gray-200">
+          <div>
+            <p className="text-sm text-gray-400">Email</p>
+            <p className="text-lg font-medium">{user.email || "Not Provided"}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-400">Phone Number</p>
+            <p className="text-lg font-medium">{user.phone || "Not Provided"}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-400">User ID</p>
+            <p className="text-lg font-medium">
+              {user.username || "Not Provided"}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* MODALS */}
+      {showPersonalModal && (
+        <EditPersonalDetailsModal
+          onClose={() => setShowPersonalModal(false)}
+          user={user}
+        />
+      )}
+      {showAccountModal && (
+        <EditAccountSettingsModal
+          onClose={() => setShowAccountModal(false)}
+          user={user}
+        />
+      )}
+    </div>
+  );
 }
+
