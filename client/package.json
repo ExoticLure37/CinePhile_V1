@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+<<<<<<< HEAD
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.4.3",
     "@mui/material": "^6.4.3",
     "@reduxjs/toolkit": "^2.5.1",
     "axios": "^1.7.9",
+=======
+>>>>>>> 2d41d0c384bd775322ca35b3cd31d39ccc37426a
     "client": "file:",
     "cookie": "^1.0.2",
     "cra-template": "1.2.0",

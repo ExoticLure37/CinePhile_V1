@@ -2,10 +2,12 @@ const userModel = require("../models/userModel");
 const tempUserModel = require("../models/tempUserModel");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const tokenModel = require("../models/token");
-const sendEmail = require("../utils/sendEmail");
-const crypto = require("crypto");
+const bcrypt = require("bcrypt")
+const tokenModel = require("../models/token")
+const sendEmail = require("../utils/sendEmail")
+const crypto = require("crypto")
+const mongoose = require("mongoose");
+
 // const redisClient = require("../utils/redisClient");
 
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
@@ -146,22 +148,59 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const getFriends = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    // Fetch user and populate friends' usernames
+    const user = await userModel.findById(userId).populate('friends._id', 'username');
+
+    // Create an array with friends and their usernames
+    const friendList = user.friends.map(friend => ({ username: friend.username, _id: friend._id }));
+
+    return res.status(200).json({ friendList });
+  } catch (err) {
+    return res.status(500).json({ message: "Internal Server Error", error: err.message });
+  }
+};
+
+
+
 const addFriend = async (req, res) => {
   try {
     const _id = req.user._id;
     const { friendsId } = req.body;
 
+    console.log(_id);
+    // console.log(friendsId);
+
+    const friend = await userModel.findOne({
+      username: friendsId
+    })
+
+    // console.log(friend)
+
+    if (!friend) return res.status(400).json({ message: "Username not exists!!" })
+
+    const friendId = friend._id.toString();
+
+    console.log(friendId)
+
     const isFriends = await userModel.findOne({
-      _id: friendsId,
-      friends: { $elemMatch: { _id: friendsId } },
+      _id: friendId,
+      friends: { $elemMatch: { _id: friendId } },
     });
+
+    // console.log(isFriends)
 
     if (isFriends) return res.status(400).json({ message: "Already friends" });
 
     const isRequestPending = await userModel.findOne({
-      _id: friendsId,
-      requests_sent: { $elemMatch: { _id: friendsId } },
+      _id: friendId,
+      requests_sent: { $elemMatch: { _id: friendId } },
     });
+
+    // console.log(isRequestPending)
 
     if (isRequestPending)
       return res.status(400).json({ message: "Request already sent" });
@@ -170,11 +209,11 @@ const addFriend = async (req, res) => {
       _id: _id,
     });
 
-    user.requests_sent.push({ _id: friendsId });
+    user.requests_sent.push({ _id: friendId });
 
     await user.save();
 
-    const targetUser = await userModel.findOne({ _id: friendsId });
+    const targetUser = await userModel.findOne({ _id: friendId });
 
     targetUser.pending_requests.push({ _id: _id });
 
@@ -192,18 +231,18 @@ const addFriend = async (req, res) => {
 
 const acceptFriendRequest = async (req, res) => {
   try {
-    const _id = req.user._id;
+    const id = req.user._id;
 
     const { friendId } = req.body;
 
-    await userModel.findByIdAndUpdate(_id, {
-      $pull: { pending_requests: friendId },
+    await userModel.findByIdAndUpdate(id, {
+      $pull: { pending_requests: { _id: friendId } },
       $push: { friends: { _id: friendId } },
     });
 
     await userModel.findByIdAndUpdate(friendId, {
-      $pull: { requests_sent: _id },
-      $push: { friends: { _id: _id } },
+      $pull: { requests_sent: { _id: id } },
+      $push: { friends: { _id: id } },
     });
 
     return res.status(200).json({ message: "Friend request accepted" });
@@ -216,16 +255,18 @@ const acceptFriendRequest = async (req, res) => {
 
 const rejectFriendRequest = async (req, res) => {
   try {
-    const _id = req.user._id;
+    const id = req.user._id;
 
     const { friendId } = req.body;
 
-    await userModel.findByIdAndUpdate(_id, {
-      $pull: { pending_requests: friendId },
+    // console.log(friendId)
+
+    await userModel.findByIdAndUpdate(id, {
+      $pull: { pending_requests: { _id: friendId } },
     });
 
     await userModel.findByIdAndUpdate(friendId, {
-      $pull: { requests_sent: _id },
+      $pull: { requests_sent: { _id: id } },
     });
 
     return res.status(200).json({ message: "Friend request rejected" });
@@ -238,16 +279,18 @@ const rejectFriendRequest = async (req, res) => {
 
 const cancelFriendRequest = async (req, res) => {
   try {
-    const _id = req.user._id;
+    const id = req.user._id;
 
     const { friendId } = req.body;
 
+    // console.log(friendId)
+
     await userModel.findByIdAndUpdate(_id, {
-      $pull: { requests_sent: friendId },
+      $pull: { requests_sent: { _id: friendId } },
     });
 
     await userModel.findByIdAndUpdate(friendId, {
-      $pull: { pending_request: _id },
+      $pull: { pending_request: { _id: id } },
     });
 
     return res.status(200).json({ message: "Friend request rejected" });
@@ -269,25 +312,92 @@ const removeFriend = async (req, res) => {
     });
 
     await userModel.findByIdAndUpdate(friendId, {
-      $pull: { friends: _id },
-    });
+      $pull: { friends: _id }
+    })
 
-    return res.status(200).json({ message: "Friend request rejected" });
+    return res.status(200).json({ message: "Friend request rejected" })
+  }
+  catch (err) {
+    return res.status(500).json({ message: "Internal server error", error: err.message })
+  }
+}
+
+const searchFriend = async (req, res) => {
+  try {
+    const username = req.query.username;
+
+    // console.log(username);
+
+    const user = await userModel.findOne({
+      username: username
+    }).select("_id fullname username email");
+
+    // console.log(user)
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json(user);
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Internal server error", error: err.message });
+    return res.status(500).json({ message: "Internal server error", error: err.message });
   }
 };
 
+const getPendingRequest = async (req, res) => {
+  try {
+    const _id = req.user._id;
+
+    // Fetch user and populate usernames in one query
+    const user = await userModel.findOne({ _id }).populate("pending_requests._id", "username");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Extract request list
+    const requestSentList = user.pending_requests.map((request) => ({
+      userId: request._id._id, // Extract ObjectId correctly
+      username: request._id.username, // Extract username correctly
+    }));
+
+    // console.log(requestSentList);
+
+    return res.status(200).json({ pending_requests: requestSentList });
+  }
+  catch (err) {
+    res.status(500).json({ message: "Internal server error", error: err.message })
+  }
+}
+
+const getRequestSent = async (req, res) => {
+  try {
+    const _id = req.user._id;
+
+    // Fetch user and populate usernames in one query
+    const user = await userModel.findOne({ _id }).populate("requests_sent._id", "username");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Extract request list
+    const requestSentList = user.requests_sent.map((request) => ({
+      userId: request._id._id, // Extract ObjectId correctly
+      username: request._id.username, // Extract username correctly
+    }));
+
+    // console.log(requestSentList);
+
+    return res.status(200).json({ requests_sent: requestSentList });
+  } catch (err) {
+    return res.status(500).json({ message: "Internal server error", error: err.message });
+  }
+};
+
+
+
 module.exports = {
-  register,
-  login,
-  resetPassword,
-  verifyToken,
-  addFriend,
-  acceptFriendRequest,
-  rejectFriendRequest,
-  cancelFriendRequest,
-  removeFriend,
+  register, login, resetPassword, verifyToken,
+  addFriend, acceptFriendRequest, rejectFriendRequest,
+  cancelFriendRequest, removeFriend, searchFriend, getPendingRequest, getRequestSent, getFriends
 };

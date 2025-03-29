@@ -12,15 +12,16 @@ import { MdDashboard } from "react-icons/md";
 import Error from "./Error";
 import ViewProfile from "./ViewProfile";
 import LogOut from "./LogOut";
+import FriendRequests from "./FriendRequests";
 const Sidebar = () => {
   const [activeSection, setActiveSection] = useState("Profile");
 
   const renderContent = () => {
     switch (activeSection) {
       case "Profile":
-        return <p className="text-lg"><ViewProfile/></p>;
+        return <p className="text-lg"><ViewProfile /></p>;
       case "Friend Requests":
-        return <p className="text-lg">Update your settings here.</p>;
+        return <FriendRequests />
       case "WatchList":
         return <p className="text-lg">View recent activities here.</p>;
       case "Messages":
@@ -31,22 +32,20 @@ const Sidebar = () => {
         return <p className="text-lg">View recent activities here.</p>;
       case "Logout":
         return <div className="flex align-middle justify-center">
-          <LogOut/>
+          <LogOut />
         </div>;
       default:
-        return <Error/>;
+        return <Error />;
     }
   };
   const curUser = useSelector((state) => state.userProfile);
   console.log(curUser);
   return (
     curUser && (
-      <div className="flex flex-col">
-        {/* <div className="mx-auto">
-          <h1 className="text-xl">{curUser.fullname}'s Dashboard</h1>
-        </div> */}
-        <div className="
-        mt-2 flex flex-row">
+      <div className="flex flex-col bg-[#141414]">
+        <div className="mx-auto">
+        </div>
+        <div className="flex flex-row">
           <div>
             <ul>
               {[
@@ -60,23 +59,22 @@ const Sidebar = () => {
               ].map((section) => (
                 <li
                   key={section}
-                  className={`p-3 cursor-pointer rounded-lg hover:bg-gray-200 ${
-                    activeSection === section ? "bg-gray-300" : ""
-                  }`}
+                  className={`p-3 cursor-pointer rounded-lg hover:bg-gray-200 ${activeSection === section ? "bg-gray-300" : ""
+                    }`}
                   onClick={() => setActiveSection(section)}
                 >
                   <div className="flex items-center gap-2">
-                    {section === "Profile" ? (
+                    {section == "Profile" ? (
                       <ImProfile />
-                    ) : section === "Friend Requests" ? (
+                    ) : section == "Friend Requests" ? (
                       <FaUserFriends />
-                    ) : section === "WatchList" ? (
+                    ) : section == "WatchList" ? (
                       <FaClipboardList />
-                    ) : section === "Messages" ? (
+                    ) : section == "Messages" ? (
                       <SiGooglemessages />
-                    ) : section === "Friend Activity" ? (
+                    ) : section == "Friend Activity" ? (
                       <LuActivity />
-                    ) : section === "Dashboard" ? (
+                    ) : section == "Dashboard" ? (
                       <MdDashboard />
                     ) : (
                       <RiLogoutBoxFill />
@@ -89,7 +87,7 @@ const Sidebar = () => {
           </div>
           <hr />
           <div className="flex-1 p-8">
-            {/* <h1 className="text-2xl font-bold mb-4 text-center"=>{activeSection}</h1> */}
+            <h1 className="text-2xl font-bold mb-4 text-center">{activeSection}</h1>
             {renderContent()}
           </div>
         </div>
