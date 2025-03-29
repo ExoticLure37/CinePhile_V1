@@ -1,8 +1,18 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../redux/user/userSlice";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const currentUser = useSelector((state) => state.userProfile)
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  const logoutHandler = () => {
+    dispatch(logout());
+    navigate("/signin")
+  }
 
   return (
     <div className="navbar w-full flex justify-between items-center
@@ -23,32 +33,17 @@ const Navbar = () => {
             tabindex="0"
             className="menu menu-sm dropdown-content bg-black rounded-box z-50 mt-3 w-52 p-2 shadow">
             <li>
-              <a>
-                {currentUser.username}
-              </a>
+              {currentUser.username !== '' ? <a>{currentUser.username}</a> : <Link to={'/signin'}>Login</Link>}
             </li>
             <li><a>My List</a></li>
             <li><a>Contact</a></li>
             <li><a>Settings</a></li>
+
+            {currentUser.username !== '' && < li><a onClick={logoutHandler}>Logout</a></li>}
           </ul>
         </div>
       </div>
-
-
-      <div className="flex items-center px-32 justify-between border-b-2 py-4 border-slate-200 h-7 ">
-        <a href="/home">
-          <span>Home</span>
-        </a>
-        <a href="./friends">
-          <span>Friends</span>
-        </a>
-        <span>Friends Watchlist</span>
-        <span>Manage Watchlist</span>
-        <span>Calendar</span>
-      </div>
-    
-
-    </div>
+    </div >
   );
 };
 
