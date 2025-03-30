@@ -23,15 +23,27 @@ function SignUp() {
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    if (!formData.fullname || !formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords don't match");
+      return;
+    }
+
+    if (
+      !formData.fullname ||
+      !formData.username ||
+      !formData.email ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
       toast.error("All fields are required!");
       return;
     }
 
     try {
-      console.log(formData)
-      const response = await axios.post(backendUrl,formData);
+      console.log(formData);
+      const response = await axios.post(backendUrl, formData);
       console.log(response.data);
+      console.log("Verification mail is sent successfully");
     } catch (error) {
       console.error(error);
     }
@@ -82,7 +94,9 @@ function SignUp() {
         <div className="text-center mt-4">
           <span className="text-gray-400">Already have an account?</span>
           <Link to="/signin">
-            <button className="block w-full mt-2 text-white font-semibold hover:underline">Sign in now.</button>
+            <button className="block w-full mt-2 text-white font-semibold hover:underline">
+              Sign in now.
+            </button>
           </Link>
         </div>
       </div>
