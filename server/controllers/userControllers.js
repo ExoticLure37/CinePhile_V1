@@ -108,9 +108,13 @@ const login = async (req, res) => {
       maxAge: rememberMe ? 7 * 24 * 60 * 60 * 1000 : 1 * 24 * 60 * 60 * 1000,
     });
     return res.status(200).json({
+      username: user.username,
       fullname: user.fullname,
       email: user.email,
-      username: user.username,
+      about: user.about,
+      gender: user.gender,
+      dob: user.dob,
+      phone_number: user.phone_number
     });
   } catch (er) {
     return res
@@ -394,10 +398,136 @@ const getRequestSent = async (req, res) => {
   }
 };
 
+const updatePersonalDetails = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const { fullname, gender, dob, about } = req.body;
+
+    const user = await userModel.findById(userId);
+
+    if (fullname) user.fullname = fullname;
+    if (gender) user.gender = gender;
+    if (dob) user.dob = dob;
+    if (about) user.about = about;
+
+    await user.save();
+
+    return res.status(200).json({
+      username: user.username,
+      fullname: user.fullname,
+      email: user.email,
+      about: user.about,
+      gender: user.gender,
+      dob: user.dob,
+      phone_number: user.phone_number
+    });
+  }
+  catch (err) {
+    return res.status(500).json({ message: "Internal Serve Error", error: err.message })
+  }
+}
+
+const updateEmail = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const { newEmail } = req.body;
+
+    const url = `${process.env.BASE_URL}/user/verify/${newEmail}/${userId}`;
+
+    await sendEmail(newEmail, "Verify Your Email", url);
+
+    return res.status(200).json("Verfication link sent to your new e-mail!!");
+  }
+  catch (err) {
+    return res.status(500).json({ message: "Internal Serve Error", error: err.message })
+  }
+}
+
+const verifyEmail = async (req, res) => {
+  try {
+    const { newEmail, userId } = req.params;
+
+    const user = await userModel.findByIdAndUpdate(userId, { email: newEmail });
+
+    return res.status(200).json({ email: user.email });
+  }
+  catch (err) {
+    return res.status(500).json({ message: "Internal Serve Error", error: err.message })
+  }
+}
+
+const updatePassword = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const { newPassword, oldPassword } = req.body;
+
+    const user = await userModel.findById(userId);
+
+    // console.log(user);
+
+    const decryptedPass = await bcrypt.compare(oldPassword, user.password);
+
+    if (!decryptedPass) return res.status(400).json({ message: "Incorrect Password!!" });
+
+    // console.log(user);
+
+    if (!validator.isStrongPassword(newPassword))
+      return res.status(400).json({ message: "Weak Password!!" });
+
+    user.password = newPassword;
+
+    await user.save();
+
+    return res.status(200).json({ message: "Password updated sucessfully!!" });
+  }
+  catch (err) {
+    return res.status(500).json({ message: "Internal Serve Error", error: err.message })
+  }
+}
+
+const updateUsername = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const { newUsername } = req.body;
+
+    const user = await userModel.findById(userId);
+
+    const storedDate = user.timeStamp;
+
+    const currentDate = new Date(); // Current date
+
+    // Calculate difference in milliseconds
+    const differenceInMilliseconds = Math.abs(currentDate - storedDate);
+
+    // Convert to days
+    const differenceInDays = Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+
+    if (differenceInDays < 90) return res.status(400).json({ message: `You cannot change user until ${90 - differenceInDays} days` });
+
+    const isAlreadyTaken = user.findOne({username : newUsername});
+
+    if(isAlreadyTaken) return res.status(400).json({message : "Username already taken!!!"})
+
+    user.username = newUsername;
+    user.timeStamp = currentDate;
+
+    await user.save();
+
+    return res.status(200).json(user.username);
+  }
+  catch (err) {
+    return res.status(500).json({ message: "Internal Serve Error", error: err.message })
+  }
+}
 
 
 module.exports = {
   register, login, resetPassword, verifyToken,
   addFriend, acceptFriendRequest, rejectFriendRequest,
-  cancelFriendRequest, removeFriend, searchFriend, getPendingRequest, getRequestSent, getFriends
+  cancelFriendRequest, removeFriend, searchFriend, getPendingRequest, getRequestSent, getFriends, updatePersonalDetails
+  , updateEmail, verifyEmail, updatePassword, updateUsername
 };

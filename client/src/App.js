@@ -7,6 +7,7 @@ import Profile from "./pages/Profile";
 import "./App.css";
 import VerifyEmail from "./pages/VerifyEmail";
 import Friends from "./pages/Friends";
+import VerifyUpdatedEmail from "./pages/VerifyUpdatedEmail";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/friends" element={<Friends />} />
         <Route path="/dashboard" element={<Profile />} />
         <Route path="/user/verify/:token" element={<VerifyEmail />} />
+        <Route path="/user/verify/:newEmail/:userId" element={<VerifyUpdatedEmail />} />
       </Routes>
     </div>
   );

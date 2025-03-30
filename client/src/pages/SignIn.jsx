@@ -30,7 +30,11 @@ function SignIn() {
       dispatch(setUserProfile({
         fullname: res.data.fullname,
         username: res.data.username,
-        email: res.data.email
+        email: res.data.email,
+        gender: res.data.gender,
+        about: res.data.about,
+        dob: res.data.dob,
+        phone_number: res.data.phone_number
       }))
 
       navigate("/home"); // Redirect after successful login

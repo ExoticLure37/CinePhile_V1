@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react'
 import axios from "axios"
 import { ImCross } from "react-icons/im";
 import { TiTick } from "react-icons/ti";
+import { useSelector } from 'react-redux';
 
 function FriendRequests() {
     const [pendingRequest, setPendingRequest] = useState([]);
     const [requestSent, setRequestSent] = useState([]);
 
     const [friendUsername, setFriendUsername] = useState("");
+
+    const currentUser = useSelector((state) => state.userProfile);
 
     useEffect(() => {
         getPendingRequests();
@@ -47,6 +50,10 @@ function FriendRequests() {
 
     const addFriend = async () => {
         try {
+            if (friendUsername == currentUser.username) {
+                console.log("Incorrect Username!!");
+                return;
+            }
             const res = await axios.patch("http://localhost:5000/user/addFriend", {
                 friendsId: friendUsername
             }, { withCredentials: true })
@@ -136,7 +143,7 @@ function FriendRequests() {
                         <div className='flex mt-3 mx-auto w-full justify-center gap-2'>
                             <input type="text"
                                 placeholder='Enter Username'
-                                className='w-3/4 p-2 rounded-md'
+                                className='w-3/4 p-2 text-black rounded-md'
                                 value={friendUsername}
                                 name='friendUsername'
                                 onChange={onChangeFriendUsername} />

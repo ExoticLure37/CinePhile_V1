@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import axios from "axios";
+import LinkNavbar from "../components/LinkNavbar";
 
 
 const Friends = () => {
@@ -34,6 +35,10 @@ const Friends = () => {
     <>
       <div className="flex flex-col min-h-screen bg-[#141414]">
         <Navbar />
+
+        <div className="bg-slate-200 bg-opacity-20 sticky top-0 z-40">
+          <LinkNavbar />
+        </div>
         <div className="flex flex-col items-center justify-center  text-white px-4 p-[35px]">
           <h1 className="text-3xl font-bold mb-6">My Friends</h1>
           <div className="w-3/4 bg-[#1F1F1F] p-5 rounded-lg shadow-lg">
