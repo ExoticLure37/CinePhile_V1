@@ -61,8 +61,13 @@ export default function ViewProfile() {
           </div>
           <div>
             <p className="text-sm text-gray-400">Date of Birth</p>
-            <p className="text-lg font-medium">{user.dob || "Not Provided"}</p>
+            <p className="text-lg font-medium">{formatDate(user.dob) || "Not Provided"}</p>
           </div>
+        </div>
+
+        <div className="mt-2">
+          <p className="text-sm text-gray-400">About</p>
+          {user.about}
         </div>
       </div>
 
@@ -79,7 +84,7 @@ export default function ViewProfile() {
           </div>
           <div>
             <p className="text-sm text-gray-400">Phone Number</p>
-            <p className="text-lg font-medium">{user.phone || "Not Provided"}</p>
+            <p className="text-lg font-medium">{user.phone_number || "Not Provided"}</p>
           </div>
           <div>
             <p className="text-sm text-gray-400">User ID</p>

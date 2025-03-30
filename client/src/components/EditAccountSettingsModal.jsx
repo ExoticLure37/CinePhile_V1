@@ -20,7 +20,7 @@ export default function EditAccountSettingsModal({ onClose, user }) {
             <label className="block text-gray-400 mb-2">Phone Number</label>
             <input
               type="text"
-              defaultValue={user.phone}
+              defaultValue={user.phone_number}
               className="w-full p-2 bg-gray-800 text-white rounded-md border border-gray-700"
             />
           </div>
