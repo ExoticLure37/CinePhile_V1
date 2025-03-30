@@ -172,10 +172,10 @@ const getFriends = async (req, res) => {
 
 const addFriend = async (req, res) => {
   try {
-    const _id = req.user._id;
+    const userId = req.user._id;
     const { friendsId } = req.body;
 
-    console.log(_id);
+    // console.log(_id);
     // console.log(friendsId);
 
     const friend = await userModel.findOne({
@@ -184,23 +184,23 @@ const addFriend = async (req, res) => {
 
     // console.log(friend)
 
-    if (!friend) return res.status(400).json({ message: "Username not exists!!" })
+    if (!friend) return res.status(400).json({ message: "Username doesn't exists!!" })
 
     const friendId = friend._id.toString();
 
-    console.log(friendId)
+    // console.log(friendId)
 
     const isFriends = await userModel.findOne({
-      _id: friendId,
+      _id: userId,
       friends: { $elemMatch: { _id: friendId } },
     });
 
     // console.log(isFriends)
 
-    if (isFriends) return res.status(400).json({ message: "Already friends" });
+    if (isFriends) return res.status(400).json({ message: "Already friends!!!" });
 
     const isRequestPending = await userModel.findOne({
-      _id: friendId,
+      _id: userId,
       requests_sent: { $elemMatch: { _id: friendId } },
     });
 
@@ -210,7 +210,7 @@ const addFriend = async (req, res) => {
       return res.status(400).json({ message: "Request already sent" });
 
     const user = await userModel.findOne({
-      _id: _id,
+      _id: userId,
     });
 
     user.requests_sent.push({ _id: friendId });
@@ -219,7 +219,7 @@ const addFriend = async (req, res) => {
 
     const targetUser = await userModel.findOne({ _id: friendId });
 
-    targetUser.pending_requests.push({ _id: _id });
+    targetUser.pending_requests.push({ _id: userId });
 
     await targetUser.save();
 
@@ -289,12 +289,12 @@ const cancelFriendRequest = async (req, res) => {
 
     // console.log(friendId)
 
-    await userModel.findByIdAndUpdate(_id, {
+    await userModel.findByIdAndUpdate(id, {
       $pull: { requests_sent: { _id: friendId } },
     });
 
     await userModel.findByIdAndUpdate(friendId, {
-      $pull: { pending_request: { _id: id } },
+      $pull: { pending_requests: { _id: id } },
     });
 
     return res.status(200).json({ message: "Friend request rejected" });
@@ -508,9 +508,9 @@ const updateUsername = async (req, res) => {
 
     if (differenceInDays < 90) return res.status(400).json({ message: `You cannot change user until ${90 - differenceInDays} days` });
 
-    const isAlreadyTaken = user.findOne({username : newUsername});
+    const isAlreadyTaken = user.findOne({ username: newUsername });
 
-    if(isAlreadyTaken) return res.status(400).json({message : "Username already taken!!!"})
+    if (isAlreadyTaken) return res.status(400).json({ message: "Username already taken!!!" })
 
     user.username = newUsername;
     user.timeStamp = currentDate;
