@@ -38,7 +38,22 @@ const userSchema = new mongoose.Schema({
     {
       _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     }
-  ]
+  ],
+  about: {
+    type: String,
+  },
+  gender: {
+    type: String,
+  },
+  phone_number: {
+    type: String,
+  },
+  dob: {
+    type: Date
+  },
+  timeStamp: {
+    type : Date
+  }
 });
 
 // Hhash passwd

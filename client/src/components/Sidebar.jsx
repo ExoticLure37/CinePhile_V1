@@ -46,7 +46,7 @@ const Sidebar = () => {
         <div className="mx-auto">
         </div>
         <div className="flex flex-row">
-          <div>
+          <div className="mt-2 text-white">
             <ul>
               {[
                 "Profile",
@@ -59,22 +59,22 @@ const Sidebar = () => {
               ].map((section) => (
                 <li
                   key={section}
-                  className={`p-3 cursor-pointer rounded-lg hover:bg-gray-200 ${activeSection === section ? "bg-gray-300" : ""
+                  className={`p-3 cursor-pointer rounded-lg hover:text-gray-500 ${activeSection === section ? "text-gray-500" : ""
                     }`}
                   onClick={() => setActiveSection(section)}
                 >
                   <div className="flex items-center gap-2">
-                    {section === "Profile" ? (
+                    {section == "Profile" ? (
                       <ImProfile />
-                    ) : section === "Friend Requests" ? (
+                    ) : section == "Friend Requests" ? (
                       <FaUserFriends />
-                    ) : section === "WatchList" ? (
+                    ) : section == "WatchList" ? (
                       <FaClipboardList />
-                    ) : section === "Messages" ? (
+                    ) : section == "Messages" ? (
                       <SiGooglemessages />
-                    ) : section === "Friend Activity" ? (
+                    ) : section == "Friend Activity" ? (
                       <LuActivity />
-                    ) : section === "Dashboard" ? (
+                    ) : section == "Dashboard" ? (
                       <MdDashboard />
                     ) : (
                       <RiLogoutBoxFill />
@@ -86,8 +86,8 @@ const Sidebar = () => {
             </ul>
           </div>
           <hr />
-          <div className="flex-1 p-8">
-            {/* <h1 className="text-2xl font-bold mb-4 text-center"=>{activeSection}</h1> */}
+          <div className="flex-1 p-8 text-white">
+            <h1 className="text-2xl font-bold mb-4 text-center">{activeSection}</h1>
             {renderContent()}
           </div>
         </div>

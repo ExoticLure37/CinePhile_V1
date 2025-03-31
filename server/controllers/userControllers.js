@@ -2,10 +2,10 @@ const userModel = require("../models/userModel");
 const tempUserModel = require("../models/tempUserModel");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt")
-const tokenModel = require("../models/token")
-const sendEmail = require("../utils/sendEmail")
-const crypto = require("crypto")
+const bcrypt = require("bcrypt");
+const tokenModel = require("../models/token");
+const sendEmail = require("../utils/sendEmail");
+const crypto = require("crypto");
 const mongoose = require("mongoose");
 
 // const redisClient = require("../utils/redisClient");
@@ -108,9 +108,13 @@ const login = async (req, res) => {
       maxAge: rememberMe ? 7 * 24 * 60 * 60 * 1000 : 1 * 24 * 60 * 60 * 1000,
     });
     return res.status(200).json({
+      username: user.username,
       fullname: user.fullname,
       email: user.email,
-      username: user.username,
+      about: user.about,
+      gender: user.gender,
+      dob: user.dob,
+      phone_number: user.phone_number,
     });
   } catch (er) {
     return res
@@ -153,50 +157,57 @@ const getFriends = async (req, res) => {
     const userId = req.user._id;
 
     // Fetch user and populate friends' usernames
-    const user = await userModel.findById(userId).populate('friends._id', 'username');
+    const user = await userModel
+      .findById(userId)
+      .populate("friends._id", "username");
 
     // Create an array with friends and their usernames
-    const friendList = user.friends.map(friend => ({ username: friend.username, _id: friend._id }));
+    const friendList = user.friends.map((friend) => ({
+      username: friend.username,
+      _id: friend._id,
+    }));
 
     return res.status(200).json({ friendList });
   } catch (err) {
-    return res.status(500).json({ message: "Internal Server Error", error: err.message });
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: err.message });
   }
 };
 
-
-
 const addFriend = async (req, res) => {
   try {
-    const _id = req.user._id;
+    const userId = req.user._id;
     const { friendsId } = req.body;
 
-    console.log(_id);
+    // console.log(_id);
     // console.log(friendsId);
 
     const friend = await userModel.findOne({
-      username: friendsId
-    })
+      username: friendsId,
+    });
 
     // console.log(friend)
 
-    if (!friend) return res.status(400).json({ message: "Username not exists!!" })
+    if (!friend)
+      return res.status(400).json({ message: "Username doesn't exists!!" });
 
     const friendId = friend._id.toString();
 
-    console.log(friendId)
+    // console.log(friendId)
 
     const isFriends = await userModel.findOne({
-      _id: friendId,
+      _id: userId,
       friends: { $elemMatch: { _id: friendId } },
     });
 
     // console.log(isFriends)
 
-    if (isFriends) return res.status(400).json({ message: "Already friends" });
+    if (isFriends)
+      return res.status(400).json({ message: "Already friends!!!" });
 
     const isRequestPending = await userModel.findOne({
-      _id: friendId,
+      _id: userId,
       requests_sent: { $elemMatch: { _id: friendId } },
     });
 
@@ -206,7 +217,7 @@ const addFriend = async (req, res) => {
       return res.status(400).json({ message: "Request already sent" });
 
     const user = await userModel.findOne({
-      _id: _id,
+      _id: userId,
     });
 
     user.requests_sent.push({ _id: friendId });
@@ -215,7 +226,7 @@ const addFriend = async (req, res) => {
 
     const targetUser = await userModel.findOne({ _id: friendId });
 
-    targetUser.pending_requests.push({ _id: _id });
+    targetUser.pending_requests.push({ _id: userId });
 
     await targetUser.save();
 
@@ -285,12 +296,12 @@ const cancelFriendRequest = async (req, res) => {
 
     // console.log(friendId)
 
-    await userModel.findByIdAndUpdate(_id, {
+    await userModel.findByIdAndUpdate(id, {
       $pull: { requests_sent: { _id: friendId } },
     });
 
     await userModel.findByIdAndUpdate(friendId, {
-      $pull: { pending_request: { _id: id } },
+      $pull: { pending_requests: { _id: id } },
     });
 
     return res.status(200).json({ message: "Friend request rejected" });
@@ -312,15 +323,16 @@ const removeFriend = async (req, res) => {
     });
 
     await userModel.findByIdAndUpdate(friendId, {
-      $pull: { friends: _id }
-    })
+      $pull: { friends: _id },
+    });
 
-    return res.status(200).json({ message: "Friend request rejected" })
+    return res.status(200).json({ message: "Friend request rejected" });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
   }
-  catch (err) {
-    return res.status(500).json({ message: "Internal server error", error: err.message })
-  }
-}
+};
 
 const searchFriend = async (req, res) => {
   try {
@@ -328,9 +340,11 @@ const searchFriend = async (req, res) => {
 
     // console.log(username);
 
-    const user = await userModel.findOne({
-      username: username
-    }).select("_id fullname username email");
+    const user = await userModel
+      .findOne({
+        username: username,
+      })
+      .select("_id fullname username email");
 
     // console.log(user)
     if (!user) {
@@ -339,7 +353,9 @@ const searchFriend = async (req, res) => {
 
     return res.status(200).json(user);
   } catch (err) {
-    return res.status(500).json({ message: "Internal server error", error: err.message });
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
   }
 };
 
@@ -348,7 +364,9 @@ const getPendingRequest = async (req, res) => {
     const _id = req.user._id;
 
     // Fetch user and populate usernames in one query
-    const user = await userModel.findOne({ _id }).populate("pending_requests._id", "username");
+    const user = await userModel
+      .findOne({ _id })
+      .populate("pending_requests._id", "username");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -363,18 +381,21 @@ const getPendingRequest = async (req, res) => {
     // console.log(requestSentList);
 
     return res.status(200).json({ pending_requests: requestSentList });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
   }
-  catch (err) {
-    res.status(500).json({ message: "Internal server error", error: err.message })
-  }
-}
+};
 
 const getRequestSent = async (req, res) => {
   try {
     const _id = req.user._id;
 
     // Fetch user and populate usernames in one query
-    const user = await userModel.findOne({ _id }).populate("requests_sent._id", "username");
+    const user = await userModel
+      .findOne({ _id })
+      .populate("requests_sent._id", "username");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -390,14 +411,168 @@ const getRequestSent = async (req, res) => {
 
     return res.status(200).json({ requests_sent: requestSentList });
   } catch (err) {
-    return res.status(500).json({ message: "Internal server error", error: err.message });
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
   }
 };
 
+const updatePersonalDetails = async (req, res) => {
+  try {
+    const userId = req.user._id;
 
+    const { fullname, gender, dob, about } = req.body;
+
+    const user = await userModel.findById(userId);
+
+    if (fullname) user.fullname = fullname;
+    if (gender) user.gender = gender;
+    if (dob) user.dob = dob;
+    if (about) user.about = about;
+
+    await user.save();
+
+    return res.status(200).json({
+      username: user.username,
+      fullname: user.fullname,
+      email: user.email,
+      about: user.about,
+      gender: user.gender,
+      dob: user.dob,
+      phone_number: user.phone_number,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Internal Serve Error", error: err.message });
+  }
+};
+
+const updateEmail = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { newEmail } = req.body;
+
+    const url = `${process.env.BASE_URL}/user/verify/${newEmail}/${userId}`;
+
+    await sendEmail(newEmail, "Verify Your Email", url);
+
+    return res.status(200).json("Verfication link sent to your new e-mail!!");
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Internal Serve Error", error: err.message });
+  }
+};
+
+const verifyEmail = async (req, res) => {
+  try {
+    const { newEmail, userId } = req.params;
+
+    const user = await userModel.findByIdAndUpdate(userId, { email: newEmail });
+
+    return res.status(200).json({ email: user.email });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Internal Serve Error", error: err.message });
+  }
+};
+
+const updatePassword = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const { newPassword, oldPassword } = req.body;
+
+    const user = await userModel.findById(userId);
+
+    // console.log(user);
+
+    const decryptedPass = await bcrypt.compare(oldPassword, user.password);
+
+    if (!decryptedPass)
+      return res.status(400).json({ message: "Incorrect Password!!" });
+
+    // console.log(user);
+
+    if (!validator.isStrongPassword(newPassword))
+      return res.status(400).json({ message: "Weak Password!!" });
+
+    user.password = newPassword;
+
+    await user.save();
+
+    return res.status(200).json({ message: "Password updated sucessfully!!" });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Internal Serve Error", error: err.message });
+  }
+};
+
+const updateUsername = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const { newUsername } = req.body;
+
+    const user = await userModel.findById(userId);
+
+    const storedDate = user.timeStamp;
+
+    const currentDate = new Date(); // Current date
+
+    // Calculate difference in milliseconds
+    const differenceInMilliseconds = Math.abs(currentDate - storedDate);
+
+    // Convert to days
+    const differenceInDays = Math.floor(
+      differenceInMilliseconds / (1000 * 60 * 60 * 24)
+    );
+
+    if (differenceInDays < 90)
+      return res
+        .status(400)
+        .json({
+          message: `You cannot change user until ${90 - differenceInDays} days`,
+        });
+
+    const isAlreadyTaken = user.findOne({ username: newUsername });
+
+    if (isAlreadyTaken)
+      return res.status(400).json({ message: "Username already taken!!!" });
+
+    user.username = newUsername;
+    user.timeStamp = currentDate;
+
+    await user.save();
+
+    return res.status(200).json(user.username);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ message: "Internal Serve Error", error: err.message });
+  }
+};
 
 module.exports = {
-  register, login, resetPassword, verifyToken,
-  addFriend, acceptFriendRequest, rejectFriendRequest,
-  cancelFriendRequest, removeFriend, searchFriend, getPendingRequest, getRequestSent, getFriends
+  register,
+  login,
+  resetPassword,
+  verifyToken,
+  addFriend,
+  acceptFriendRequest,
+  rejectFriendRequest,
+  cancelFriendRequest,
+  removeFriend,
+  searchFriend,
+  getPendingRequest,
+  getRequestSent,
+  getFriends,
+  updatePersonalDetails,
+  updateEmail,
+  verifyEmail,
+  updatePassword,
+  updateUsername,
 };

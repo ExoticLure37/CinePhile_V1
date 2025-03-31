@@ -4,30 +4,35 @@ import Sidebar from '../components/Sidebar'
 //import { Outlet } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import Error from '../components/Error'
+import LinkNavbar from '../components/LinkNavbar'
 //import Dashboard from '../components/Dashboard'
 
 const Profile = () => {
 
-    const curUser=useSelector((state)=>state.userProfile)
+    const curUser = useSelector((state) => state.userProfile)
     console.log(curUser)
 
-  return (
-    curUser.fullname?
-    <div>
-        <div>
-            <Navbar/>
-        </div>
+    return (
+        curUser.fullname ?
+            <div className='min-h-screen flex flex-col bg-[#141414]'>
+                <div>
+                    <Navbar />
+                </div>
 
-        <div>
-            <div>
-                <Sidebar/>
+                <div className="bg-slate-200 bg-opacity-20 sticky top-0 z-40">
+                    <LinkNavbar />
+                </div>
+
+                <div>
+                    <div>
+                        <Sidebar />
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
 
-    :
-    <Error/>
-  )
+            :
+            <Error />
+    )
 }
 
 export default Profile;
