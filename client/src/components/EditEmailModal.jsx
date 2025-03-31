@@ -13,9 +13,9 @@ export default function EditEmailModal({ onClose, user }) {
     if (newEmail !== user.email) {
       try {
         setIsVerifying(true);
-        setError(null); // Reset previous errors
-
-        // Send the new email update request
+        setError(null); 
+        
+        // error 
         const response = await axios.post(
           `http://localhost:5000/user/updateEmail`,
           {
@@ -26,9 +26,7 @@ export default function EditEmailModal({ onClose, user }) {
         );
         alert("Verification link sent to new email!");
 
-        // Simulate email verification status change, depending on your server response.
-        // You can also make an API call to check the status after sending the email.
-        setVerificationStatus(false); // Assuming the email is not verified right away.
+        setVerificationStatus(false); 
 
       } catch (error) {
         setError("Error updating email. Please try again.");
