@@ -64,17 +64,17 @@ const Sidebar = () => {
                   onClick={() => setActiveSection(section)}
                 >
                   <div className="flex items-center gap-2">
-                    {section == "Profile" ? (
+                    {section === "Profile" ? (
                       <ImProfile />
-                    ) : section == "Friend Requests" ? (
+                    ) : section === "Friend Requests" ? (
                       <FaUserFriends />
-                    ) : section == "WatchList" ? (
+                    ) : section === "WatchList" ? (
                       <FaClipboardList />
-                    ) : section == "Messages" ? (
+                    ) : section === "Messages" ? (
                       <SiGooglemessages />
-                    ) : section == "Friend Activity" ? (
+                    ) : section === "Friend Activity" ? (
                       <LuActivity />
-                    ) : section == "Dashboard" ? (
+                    ) : section === "Dashboard" ? (
                       <MdDashboard />
                     ) : (
                       <RiLogoutBoxFill />
@@ -87,7 +87,7 @@ const Sidebar = () => {
           </div>
           <hr />
           <div className="flex-1 p-8">
-            <h1 className="text-2xl font-bold mb-4 text-center">{activeSection}</h1>
+            {/* <h1 className="text-2xl font-bold mb-4 text-center"=>{activeSection}</h1> */}
             {renderContent()}
           </div>
         </div>
