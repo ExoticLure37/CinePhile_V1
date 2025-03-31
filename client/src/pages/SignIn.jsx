@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux"
-import { setUserProfile } from "../redux/user/userSlice"
+import { setFriendList, setUserProfile } from "../redux/user/userSlice"
 import axios from "axios";
 
 function SignIn() {
@@ -25,7 +25,7 @@ function SignIn() {
         { withCredentials: true }
       );
 
-      console.log(res.data);
+      // console.log(res.data);
 
       dispatch(setUserProfile({
         fullname: res.data.fullname,
@@ -39,7 +39,7 @@ function SignIn() {
 
       navigate("/home"); // Redirect after successful login
     } catch (err) {
-      console.log(err.response?.data?.message || "Login Failed!");
+      setError(err.response?.data?.message || "Login Failed!");
     }
   };
 
@@ -54,8 +54,6 @@ function SignIn() {
       {/* Netflix-style Sign-in Form */}
       <div className="w-full max-w-md bg-[#1F1F1F] p-8 rounded-lg shadow-lg mt-20">
         <h1 className="text-3xl font-bold text-center mb-6">Sign In</h1>
-
-        {error && <p className="text-red-500 text-center">{error}</p>}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col">
@@ -96,6 +94,8 @@ function SignIn() {
               Forget password
             </Link>
           </div>
+
+          {error && <p className="text-red-500 text-center">{error}</p>}
 
           <button
             type="submit"

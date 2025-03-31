@@ -175,12 +175,14 @@ const addFriend = async (req, res) => {
     const userId = req.user._id;
     const { friendsId } = req.body;
 
-    // console.log(_id);
+    // console.log(userId);
     // console.log(friendsId);
 
-    const friend = await userModel.findOne({
-      username: friendsId
-    })
+    const friend = await userModel.findOne(
+      mongoose.Types.ObjectId.isValid(friendsId)
+        ? { _id: friendsId }
+        : { username: friendsId }
+    );
 
     // console.log(friend)
 
@@ -307,16 +309,20 @@ const cancelFriendRequest = async (req, res) => {
 
 const removeFriend = async (req, res) => {
   try {
-    const _id = req.user._id;
+    const id = req.user._id;
+
+    // console.log(_id)
 
     const { friendId } = req.body;
 
-    await userModel.findByIdAndUpdate(_id, {
-      $pull: { friends: friendId },
+    // console.log(friendId)
+
+    await userModel.findByIdAndUpdate(id, {
+      $pull: { friends: { _id: friendId } },
     });
 
     await userModel.findByIdAndUpdate(friendId, {
-      $pull: { friends: _id }
+      $pull: { friends: { _id: id } }
     })
 
     return res.status(200).json({ message: "Friend request rejected" })
@@ -524,10 +530,40 @@ const updateUsername = async (req, res) => {
   }
 }
 
+const getProfile = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    // console.log("UserID received:", userId);
+
+    const user = await userModel.findOne(
+      mongoose.Types.ObjectId.isValid(userId)
+        ? { _id: userId }
+        : { username: userId }
+    );
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // console.log(user)
+
+    return res.status(200).json({
+      username: user.username,
+      fullname: user.fullname,
+      email: user.email,
+      about: user.about,
+      gender: user.gender,
+      dob: user.dob,
+      phone_number: user.phone_number
+    });
+  }
+  catch (err) {
+    res.status(500).json({ message: "Internal server error!!", error: err.message });
+  }
+}
+
 
 module.exports = {
   register, login, resetPassword, verifyToken,
   addFriend, acceptFriendRequest, rejectFriendRequest,
   cancelFriendRequest, removeFriend, searchFriend, getPendingRequest, getRequestSent, getFriends, updatePersonalDetails
-  , updateEmail, verifyEmail, updatePassword, updateUsername
+  , updateEmail, verifyEmail, updatePassword, updateUsername, getProfile
 };
