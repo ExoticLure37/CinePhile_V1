@@ -2,14 +2,18 @@ import React, { useEffect, useState } from 'react'
 import axios from "axios"
 import { ImCross } from "react-icons/im";
 import { TiTick } from "react-icons/ti";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import IconBtn from "./IconBtn";
+import { setFriendList } from '../redux/user/userSlice';
+import { Link } from 'react-router-dom';
 
 function FriendRequests() {
     const [pendingRequest, setPendingRequest] = useState([]);
     const [requestSent, setRequestSent] = useState([]);
 
     const [friendUsername, setFriendUsername] = useState("");
+
+    const dispatch = useDispatch();
 
     const [message, setMessage] = useState("");
     const [showModal, setShowModal] = useState(false);
@@ -27,7 +31,7 @@ function FriendRequests() {
                 withCredentials: true
             })
 
-            console.log(res);
+            // console.log(res);
 
             setPendingRequest(res.data.pending_requests)
         }
@@ -95,10 +99,25 @@ function FriendRequests() {
             setMessage(res.data.message);
             setShowModal(true)
             getPendingRequests();
+            getFriends();
         }
         catch (err) {
             setMessage(err.response?.data?.message || "Something went wrong");
             setShowModal(true);
+        }
+    }
+
+    const getFriends = async () => {
+        try {
+            const res = await axios.get("http://localhost:5000/user/getFriends", {
+                withCredentials: true
+            })
+
+            dispatch(setFriendList({ friendList: res.data.friendList }))
+            // setFriendsList(res.data.friendList)
+        }
+        catch (err) {
+            console.log(err.message);
         }
     }
 
@@ -147,7 +166,12 @@ function FriendRequests() {
                         <ul className='space-y-2'>
                             {pendingRequest.map((e) => (
                                 <li key={e.userId} className='flex justify-between p-3 bg-gray-700 rounded-md'>
-                                    <span className="text-md font-semibold">{e.username}</span>
+                                    <Link
+                                        to={`/profile/${e.userId}`}
+                                        className="ml-3 text-lg font-medium text-gray-100 hover:text-blue-400 transition-all"
+                                    >
+                                        {e.username}
+                                    </Link>
                                     <div className='flex gap-2'>
                                         <button onClick={() => acceptFriendRequest(e.userId)}>
                                             <TiTick className='text-green-400 text-2xl' />
@@ -165,7 +189,12 @@ function FriendRequests() {
                         <ul className='space-y-2'>
                             {requestSent.map((e) => (
                                 <li key={e.userId} className='flex justify-between p-3 bg-gray-700 rounded-md'>
-                                    <span className="text-md font-semibold">{e.username}</span>
+                                    <Link
+                                        to={`/profile/${e.userId}`}
+                                        className="ml-3 text-lg font-medium text-gray-100 hover:text-blue-400 transition-all"
+                                    >
+                                        {e.username}
+                                    </Link>
                                     <button onClick={() => cancelFriendRequest(e.userId)}>
                                         <ImCross className='text-red-400 text-sm' />
                                     </button>

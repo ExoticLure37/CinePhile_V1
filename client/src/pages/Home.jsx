@@ -1,14 +1,69 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Footer from "../components/Footer";
+import { setFriendList, setPendingRequest, setRequestSent } from "../redux/user/userSlice";
+import axios from "axios";
 
 function Home() {
   const currentUser = useSelector((state) => state.userProfile);
 
-  console.log(currentUser);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    getFriends();
+    getPendingRequests();
+    getRequestSent();
+  }, []);
+
+
+  const getFriends = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/user/getFriends", {
+        withCredentials: true
+      })
+
+      // console.log(res.data);
+
+      dispatch(setFriendList({ friendList: res.data.friendList }))
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
+
+  const getPendingRequests = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/user/pendingRequests", {
+        withCredentials: true
+      })
+
+      // console.log(res);
+
+      dispatch(setPendingRequest({ pending_requests: res.data.pending_requests }))
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
+
+  const getRequestSent = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/user/requestSent", {
+        withCredentials: true
+      })
+
+      dispatch(setRequestSent({ request_sent: res.data.requests_sent }))
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
+
+  // console.log(currentUser);
+
   return (
     <div className="min-h-screen flex flex-col bg-[#141414]">
       <Navbar />
@@ -107,7 +162,7 @@ function Home() {
         </div>
       </div>
 
-      <Footer/>
+      <Footer />
     </div>
   );
 }

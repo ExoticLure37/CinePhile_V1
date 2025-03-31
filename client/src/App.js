@@ -8,6 +8,7 @@ import "./App.css";
 import VerifyEmail from "./pages/VerifyEmail";
 import Friends from "./pages/Friends";
 import VerifyUpdatedEmail from "./pages/VerifyUpdatedEmail";
+import FriendProfile from "./pages/FriendProfile";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/home" element={<Home />} />
         <Route path="/friends" element={<Friends />} />
+        <Route path="/profile/:friendId" element={<FriendProfile />} />
         <Route path="/dashboard" element={<Profile />} />
         <Route path="/user/verify/:token" element={<VerifyEmail />} />
         <Route path="/user/verify/:newEmail/:userId" element={<VerifyUpdatedEmail />} />
