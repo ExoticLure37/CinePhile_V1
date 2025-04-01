@@ -8,7 +8,7 @@ function LinkNavbar() {
             <Link to={'/home'} className="text-white hover:text-opacity-30 hover:border-b-2 border-white">Home</Link>
             <Link to={'/friends'} className="text-white hover:text-opacity-30 hover:border-b-2 border-white">Friends</Link>
             <Link to={'/friends-watchlist'} className="text-white hover:text-opacity-30 hover:border-b-2 border-white">Friends Watchlist</Link>
-            <Link to={'/manage-watchlist'} className="text-white hover:text-opacity-30 hover:border-b-2 border-white">Manage Watchlist</Link>
+            <Link to={'/watchlist'} className="text-white hover:text-opacity-30 hover:border-b-2 border-white">Watchlist</Link>
             <Link to={'/calendar'} className="text-white hover:text-opacity-30 hover:border-b-2 border-white">Calendar</Link>
         </div></div>
     )

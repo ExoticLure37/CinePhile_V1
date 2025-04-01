@@ -97,7 +97,7 @@ export default function FriendProfile() {
                 withCredentials: true
             })
 
-            // console.log(res);
+            console.log(res);
 
             dispatch(setPendingRequest({ pending_requests: res.data.pending_requests }))
             setPRequest(res.data.pending_requests)
@@ -113,7 +113,7 @@ export default function FriendProfile() {
                 withCredentials: true
             })
 
-            // console.log(res.data);
+            console.log(res.data);
 
             dispatch(setRequestSent({ request_sent: res.data.requests_sent }))
             setRSent(res.data.requests_sent)

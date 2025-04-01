@@ -4,12 +4,12 @@ import { ImCross } from "react-icons/im";
 import { TiTick } from "react-icons/ti";
 import { useDispatch, useSelector } from 'react-redux';
 import IconBtn from "./IconBtn";
-import { setFriendList } from '../redux/user/userSlice';
+import { setFriendList, setPendingRequest, setRequestSent } from '../redux/user/userSlice';
 import { Link } from 'react-router-dom';
 
 function FriendRequests() {
-    const [pendingRequest, setPendingRequest] = useState([]);
-    const [requestSent, setRequestSent] = useState([]);
+    const [pRequest, setPRequest] = useState([]);
+    const [rSent, setRSent] = useState([]);
 
     const [friendUsername, setFriendUsername] = useState("");
 
@@ -33,7 +33,8 @@ function FriendRequests() {
 
             // console.log(res);
 
-            setPendingRequest(res.data.pending_requests)
+            setPRequest(res.data.pending_requests)
+            dispatch(setPendingRequest({pending_requests : res.data.pending_requests}))
         }
         catch (err) {
             console.log(err);
@@ -48,7 +49,8 @@ function FriendRequests() {
 
             // console.log(res);
 
-            setRequestSent(res.data.requests_sent)
+            setRSent(res.data.requests_sent)
+            dispatch(setRequestSent({ request_sent: res.data.requests_sent }));
             // console.log(requestSent)
         }
         catch (err) {
@@ -164,7 +166,7 @@ function FriendRequests() {
                     <div className='bg-gray-800 p-4 rounded-lg shadow-md'>
                         <h2 className='text-xl font-semibold mb-4 text-center'>Pending Friend Requests</h2>
                         <ul className='space-y-2'>
-                            {pendingRequest.map((e) => (
+                            {pRequest.map((e) => (
                                 <li key={e.userId} className='flex justify-between p-3 bg-gray-700 rounded-md'>
                                     <Link
                                         to={`/profile/${e.userId}`}
@@ -187,7 +189,7 @@ function FriendRequests() {
                     <div className='bg-gray-800 p-4 rounded-lg shadow-md'>
                         <h2 className='text-xl font-semibold mb-4 text-center'>Friend Requests Sent</h2>
                         <ul className='space-y-2'>
-                            {requestSent.map((e) => (
+                            {rSent.map((e) => (
                                 <li key={e.userId} className='flex justify-between p-3 bg-gray-700 rounded-md'>
                                     <Link
                                         to={`/profile/${e.userId}`}

@@ -6,6 +6,7 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Footer from "../components/Footer";
 import { setFriendList, setPendingRequest, setRequestSent } from "../redux/user/userSlice";
 import axios from "axios";
+import LinkNavbar from "../components/LinkNavbar";
 
 function Home() {
   const currentUser = useSelector((state) => state.userProfile);
@@ -68,40 +69,8 @@ function Home() {
     <div className="min-h-screen flex flex-col bg-[#141414]">
       <Navbar />
 
-      <div
-        className="flex items-center px-32 justify-between 
-            py-4  bg-slate-200 bg-opacity-20 sticky top-0 z-40 h-10"
-      >
-        <Link
-          to={"/home"}
-          className="text-white hover:text-opacity-30 hover:border-b-2 border-white"
-        >
-          Home
-        </Link>
-        <Link
-          to={"/friends"}
-          className="text-white hover:text-opacity-30 hover:border-b-2 border-white"
-        >
-          Friends
-        </Link>
-        <Link
-          to={"/friends-watchlist"}
-          className="text-white hover:text-opacity-30 hover:border-b-2 border-white"
-        >
-          Friends Watchlist
-        </Link>
-        <Link
-          to={"/manage-watchlist"}
-          className="text-white hover:text-opacity-30 hover:border-b-2 border-white"
-        >
-          Manage Watchlist
-        </Link>
-        <Link
-          to={"/calendar"}
-          className="text-white hover:text-opacity-30 hover:border-b-2 border-white"
-        >
-          Calendar
-        </Link>
+      <div className="bg-slate-200 bg-opacity-20 sticky top-0 z-40">
+        <LinkNavbar />
       </div>
 
       <div className="flex flex-col my-8 gap-10 ml-10">
