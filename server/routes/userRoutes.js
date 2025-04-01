@@ -1,4 +1,4 @@
-const express = require("express")
+const express = require("express");
 const { authUser } = require("../middleware/authMiddleware");
 const { register, login, resetPassword, verifyToken, addFriend, getFriends, acceptFriendRequest, rejectFriendRequest, cancelFriendRequest, removeFriend, searchFriend, getPendingRequest, getRequestSent, updatePersonalDetails, updateEmail, verifyEmail, updatePassword, updateUsername, getProfile } = require("../controllers/userControllers");
 
@@ -13,13 +13,13 @@ router.get("/pendingRequests", authUser, getPendingRequest);
 router.get("/requestSent", authUser, getRequestSent);
 router.get("/search", searchFriend);
 router.get("/getFriends", authUser, getFriends);
-router.patch("/addFriend", authUser, addFriend)
-router.patch("/acceptFriendRequest", authUser, acceptFriendRequest)
-router.patch("/rejectFriendRequest", authUser, rejectFriendRequest)
-router.patch("/cancelFriendRequest", authUser, cancelFriendRequest)
-router.patch("/removeFriend", authUser, removeFriend)
+router.patch("/addFriend", authUser, addFriend);
+router.patch("/acceptFriendRequest", authUser, acceptFriendRequest);
+router.patch("/rejectFriendRequest", authUser, rejectFriendRequest);
+router.patch("/cancelFriendRequest", authUser, cancelFriendRequest);
+router.patch("/removeFriend", authUser, removeFriend);
 router.patch("/updatePersonalDetails", authUser, updatePersonalDetails);
-router.patch("/updateEmail", authUser, updateEmail);
+router.post("/updateEmail", authUser, updateEmail);
 router.patch("/updatePassword", authUser, updatePassword);
 router.patch("/updateUsername", authUser, updateUsername);
 router.get("/getProfile/:userId", getProfile);

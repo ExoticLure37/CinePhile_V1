@@ -1,20 +1,21 @@
-const express = require('express');
-const dotenv = require('dotenv');
+const express = require("express");
+const dotenv = require("dotenv");
 dotenv.config();
-const cors = require('cors');
-const userModel = require('./middleware/authMiddleware');
-const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser');
+const cors = require("cors");
+const userModel = require("./middleware/authMiddleware");
+const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
 
-const userRoutes = require('./routes/userRoutes.js')
-
+const userRoutes = require("./routes/userRoutes.js");
 
 const app = express();
 
-app.use(cors({
-    origin: 'http://localhost:3000',
-    credentials: true
-}));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(cookieParser());
@@ -22,17 +23,14 @@ app.use(cookieParser());
 app.use("/user", userRoutes);
 
 app.listen(process.env.PORT, (error) => {
-    console.log(`Sever started at port ${process.env.PORT}`);
+  console.log(`Sever started at port ${process.env.PORT}`);
 });
 
-mongoose.connect(process.env.MOGO_URI)
-    .then(
-        () => {
-            console.log("MonogDB connected successfully... ");
-        }
-    )
-    .catch(
-        (error) => {
-            console.log("MongoDB connection failed :(", process.env.MOGO_URI, error);
-        }
-    );
+mongoose
+  .connect(process.env.MOGO_URI)
+  .then(() => {
+    console.log("MonogDB connected successfully... ");
+  })
+  .catch((error) => {
+    console.log("MongoDB connection failed :(", process.env.MOGO_URI, error);
+  });

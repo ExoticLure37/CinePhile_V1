@@ -44,6 +44,7 @@ function SignUp() {
       const response = await axios.post(backendUrl, formData);
       console.log(response.data);
       console.log("Verification mail is sent successfully");
+      
     } catch (error) {
       console.error(error);
     }
