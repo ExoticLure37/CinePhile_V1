@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import IconBtn from "../components/IconBtn";
 import EditPersonalDetailsModal from "../components/EditPersonalDetailsModal";
-import EditAccountSettingsModal from "../components/EditAccountSettingsModal";
+// import EditAccountSettingsModal from "../components/EditAccountSettingsModal";
 import profileimage from "../image/photo.jpg";
 import LinkNavbar from "../components/LinkNavbar";
 import Navbar from "../components/Navbar";
@@ -258,12 +258,12 @@ export default function FriendProfile() {
                         user={user}
                     />
                 )}
-                {showAccountModal && (
+                {/* {showAccountModal && (
                     <EditAccountSettingsModal
                         onClose={() => setShowAccountModal(false)}
                         user={user}
                     />
-                )}
+                )} */}
             </div>
         </div>
     );
