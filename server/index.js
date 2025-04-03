@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 
 const userRoutes = require("./routes/userRoutes.js");
+const watchListRoutes = require("./routes/watchListRoutes.js");
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/user", userRoutes);
+app.use("/watchlist", watchListRoutes);
 
 app.listen(process.env.PORT, (error) => {
   console.log(`Sever started at port ${process.env.PORT}`);
