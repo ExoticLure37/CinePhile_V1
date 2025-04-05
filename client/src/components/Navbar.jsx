@@ -14,8 +14,9 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
-  const [visibleResults, setVisibleResults] = useState(8);
+  const [visibleResults, setVisibleResults] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeModalId, setActiveModalId] = useState(null);
 
   const logoutHandler = () => {
     dispatch(logout());
@@ -114,7 +115,10 @@ const Navbar = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <button
-                onClick={fetchMovieByTitle}
+                onClick={() => {
+                  fetchMovieByTitle();
+                  setVisibleResults(10);
+                }}
                 className="text-white text-xl hover:scale-110 transition-transform"
               >
                 🔍
@@ -146,6 +150,8 @@ const Navbar = () => {
                         url: `https://www.imdb.com/title/${item.id}`,
                         type: item.titleType || "movie",
                       }}
+                      mediaId={item.id} activeModalId={activeModalId}
+                      setActiveModalId={setActiveModalId}
                     />
                   ))}
                 </div>
@@ -155,7 +161,7 @@ const Navbar = () => {
                   <div className="flex justify-center mt-6">
                     <button
                       className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200 shadow-md"
-                      onClick={() => setVisibleResults((prev) => prev + 8)}
+                      onClick={() => setVisibleResults((prev) => prev + 10)}
                     >
                       Load More
                       <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -178,6 +184,7 @@ const Navbar = () => {
                 setIsSearchOpen(false);
                 setSearchQuery("");
                 setSearchResults([]);
+                setVisibleResults(10);
               }}
             >
               ✖ Close
