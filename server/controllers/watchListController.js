@@ -183,10 +183,6 @@ const addItemToWatchList = async (req, res) => {
             name: req.body.item.originalTitle,
         };
 
-        // console.log(userId);
-        // console.log(watchlistId);
-        // console.log(newItem);
-
         if (!newItem || !newItem.imdb_id || !newItem.name) {
             return res.status(400).json({ message: "Incomplete item details." });
         }

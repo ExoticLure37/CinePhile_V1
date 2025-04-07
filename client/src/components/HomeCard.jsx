@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Plus } from "lucide-react";
 import axios from "axios";
 
-const MediaCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
+const HomeCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
     const imageUrl = media.primaryImage;
     const hasImage = !!imageUrl;
     const [open, setOpen] = useState(false);
@@ -21,24 +21,12 @@ const MediaCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
         if (plusButtonRef.current) {
             const rect = plusButtonRef.current.getBoundingClientRect();
             setModalPos({
-                top: rect.top + window.scrollY,     // makes sure it tracks scroll
-                left: rect.right + window.scrollX + 9, // +8 for gap from button
+                top: rect.top,
+                left: rect.right + 9 // +8 for gap from button
             });
             setActiveModalId(mediaId);
         }
     };
-
-    const getAllWatchList = async () => {
-        try {
-            const res = await axios.get("http://localhost:5000/watchlist/", { withCredentials: true });
-
-            setWatchlists(res.data.watchlists);
-            // console.log(res.data);
-        }
-        catch (err) {
-            console.log(err.response.data);
-        }
-    }
 
     const addToWatchlist = async (id) => {
         try {
@@ -53,7 +41,6 @@ const MediaCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
 
     // Close on outside click
     useEffect(() => {
-        getAllWatchList();
         const handleClickOutside = (e) => {
             if (!plusButtonRef.current?.contains(e.target)) {
                 setShowWatchlistModal(false);
@@ -73,7 +60,7 @@ const MediaCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
         <>
             {/* Card */}
             <div onClick={() => setOpen(true)}
-                className="h-60 w-full rounded-2xl relative shadow-lg overflow-hidden cursor-pointer transform transition-transform duration-300 hover:scale-105 group"
+                className="h-60 w-48 rounded-2xl relative shadow-lg overflow-hidden cursor-pointer transform transition-transform duration-300 hover:scale-105 group"
             >
                 {/* Image or Skeleton */}
                 {hasImage ? (
@@ -104,7 +91,7 @@ const MediaCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
                     onClick={(e) => e.stopPropagation()}
                 >
                     <div className="relative">
-                        <button
+                        {/* <button
                             className="bg-white p-2 rounded-full shadow-md hover:bg-gray-200 transition"
                             ref={plusButtonRef}
                             onClick={handlePlusClick}
@@ -112,14 +99,14 @@ const MediaCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
                             onMouseLeave={() => setShowTooltip(false)}
                         >
                             <Plus size={20} className="text-gray-600" />
-                        </button>
+                        </button> */}
 
                         {/* Tooltip */}
-                        {showTooltip && (
+                        {/* {showTooltip && (
                             <div className="absolute left-1/2 -translate-x-[80%] top-[110%] bg-black text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-50">
                                 Add to Watchlist
                             </div>
-                        )}
+                        )} */}
                     </div>
                 </div>
 
@@ -128,7 +115,7 @@ const MediaCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
             {/* Detached Watchlist Modal */}
             {isModalOpen && (
                 <div
-                    className="absolute z-[9999] w-60 rounded-xl border border-gray-600 bg-gray-900 shadow-xl p-4"
+                    className="fixed z-[9999] w-60 rounded-xl border border-gray-600 bg-gray-900 shadow-xl p-4"
                     style={{
                         top: modalPos.top,
                         left: modalPos.left,
@@ -200,4 +187,4 @@ const MediaCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
     );
 };
 
-export default MediaCard;
+export default HomeCard;
