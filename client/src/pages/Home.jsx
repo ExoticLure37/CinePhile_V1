@@ -25,11 +25,14 @@ function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 6;
 
+  const [upcoming, setUpcoming] = useState([]);
+
   useEffect(() => {
     getFriends();
     getPendingRequests();
     getRequestSent();
     fetchData();
+    // fetchComingSoon();
   }, []);
 
   const fetchData = async () => {
@@ -38,7 +41,7 @@ function Home() {
         "https://imdb236.p.rapidapi.com/imdb/most-popular-movies",
         {
           headers: {
-            "x-rapidapi-key": "0a976bef91msha866008250a5b1ep109f88jsnb240c667e126",
+            "x-rapidapi-key": "ac756fd330msh8c169a5cfb93ae0p1fee36jsn17b73def8bef",
             "x-rapidapi-host": "imdb236.p.rapidapi.com"
           }
         }
@@ -47,6 +50,58 @@ function Home() {
       setPopularMovies(response.data.slice(0, 30)); // Store only 20 results
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  // const fetchComingSoon = async () => {
+  //   try {
+  //     const options = {
+  //       method: 'GET',
+  //       url: 'https://imdb232.p.rapidapi.com/api/title/get-coming-soon',
+  //       params: {
+  //         limit: '20',
+  //         comingSoonType: 'MOVIE'
+  //       },
+  //       headers: {
+  //         'x-rapidapi-key': '0a976bef91msha866008250a5b1ep109f88jsnb240c667e126',
+  //         'x-rapidapi-host': 'imdb232.p.rapidapi.com'
+  //       }
+  //     };
+
+  //     const response = await axios.request(options);
+
+  //     const edges = response.data?.data?.comingSoon?.edges?.slice(0, 30) || [];
+  //     const imdbIds = edges.map(edge => edge.node.id);
+
+  //     const detailedPromises = imdbIds.map(id => fetchMovieDetails(id));
+  //     const detailedMovies = await Promise.all(detailedPromises);
+
+  //     setUpcoming(detailedMovies);
+  //     console.log(response.data.data.comingSoon);
+  //     console.log(imdbIds)
+  //     console.log(detailedMovies);
+  //   } catch (err) {
+  //     console.error(err);
+  //     // setError(err);
+  //   }
+  // };
+
+  const fetchMovieDetails = async (id) => {
+    try {
+      const options = {
+        method: 'GET',
+        url: `https://imdb236.p.rapidapi.com/imdb/${id}`,
+        headers: {
+          'x-rapidapi-key': '0a976bef91msha866008250a5b1ep109f88jsnb240c667e126',
+          'x-rapidapi-host': 'imdb236.p.rapidapi.com'
+        }
+      };
+
+      const response = await axios.request(options);
+      // setMovie(response.data);
+    } catch (err) {
+      console.error(err);
+      // setError(err);
     }
   };
 

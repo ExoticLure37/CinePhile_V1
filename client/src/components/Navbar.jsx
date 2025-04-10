@@ -36,7 +36,7 @@ const Navbar = () => {
             sortField: 'id'
           },
           headers: {
-            'x-rapidapi-key': '0a976bef91msha866008250a5b1ep109f88jsnb240c667e126', // Replace with your actual API key
+            'x-rapidapi-key': 'ac756fd330msh8c169a5cfb93ae0p1fee36jsn17b73def8bef', // Replace with your actual API key
             'x-rapidapi-host': 'imdb236.p.rapidapi.com'
           }
         }

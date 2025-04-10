@@ -181,6 +181,7 @@ const addItemToWatchList = async (req, res) => {
         const newItem = {
             imdb_id: req.body.item.id,
             name: req.body.item.originalTitle,
+            imageUrl: req.body.item.primaryImage
         };
 
         if (!newItem || !newItem.imdb_id || !newItem.name) {

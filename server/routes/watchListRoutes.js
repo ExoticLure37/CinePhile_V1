@@ -10,7 +10,7 @@ router.post('/create/:title', authUser, createWatchList);
 router.patch('/rename/:watchlist_id/:new_title', renameWatchList);
 router.delete('/delete', deleteAllWatchLists);
 router.delete('/delete/:watchlist_id', authUser, deleteWatchList);
-router.get('/:watchlist_id', getWatchListItems);
+router.get('/:watchlist_id',authUser, getWatchListItems);
 router.patch('/addToWatchlist/:watchlist_id',authUser, addItemToWatchList);
 router.patch('/:watchlist_id/:item_id', removeItemFromWatchList);
 
