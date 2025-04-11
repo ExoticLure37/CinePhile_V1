@@ -15,7 +15,7 @@ import FriendRequests from "./FriendRequests";
 const Sidebar = () => {
   const [activeSection, setActiveSection] = useState("Profile");
   const curUser = useSelector((state) => state.userProfile);
-  
+
   const renderContent = () => {
     switch (activeSection) {
       case "Profile":
@@ -29,7 +29,11 @@ const Sidebar = () => {
       case "Dashboard":
         return <p className="text-lg">Dashboard overview.</p>;
       case "Logout":
-        return <div className="flex align-middle justify-center"><LogOut /></div>;
+        return (
+          <div className="flex align-middle justify-center">
+            <LogOut />
+          </div>
+        );
       default:
         return <Error />;
     }
@@ -37,45 +41,59 @@ const Sidebar = () => {
 
   return (
     curUser && (
-      <div className="flex h-screen bg-gray-900 text-white">
+      <div className="flex h-screen bg-gradient-to-tr from-[#1f1f1f] to-[#2c2c2c] text-white">
         {/* Sidebar */}
-        <div className="w-64 bg-gray-800 p-5 flex flex-col justify-between shadow-lg">
+        <div className="w-64 p-6 bg-gradient-to-b from-gray-900 to-gray-800 shadow-2xl flex flex-col justify-between sticky top-0 h-screen">
           <div>
-            <h2 className="text-2xl font-bold text-center mb-6">Menu</h2>
+            <h2 className="text-3xl font-bold text-center mb-8 text-yellow-400">
+              🎬 Menu
+            </h2>
             <ul>
-              {["Profile", "Friend Requests", "Messages", "Friend Activity", "Dashboard", "Logout"].map((section) => (
+              {[
+                "Profile",
+                "Friend Requests",
+                "Messages",
+                "Friend Activity",
+                "Dashboard",
+                "Logout",
+              ].map((section) => (
                 <li
                   key={section}
-                  className={`p-3 my-2 flex items-center gap-3 rounded-lg transition-all duration-200 cursor-pointer ${
-                    activeSection === section
-                      ? "bg-blue-500 text-white shadow-md"
-                      : "hover:bg-gray-700 hover:text-gray-300"
-                  }`}
+                  className={`p-3 my-2 flex items-center gap-4 rounded-xl text-base font-medium tracking-wide cursor-pointer transition-all duration-200 ${activeSection === section
+                      ? "bg-blue-600 text-white shadow-md scale-[1.02]"
+                      : "hover:bg-gray-700 hover:text-blue-400"
+                    }`}
                   onClick={() => setActiveSection(section)}
                 >
                   {section === "Profile" ? (
-                    <ImProfile />
+                    <ImProfile className="text-xl" />
                   ) : section === "Friend Requests" ? (
-                    <FaUserFriends />
+                    <FaUserFriends className="text-xl" />
                   ) : section === "Messages" ? (
-                    <SiGooglemessages />
+                    <SiGooglemessages className="text-xl" />
                   ) : section === "Friend Activity" ? (
-                    <LuActivity />
+                    <LuActivity className="text-xl" />
                   ) : section === "Dashboard" ? (
-                    <MdDashboard />
+                    <MdDashboard className="text-xl" />
                   ) : (
-                    <RiLogoutBoxFill />
+                    <RiLogoutBoxFill className="text-xl text-red-400" />
                   )}
                   <span>{section}</span>
                 </li>
               ))}
             </ul>
           </div>
+          <p className="text-sm text-gray-400 text-center mt-6">© 2025 ProjectV</p>
         </div>
+
         {/* Main Content */}
-        <div className="flex-1 p-8 overflow-auto">
-          <h1 className="text-3xl font-bold mb-6 text-center">{activeSection}</h1>
-          <div className="bg-gray-800 p-6 rounded-lg shadow-lg">{renderContent()}</div>
+        <div className="flex-1 px-10 py-8 overflow-auto">
+          <h1 className="text-4xl font-bold mb-8 text-center text-white tracking-wide">
+            {activeSection}
+          </h1>
+          <div className="bg-gray-900/60 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-gray-700 min-h-[70vh] transition-all">
+            {renderContent()}
+          </div>
         </div>
       </div>
     )

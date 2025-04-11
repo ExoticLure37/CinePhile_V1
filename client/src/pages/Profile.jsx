@@ -19,7 +19,7 @@ const Profile = () => {
                     <Navbar />
                 </div>
 
-                <div className="bg-slate-200 bg-opacity-20 sticky top-0 z-40">
+                <div className="bg-black/30 backdrop-blur-md sticky top-0 z-40">
                     <LinkNavbar />
                 </div>
 

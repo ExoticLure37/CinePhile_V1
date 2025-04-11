@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Minus, Plus } from "lucide-react";
 import axios from "axios";
 
-const Watchlist = ({ media, mediaId, activeModalId, setActiveModalId }) => {
+const WatchlistCard = ({ media, mediaImdbId, activeModalId, setActiveModalId, mediaId, watchListId, onRemove }) => {
     const imageUrl = media.primaryImage;
     const hasImage = !!imageUrl;
     const [open, setOpen] = useState(false);
@@ -11,21 +11,6 @@ const Watchlist = ({ media, mediaId, activeModalId, setActiveModalId }) => {
     const [modalPos, setModalPos] = useState({ top: 0, left: 0 });
     const plusButtonRef = useRef(null);
     const isModalOpen = activeModalId === mediaId;
-
-    const handlePlusClick = (e) => {
-        e.stopPropagation();
-        setShowWatchlistModal(false);
-
-        if (plusButtonRef.current) {
-            const rect = plusButtonRef.current.getBoundingClientRect();
-            setModalPos({
-                top: rect.top + window.scrollY,     // makes sure it tracks scroll
-                left: rect.right + window.scrollX + 9, // +8 for gap from button
-            });
-            setActiveModalId(mediaId);
-        }
-    };
-
 
     // Close on outside click
     useEffect(() => {
@@ -43,6 +28,21 @@ const Watchlist = ({ media, mediaId, activeModalId, setActiveModalId }) => {
             document.removeEventListener("click", handleClickOutside);
         };
     }, [isModalOpen]);
+
+    const handleRemove = async (e) => {
+        e.stopPropagation();
+
+        try {
+            const res = await axios.patch(`http://localhost:5000/watchlist/${watchListId}/${mediaId}`, {}, { withCredentials: true });
+            console.log(res);
+            if (onRemove) {
+                onRemove(true);
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+    };
 
     return (
         <>
@@ -82,7 +82,7 @@ const Watchlist = ({ media, mediaId, activeModalId, setActiveModalId }) => {
                         <button
                             className="bg-white p-2 rounded-full shadow-md hover:bg-gray-200 transition"
                             ref={plusButtonRef}
-                            onClick={handlePlusClick}
+                            onClick={handleRemove}
                             onMouseEnter={() => setShowTooltip(true)}
                             onMouseLeave={() => setShowTooltip(false)}
                         >
@@ -137,4 +137,4 @@ const Watchlist = ({ media, mediaId, activeModalId, setActiveModalId }) => {
     );
 };
 
-export default Watchlist;
+export default WatchlistCard;
