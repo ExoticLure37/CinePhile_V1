@@ -16,7 +16,7 @@ import LinkNavbar from "../components/LinkNavbar";
 import MediaCard from "../components/MediaCard";
 import HomeCard from "../components/HomeCard";
 
-function Home() {
+function Movies() {
   const currentUser = useSelector((state) => state.userProfile);
   const dispatch = useDispatch();
 
@@ -257,4 +257,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Movies;
