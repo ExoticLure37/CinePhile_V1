@@ -19,17 +19,17 @@ const Sidebar = () => {
   const renderContent = () => {
     switch (activeSection) {
       case "Profile":
-        return <p className="text-lg"><ViewProfile /></p>;
+        return <span className="text-lg"><ViewProfile /></span>;
       case "Friend Requests":
         return <FriendRequests />
       case "WatchList":
-        return <p className="text-lg">View recent activities here.</p>;
+        return <span className="text-lg">View recent activities here.</span>;
       case "Messages":
-        return <p className="text-lg">View recent activities here.</p>;
+        return <span className="text-lg">View recent activities here.</span>;
       case "Friend Activity":
-        return <p className="text-lg">View recent activities here.</p>;
+        return <span className="text-lg">View recent activities here.</span>;
       case "Dashboard":
-        return <p className="text-lg">View recent activities here.</p>;
+        return <span className="text-lg">View recent activities here.</span>;
       case "Logout":
         return <div className="flex align-middle justify-center">
           <LogOut />
@@ -64,17 +64,17 @@ const Sidebar = () => {
                   onClick={() => setActiveSection(section)}
                 >
                   <div className="flex items-center gap-2">
-                    {section == "Profile" ? (
+                    {section === "Profile" ? (
                       <ImProfile />
-                    ) : section == "Friend Requests" ? (
+                    ) : section === "Friend Requests" ? (
                       <FaUserFriends />
-                    ) : section == "WatchList" ? (
+                    ) : section === "WatchList" ? (
                       <FaClipboardList />
-                    ) : section == "Messages" ? (
+                    ) : section === "Messages" ? (
                       <SiGooglemessages />
-                    ) : section == "Friend Activity" ? (
+                    ) : section === "Friend Activity" ? (
                       <LuActivity />
-                    ) : section == "Dashboard" ? (
+                    ) : section === "Dashboard" ? (
                       <MdDashboard />
                     ) : (
                       <RiLogoutBoxFill />
