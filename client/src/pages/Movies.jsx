@@ -16,7 +16,7 @@ import LinkNavbar from "../components/LinkNavbar";
 import MediaCard from "../components/MediaCard";
 import HomeCard from "../components/HomeCard";
 
-function Home() {
+function Movies() {
   const currentUser = useSelector((state) => state.userProfile);
   const dispatch = useDispatch();
 
@@ -153,8 +153,7 @@ function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-[#141414]">
       <Navbar />
-
-      <div className="bg-slate-200 bg-opacity-20 sticky top-0 z-40">
+      <div className="bg-black/30 backdrop-blur-md sticky top-0 z-40">
         <LinkNavbar />
       </div>
 
@@ -258,4 +257,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Movies;

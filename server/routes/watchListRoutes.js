@@ -12,7 +12,7 @@ router.delete('/delete', deleteAllWatchLists);
 router.delete('/delete/:watchlist_id', authUser, deleteWatchList);
 router.get('/:watchlist_id',authUser, getWatchListItems);
 router.patch('/addToWatchlist/:watchlist_id',authUser, addItemToWatchList);
-router.patch('/:watchlist_id/:item_id', removeItemFromWatchList);
+router.patch('/:watchlist_id/:item_id',authUser, removeItemFromWatchList);
 
 
 module.exports = router;

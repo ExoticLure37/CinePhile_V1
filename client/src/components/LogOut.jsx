@@ -11,9 +11,7 @@ export default function LogOut() {
   return (
     <div className="flex flex-col mx-auto">
       <div>
-        <h1>
-            Are You sure you want to Log Out
-        </h1>
+        <span>Are You sure you want to Log Out</span>
       </div>
       <div className="flex align-middle justify-center mt-4">
         <button
