@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema({
   fullname: {
     type: String,
-    required: true
+    required: true,
   },
   username: {
     type: String,
@@ -22,22 +22,22 @@ const userSchema = new mongoose.Schema({
   },
   friends: [
     {
-      _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    }
+      _id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    },
   ],
   verified: {
     type: Boolean,
-    default: false
+    default: false,
   },
   pending_requests: [
     {
-      _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    }
+      _id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    },
   ],
   requests_sent: [
     {
-      _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    }
+      _id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    },
   ],
   about: {
     type: String,
@@ -49,17 +49,16 @@ const userSchema = new mongoose.Schema({
     type: String,
   },
   dob: {
-    type: Date
+    type: Date,
   },
   timeStamp: {
-    type : Date
-  }
+    type: Date,
+  },
 });
 
 // Hhash passwd
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password'))
-    return next();
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
 
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
@@ -67,6 +66,6 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-const userModel = mongoose.model('User', userSchema);
+const userModel = mongoose.model("User", userSchema);
 
 module.exports = userModel;

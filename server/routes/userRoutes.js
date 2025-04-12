@@ -1,6 +1,26 @@
 const express = require("express");
 const { authUser } = require("../middleware/authMiddleware");
-const { register, login, resetPassword, verifyToken, addFriend, getFriends, acceptFriendRequest, rejectFriendRequest, cancelFriendRequest, removeFriend, searchFriend, getPendingRequest, getRequestSent, updatePersonalDetails, updateEmail, verifyEmail, updatePassword, updateUsername, getProfile } = require("../controllers/userControllers");
+const {
+  register,
+  login,
+  resetPassword,
+  verifyToken,
+  addFriend,
+  getFriends,
+  acceptFriendRequest,
+  rejectFriendRequest,
+  cancelFriendRequest,
+  removeFriend,
+  searchFriend,
+  getPendingRequest,
+  getRequestSent,
+  updatePersonalDetails,
+  updateEmail,
+  verifyEmail,
+  updatePassword,
+  updateUsername,
+  getProfile,
+} = require("../controllers/userControllers");
 
 const router = express.Router();
 

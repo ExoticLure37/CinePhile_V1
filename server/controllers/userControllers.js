@@ -329,8 +329,8 @@ const removeFriend = async (req, res) => {
     });
 
     await userModel.findByIdAndUpdate(friendId, {
-      $pull: { friends: { _id: id } }
-    })
+      $pull: { friends: { _id: id } },
+    });
 
     return res.status(200).json({ message: "Friend request rejected" });
   } catch (err) {
@@ -538,11 +538,9 @@ const updateUsername = async (req, res) => {
     );
 
     if (differenceInDays < 90)
-      return res
-        .status(400)
-        .json({
-          message: `You cannot change user until ${90 - differenceInDays} days`,
-        });
+      return res.status(400).json({
+        message: `You cannot change user until ${90 - differenceInDays} days`,
+      });
 
     const isAlreadyTaken = user.findOne({ username: newUsername });
 
@@ -560,10 +558,10 @@ const updateUsername = async (req, res) => {
       .status(500)
       .json({ message: "Internal Serve Error", error: err.message });
   }
-//   catch (err) {
-//     return res.status(500).json({ message: "Internal Serve Error", error: err.message })
-//   }
-}
+  //   catch (err) {
+  //     return res.status(500).json({ message: "Internal Serve Error", error: err.message })
+  //   }
+};
 
 const getProfile = async (req, res) => {
   try {
@@ -587,18 +585,33 @@ const getProfile = async (req, res) => {
       about: user.about,
       gender: user.gender,
       dob: user.dob,
-      phone_number: user.phone_number
+      phone_number: user.phone_number,
     });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Internal server error!!", error: err.message });
   }
-  catch (err) {
-    res.status(500).json({ message: "Internal server error!!", error: err.message });
-  }
-}
-
+};
 
 module.exports = {
-  register, login, resetPassword, verifyToken,
-  addFriend, acceptFriendRequest, rejectFriendRequest,
-  cancelFriendRequest, removeFriend, searchFriend, getPendingRequest, getRequestSent, getFriends, updatePersonalDetails
-  , updateEmail, verifyEmail, updatePassword, updateUsername, getProfile
+  register,
+  login,
+  resetPassword,
+  verifyToken,
+  addFriend,
+  acceptFriendRequest,
+  rejectFriendRequest,
+  cancelFriendRequest,
+  removeFriend,
+  searchFriend,
+  getPendingRequest,
+  getRequestSent,
+  getFriends,
+  updatePersonalDetails,
+  updateEmail,
+  verifyEmail,
+  updatePassword,
+  updateUsername,
+  getProfile,
 };
