@@ -10,6 +10,7 @@ import Friends from "./pages/Friends";
 import VerifyUpdatedEmail from "./pages/VerifyUpdatedEmail";
 import FriendProfile from "./pages/FriendProfile";
 import Watchlist from "./pages/Watchlist";
+import FriendsWatchList from "./pages/FriendsWatchList";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/home" element={<Home />} />
         <Route path="/friends" element={<Friends />} />
+        <Route path="/friends-watchlist" element={<FriendsWatchList/>} />
         <Route path="/watchlist" element={<Watchlist />} />
         <Route path="/profile/:friendId" element={<FriendProfile />} />
         <Route path="/dashboard" element={<Profile />} />
