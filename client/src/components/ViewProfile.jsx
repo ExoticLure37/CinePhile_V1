@@ -23,14 +23,14 @@ export default function ViewProfile() {
   const EditIcon = ({ onClick }) => (
     <button
       onClick={onClick}
-      className="p-2 rounded-full hover:bg-gray-700 transition"
+      className="ml-2 p-2 rounded-full hover:bg-blue-600 hover:text-white transition duration-200"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
         strokeWidth={2}
-        stroke="white"
+        stroke="currentColor"
         className="w-5 h-5"
       >
         <path
@@ -43,30 +43,26 @@ export default function ViewProfile() {
   );
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="mb-10 text-4xl font-bold text-white">My Profile</h1>
-
+    <div className="max-w-5xl mx-auto px-6 py-8">
       {/* Profile Card */}
-      <div className="flex flex-col sm:flex-row items-center justify-between bg-gradient-to-r from-gray-800 to-gray-900 p-6 rounded-xl shadow-lg">
+      <div className="flex flex-col sm:flex-row items-center justify-between bg-gradient-to-r from-[#1e293b] to-[#0f172a] p-6 rounded-3xl shadow-xl">
         <div className="flex items-center gap-6">
           <img
             src={profileimage}
             alt={`profile-${user.fullname}`}
-            className="w-20 h-20 rounded-full object-cover border-2 border-blue-500"
+            className="w-24 h-24 rounded-full object-cover border-4 border-blue-500 shadow-lg"
           />
           <div>
-            <p className="text-2xl font-semibold text-white">{user.fullname}</p>
-            <p className="text-sm text-gray-400">
-              {user.gender || "Not Provided"}
-            </p>
+            <p className="text-2xl font-bold text-white">{user.fullname}</p>
+            <p className="text-sm text-blue-300">{user.gender || "Not Provided"}</p>
           </div>
         </div>
       </div>
 
       {/* Personal Details */}
-      <div className="my-10 bg-gray-800 p-6 rounded-xl shadow-lg">
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-xl font-semibold text-white">Personal Details</p>
+      <div className="mt-10 bg-[#1f2937]/90 backdrop-blur-md p-6 rounded-2xl shadow-lg">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-white">Personal Details</h2>
           <IconBtn text="Edit" onClick={() => setShowPersonalModal(true)} />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-gray-200">
@@ -76,57 +72,43 @@ export default function ViewProfile() {
           </div>
           <div>
             <p className="text-sm text-gray-400">Gender</p>
-            <p className="text-lg font-medium">
-              {user.gender || "Lesbian"}
-            </p>
+            <p className="text-lg font-medium">{user.gender || "Not Provided"}</p>
           </div>
           <div>
             <p className="text-sm text-gray-400">Date of Birth</p>
             <p className="text-lg font-medium">
-              {formatDate(user.dob) || "Not Provided"}
+              {user.dob ? formatDate(user.dob) : "Not Provided"}
             </p>
           </div>
         </div>
       </div>
 
       {/* Account Settings */}
-      <div className="bg-gray-800 p-6 rounded-xl shadow-lg">
-        <div className="flex items-center justify-between mb-4 ">
-          <p className="text-xl font-semibold text-white">Account Settings</p>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 text-gray-200">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <div className="flex">
-                <p className="text-m text-gray-400">Email</p>
-                <EditIcon onClick={() => setShowEmailModal(true)} />
-              </div>
-              <p className="text-lg font-medium">
-                {user.email || "Not Provided"}
-              </p>
+      <div className="mt-8 bg-[#1f2937]/90 backdrop-blur-md p-6 rounded-2xl shadow-lg">
+        <h2 className="text-xl font-bold text-white mb-6">Account Settings</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 text-gray-200">
+          <div>
+            <div className="flex items-center mb-1">
+              <p className="text-sm text-gray-400">Email</p>
+              <EditIcon onClick={() => setShowEmailModal(true)} />
             </div>
+            <p className="text-lg font-medium">{user.email || "Not Provided"}</p>
           </div>
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <div className="flex">
-                <p className="text-m text-gray-400">Phone Number</p>
-                <EditIcon onClick={() => setShowPhoneModal(true)} />
-              </div>
-              <p className="text-lg font-medium">
-                {user.phone_number || "Not Provided"}
-              </p>
+          <div>
+            <div className="flex items-center mb-1">
+              <p className="text-sm text-gray-400">Phone Number</p>
+              <EditIcon onClick={() => setShowPhoneModal(true)} />
             </div>
+            <p className="text-lg font-medium">{user.phone_number || "Not Provided"}</p>
           </div>
-          <div className="mb-6">
+          <div>
             <p className="text-sm text-gray-400">User ID</p>
-            <p className="text-lg font-medium">
-              {user.username || "Not Provided"}
-            </p>
+            <p className="text-lg font-medium">{user.username || "Not Provided"}</p>
           </div>
         </div>
       </div>
 
-      {/* MODALS */}
+      {/* Modals */}
       {showPersonalModal && (
         <EditPersonalDetailsModal
           onClose={() => setShowPersonalModal(false)}

@@ -1,57 +1,57 @@
 import { useState } from "react";
 import React from "react";
-//import { FaHome } from "react-icons/fa";
 import { ImProfile } from "react-icons/im";
-import { FaUserFriends } from "react-icons/fa";
-import { useSelector } from "react-redux";
-import { FaClipboardList } from "react-icons/fa";
+import { FaUserFriends, FaClipboardList } from "react-icons/fa";
 import { SiGooglemessages } from "react-icons/si";
 import { LuActivity } from "react-icons/lu";
 import { RiLogoutBoxFill } from "react-icons/ri";
 import { MdDashboard } from "react-icons/md";
+import { useSelector } from "react-redux";
 import Error from "./Error";
 import ViewProfile from "./ViewProfile";
 import LogOut from "./LogOut";
 import FriendRequests from "./FriendRequests";
+
 const Sidebar = () => {
   const [activeSection, setActiveSection] = useState("Profile");
+  const curUser = useSelector((state) => state.userProfile);
 
   const renderContent = () => {
     switch (activeSection) {
       case "Profile":
-        return <span className="text-lg"><ViewProfile /></span>;
+        return <ViewProfile />;
       case "Friend Requests":
-        return <FriendRequests />
-      case "WatchList":
-        return <span className="text-lg">View recent activities here.</span>;
+        return <FriendRequests />;
       case "Messages":
-        return <span className="text-lg">View recent activities here.</span>;
+        return <p className="text-lg">View recent messages here.</p>;
       case "Friend Activity":
-        return <span className="text-lg">View recent activities here.</span>;
+        return <p className="text-lg">See what your friends are up to.</p>;
       case "Dashboard":
-        return <span className="text-lg">View recent activities here.</span>;
+        return <p className="text-lg">Dashboard overview.</p>;
       case "Logout":
-        return <div className="flex align-middle justify-center">
-          <LogOut />
-        </div>;
+        return (
+          <div className="flex align-middle justify-center">
+            <LogOut />
+          </div>
+        );
       default:
         return <Error />;
     }
   };
-  const curUser = useSelector((state) => state.userProfile);
-  console.log(curUser);
+
   return (
     curUser && (
-      <div className="flex flex-col bg-[#141414]">
-        <div className="mx-auto">
-        </div>
-        <div className="flex flex-row">
-          <div className="mt-2 text-white">
+      <div className="flex h-screen bg-gradient-to-tr from-[#1f1f1f] to-[#2c2c2c] text-white">
+        {/* Sidebar */}
+        <div className="w-64 p-6 bg-gradient-to-b from-gray-900 to-gray-800 shadow-2xl flex flex-col justify-between sticky top-0 h-screen">
+          <div>
+            <h2 className="text-3xl font-bold text-center mb-8 text-yellow-400">
+              🎬 Menu
+            </h2>
             <ul>
               {[
                 "Profile",
                 "Friend Requests",
-                "WatchList",
                 "Messages",
                 "Friend Activity",
                 "Dashboard",
@@ -59,35 +59,39 @@ const Sidebar = () => {
               ].map((section) => (
                 <li
                   key={section}
-                  className={`p-3 cursor-pointer rounded-lg hover:text-gray-500 ${activeSection === section ? "text-gray-500" : ""
+                  className={`p-3 my-2 flex items-center gap-4 rounded-xl text-base font-medium tracking-wide cursor-pointer transition-all duration-200 ${activeSection === section
+                      ? "bg-blue-600 text-white shadow-md scale-[1.02]"
+                      : "hover:bg-gray-700 hover:text-blue-400"
                     }`}
                   onClick={() => setActiveSection(section)}
                 >
-                  <div className="flex items-center gap-2">
-                    {section === "Profile" ? (
-                      <ImProfile />
-                    ) : section === "Friend Requests" ? (
-                      <FaUserFriends />
-                    ) : section === "WatchList" ? (
-                      <FaClipboardList />
-                    ) : section === "Messages" ? (
-                      <SiGooglemessages />
-                    ) : section === "Friend Activity" ? (
-                      <LuActivity />
-                    ) : section === "Dashboard" ? (
-                      <MdDashboard />
-                    ) : (
-                      <RiLogoutBoxFill />
-                    )}
-                    <h1 className="text-lg">{section}</h1>
-                  </div>
+                  {section === "Profile" ? (
+                    <ImProfile className="text-xl" />
+                  ) : section === "Friend Requests" ? (
+                    <FaUserFriends className="text-xl" />
+                  ) : section === "Messages" ? (
+                    <SiGooglemessages className="text-xl" />
+                  ) : section === "Friend Activity" ? (
+                    <LuActivity className="text-xl" />
+                  ) : section === "Dashboard" ? (
+                    <MdDashboard className="text-xl" />
+                  ) : (
+                    <RiLogoutBoxFill className="text-xl text-red-400" />
+                  )}
+                  <span>{section}</span>
                 </li>
               ))}
             </ul>
           </div>
-          <hr />
-          <div className="flex-1 p-8 text-white">
-            <h1 className="text-2xl font-bold mb-4 text-center">{activeSection}</h1>
+          <p className="text-sm text-gray-400 text-center mt-6">© 2025 ProjectV</p>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 px-10 py-8 overflow-auto">
+          <h1 className="text-4xl font-bold mb-8 text-center text-white tracking-wide">
+            {activeSection}
+          </h1>
+          <div className="bg-gray-900/60 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-gray-700 min-h-[70vh] transition-all">
             {renderContent()}
           </div>
         </div>
