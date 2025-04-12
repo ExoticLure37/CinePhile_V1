@@ -34,7 +34,8 @@ const Navbar = () => {
             sortField: "id",
           },
           headers: {
-            "x-rapidapi-key": "ac756fd330msh8c169a5cfb93ae0p1fee36jsn17b73def8bef",
+            "x-rapidapi-key":
+              "ac756fd330msh8c169a5cfb93ae0p1fee36jsn17b73def8bef",
             "x-rapidapi-host": "imdb236.p.rapidapi.com",
           },
         }
@@ -197,9 +198,7 @@ const Navbar = () => {
                   <div className="flex justify-center mt-6">
                     <button
                       className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200 shadow-md"
-                      onClick={() =>
-                        setVisibleResults((prev) => prev + 10)
-                      }
+                      onClick={() => setVisibleResults((prev) => prev + 10)}
                     >
                       Load More
                       <svg

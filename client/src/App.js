@@ -9,6 +9,7 @@ import Friends from "./pages/Friends";
 import VerifyUpdatedEmail from "./pages/VerifyUpdatedEmail";
 import FriendProfile from "./pages/FriendProfile";
 import Watchlist from "./pages/Watchlist";
+import FriendsWatchList from "./pages/FriendsWatchList";
 import Movies from "./pages/Movies";
 import TVShows from "./pages/TVShows";
 
@@ -21,6 +22,7 @@ function App() {
         <Route path="/movies" element={<Movies />} />
         <Route path="/tvshows" element={<TVShows />} />
         <Route path="/friends" element={<Friends />} />
+        <Route path="/friends-watchlist" element={<FriendsWatchList/>} />
         <Route path="/watchlist" element={<Watchlist />} />
         <Route path="/profile/:friendId" element={<FriendProfile />} />
         <Route path="/dashboard" element={<Profile />} />
