@@ -109,19 +109,19 @@ const Navbar = () => {
                 )}
               </li>
               <li>
-                <a className="hover:text-yellow-400">My List</a>
+                <button className="hover:text-yellow-400">My List</button>
               </li>
               <li>
-                <a className="hover:text-yellow-400">Contact</a>
+                <button className="hover:text-yellow-400">Contact</button>
               </li>
               <li>
-                <a className="hover:text-yellow-400">Settings</a>
+                <button className="hover:text-yellow-400">Settings</button>
               </li>
               {currentUser.username !== "" && (
                 <li>
-                  <a onClick={logoutHandler} className="hover:text-yellow-400">
+                  <button onClick={logoutHandler} className="hover:text-yellow-400">
                     Logout
-                  </a>
+                  </button>
                 </li>
               )}
             </ul>

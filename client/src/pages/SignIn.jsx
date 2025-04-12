@@ -37,7 +37,7 @@ function SignIn() {
         phone_number: res.data.phone_number
       }))
 
-      navigate("/home"); // Redirect after successful login
+      navigate("/movies"); // Redirect after successful login
     } catch (err) {
       setError(err.response?.data?.message || "Login Failed!");
     }
