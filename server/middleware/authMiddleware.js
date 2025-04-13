@@ -5,12 +5,12 @@ const authUser = (req, res, next) => {
      const cookieHeader = req.headers.cookie;
  
      if (!cookieHeader) {
-       console.log("No cookie header found.");
+      //  console.log("No cookie header found.");
        return res.status(401).json({ message: 'Unauthorized Access', error: true });
      }
  
      const token = cookieHeader.split('; ').find(row => row.startsWith('token=')).split('=')[1];
-     console.log("Token from cookie:", token);
+    //  console.log("Token from cookie:", token);
  
      if (!token) {
        return res.status(401).json({ message: 'Unauthorized Access', error: true });
@@ -20,8 +20,10 @@ const authUser = (req, res, next) => {
      req.user = userInfo; // Attach user data to request
      next();
    } catch (error) {
-     console.log("Error verifying token:", error.message);
+    //  console.log("Error verifying token:", error.message);
      return res.status(401).json({ message: 'Invalid Token', error: true });
    }
  };
+
+ module.exports = {authUser} ; 
  

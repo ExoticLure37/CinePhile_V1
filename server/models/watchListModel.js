@@ -17,6 +17,12 @@ const watchListSchema = new mongoose.Schema({
                 }
             ]
         }
+    ],
+    shared_watchlists: [
+        {
+            watchlist_id: { type: mongoose.Schema.Types.ObjectId, ref: 'SharedWatchList' },
+            title: { type: String, required: true }
+        }
     ]
 });
 
