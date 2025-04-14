@@ -1,5 +1,6 @@
 const sharedWatchListModel = require('../models/sharedWatchListModel');
 const watchListModel = require('../models/watchListModel');
+const mongoose = require('mongoose');
 
 //create 
 const createSharedWatchList = async (req, res) => {
@@ -89,11 +90,11 @@ const addMember = async (req, res) => {
     try {
         const { watchlist_id } = req.params;
         const { memberId, permissions } = req.body;
-
+        
         const watchlist = await sharedWatchListModel.findById(watchlist_id);
 
         if (watchlist.members.some(m => m.user.toString() === memberId)) {
-            return res.status(400).json({ error: "Member already exists" });
+            return res.status(400).json({ error:true, message:"Member already exists" });
         }
 
         const updatedDoc = await sharedWatchListModel.findByIdAndUpdate(
@@ -130,9 +131,9 @@ const addItem = async (req, res) => {
             return res.status(400).json({ error: true, message: "Item must contain imdb_id and name" });
         }
 
-        item.addedBy = req.uesr._id;
+        item.addedBy = req.user._id;
 
-        const updatedWatchList = await sharedWatchListModel.findById(watchlist_id, { $push: { items: item } }, { new: true });
+        const updatedWatchList = await sharedWatchListModel.findByIdAndUpdate(watchlist_id, { $push: { items: item } }, { new: true });
 
         return res.status(200).json({ message: "Added successfully", watchlist: updatedWatchList });
     } catch (err) {
@@ -151,7 +152,7 @@ const removeItem = async (req, res) => {
             });
         }
 
-        const updatedWatchList = await sharedWatchListModel.findById(watchlist_id,
+        const updatedWatchList = await sharedWatchListModel.findByIdAndUpdate(watchlist_id,
             { $pull: { items: { _id: item_id } } }, { new: true });
 
         return res.status(200).json({ message: "Removed successfully", watchlist: updatedWatchList });

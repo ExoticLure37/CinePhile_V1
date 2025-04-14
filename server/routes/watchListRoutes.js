@@ -18,10 +18,10 @@ router.patch('/:watchlist_id/:item_id', authUser, removeItemFromWatchList);
 
 //to share 
 router.post("/shared",authUser,createSharedWatchList);
-router.patch("/shared/rename/:watchlist_id/:new_title",authUser,renameSharedWatchList);
-router.patch("/shared/:watchlist_id",authUser,checkSharedWatchlistPermissions('isOwner'),addMember);
-router.put('/shared/add/:watchlist_id', checkSharedWatchlistPermissions('canAdd'),addItem);
-router.delete('/shared/remove/:watchlist_id/:item_id', checkSharedWatchlistPermissions('canRemove'),removeItem);
+router.patch("/shared/rename/:watchlist_id/:new_title",authUser,checkSharedWatchlistPermissions('canEdit'),renameSharedWatchList);
+router.patch("/shared/add-member/:watchlist_id",authUser,checkSharedWatchlistPermissions('isOwner'),addMember);
+router.put('/shared/add/:watchlist_id',authUser, checkSharedWatchlistPermissions('canAdd'),addItem);
+router.delete('/shared/remove/:watchlist_id/:item_id',authUser, checkSharedWatchlistPermissions('canRemove'),removeItem);
 
 // router.put('/shared/update-permissons/:watchlist_id');//update persmiison 
 

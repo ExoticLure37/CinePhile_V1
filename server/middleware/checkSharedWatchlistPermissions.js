@@ -1,6 +1,8 @@
+const sharedWatchListModel = require('../models/sharedWatchListModel');
+
 const checkSharedWatchlistPermissions = (requiredPermission) => {
     return async (req, res, next) => {
-      const watchlist = await SharedWatchlist.findById(req.params.watchListId);
+      const watchlist = await sharedWatchListModel.findById(req.params.watchlist_id);
       
       const member = watchlist.members.find(m => 
         m.user._id.toString() === req.user._id.toString()
