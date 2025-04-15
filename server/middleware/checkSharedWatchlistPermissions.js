@@ -1,10 +1,13 @@
-const sharedWatchListModel = require('../models/sharedWatchListModel');
+const watchListModel = require('../models/watchListModel');
 
 const checkSharedWatchlistPermissions = (requiredPermission) => {
     return async (req, res, next) => {
-      const watchlist = await sharedWatchListModel.findById(req.params.watchlist_id);
+      const watchlist = await watchListModel.findById(req.params.watchlist_id);
       
-      const member = watchlist.members.find(m => 
+      if(!watchlist)
+        return res.status(404).json({ error: 'Watchlist not found' });
+
+      const member = watchlist?.members.find(m => 
         m.user._id.toString() === req.user._id.toString()
       );
       
