@@ -99,16 +99,22 @@ const getAllWatchLists = async (req, res) => {
     try {
         const userId = req.user._id;
 
+        // Fetch the user's watchlists
         const userWatchlists = await userModel.findById(userId)
             .select('watchlists')
             .lean();
 
-        // not found
-        if (!userWatchlists || userWatchlists.watchlists.length === 0) {
+        // Check if userWatchlists or watchlists are undefined or null
+        if (!userWatchlists || !userWatchlists.watchlists) {
             return res.status(404).json({ message: "No watchlists found." });
         }
 
-        console.log(userWatchlists.watchlists)
+        // If watchlists array is empty
+        if (userWatchlists.watchlists.length === 0) {
+            return res.status(404).json({ message: "No watchlists found." });
+        }
+
+        console.log(userWatchlists.watchlists); // Check the watchlists content
         return res.status(200).json({
             watchlists: userWatchlists.watchlists,
             message: "success"
@@ -118,6 +124,7 @@ const getAllWatchLists = async (req, res) => {
         return res.status(500).json({ error: true, message: err.message });
     }
 };
+
 
 //Delete all  watchlists  for a user 
 const deleteAllWatchLists = async (req, res) => {

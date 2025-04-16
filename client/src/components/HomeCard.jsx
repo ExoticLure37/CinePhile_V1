@@ -15,8 +15,6 @@ const HomeCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
     const plusButtonRef = useRef(null);
     const isModalOpen = activeModalId === mediaId;
 
-    const [watchlists, setWatchlists] = useState([]);
-
     const handlePlusClick = (e) => {
         e.stopPropagation();
         setShowWatchlistModal(false);
@@ -42,18 +40,6 @@ const HomeCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
         }
     }
 
-    const getAllWatchList = async () => {
-        try {
-            const res = await axios.get("http://localhost:5000/watchlist/", { withCredentials: true });
-
-            setWatchlists(res.data.watchlists);
-            // console.log(res.data);
-        }
-        catch (err) {
-            console.log(err.response.data);
-        }
-    }
-
     useEffect(()=>{
         // console.log(media)
     },[])
@@ -73,12 +59,11 @@ const HomeCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
         return () => {
             document.removeEventListener("click", handleClickOutside);
         };
-    }, [isModalOpen, watchlists]);
+    }, [isModalOpen]);
 
 
     // Close on outside click
     useEffect(() => {
-        getAllWatchList();
         const handleClickOutside = (e) => {
             if (!plusButtonRef.current?.contains(e.target)) {
                 setShowWatchlistModal(false);
@@ -92,7 +77,7 @@ const HomeCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
         return () => {
             document.removeEventListener("click", handleClickOutside);
         };
-    }, [isModalOpen, watchlists]);
+    }, [isModalOpen]);
 
     return (
         <>
@@ -149,44 +134,7 @@ const HomeCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
                 </div>
 
             </div >
-
-            {/* Detached Watchlist Modal */}
-            {isModalOpen && (
-                <div
-                    className="fixed z-[9999] w-60 rounded-xl border border-gray-600 bg-gray-900 shadow-xl p-4"
-                    style={{
-                        top: modalPos.top,
-                        left: modalPos.left,
-                    }}
-                >
-                    <h4 className="text-gray-100 text-base font-semibold mb-3">
-                        Select Watchlist
-                    </h4>
-
-                    <ul className="space-y-1 max-h-48 overflow-y-auto custom-scrollbar pr-1">
-                        {watchlists.map((wl) => (
-                            <li
-                                key={wl._id}
-                                onClick={() => { addToWatchlist(wl._id) }}
-                                className="px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-all cursor-pointer"
-                            >
-                                {wl.title}
-                            </li>
-                        ))}
-                    </ul>
-
-                    <div className="mt-4 border-t border-gray-700 pt-3 text-right">
-                        <button
-                            onClick={() => setActiveModalId(null)}
-                            className="text-xs text-red-400 font-medium hover:text-red-300 transition"
-                        >
-                            ✕ Close
-                        </button>
-                    </div>
-                </div>
-            )}
-
-
+        
 
             {/* Modal */}
             {

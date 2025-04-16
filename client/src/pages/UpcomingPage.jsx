@@ -1,23 +1,31 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import axios from "axios";
-import HomeCard from "./HomeCard";
+import React, { useEffect, useState } from 'react'
+import LinkNavbar from '../components/LinkNavbar'
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
+import axios from 'axios';
+import HomeCard from '../components/HomeCard';
+import { useLocation } from 'react-router-dom';
 
-function Upcoming({ flag }) {
+function UpcomingPage() {
     const [upcomingMovies, setUpcomingMovies] = useState([]);
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const itemsPerPage = 6;
+    const [visibleCount, setVisibleCount] = useState(20)
     const [activeModalId, setActiveModalId] = useState(null);
+    const [loading, setLoading] = useState(true); // Loading state
+
+    const location = useLocation();
+    const flag = location.state?.f;
 
     useEffect(() => {
         fetchUpcoming();
-    }, []);
+    }, [flag]);
+
+    const handleLoadMore = () => {
+        setVisibleCount((prev) => prev + 20);
+    }
 
     const fetchUpcoming = async () => {
         try {
+            setLoading(true);
             let response;
             const apiKey = process.env.REACT_APP_RAPIDAPI_KEY;
             const apiHost = process.env.REACT_APP_RAPIDAPI_HOST;
@@ -50,52 +58,31 @@ function Upcoming({ flag }) {
             const allTitles = response.data.flatMap(group => group.titles);
 
             // Slice if needed
-            setUpcomingMovies(allTitles.slice(0, 30));
+            setUpcomingMovies(allTitles);
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false); // Set loading to false when fetch completes
         }
     }
 
-    const handleNext = () => {
-        if (currentIndex + itemsPerPage < upcomingMovies.length) {
-            setCurrentIndex((prev) => prev + itemsPerPage);
-        }
-    };
-
-    const handlePrev = () => {
-        if (currentIndex > 0) {
-            setCurrentIndex((prev) => prev - itemsPerPage);
-        }
-    };
-
-    const navigate = useNavigate();
-
-    const handleNavigate = () => {
-        navigate("/upcoming", { state: { f: flag } });
-    };
-
     return (
-        <div className="flex flex-col gap-5 relative">
-            <button
-                onClick={handleNavigate}
-                className="font-bold text-4xl hover:text-5xl text-left transition-all duration-200"
-            >
-                Upcoming <ArrowForwardIosIcon />
-            </button>
+        <div className="min-h-screen flex flex-col bg-[#141414]">
+            <Navbar />
+            <div className="bg-black/30 backdrop-blur-md sticky top-0 z-40">
+                <LinkNavbar />
+            </div>
 
-            <div className="flex items-center gap-2">
-                <button
-                    onClick={handlePrev}
-                    disabled={currentIndex === 0}
-                    className="text-white hover:scale-125 transition-all duration-300 p-2 disabled:opacity-30"
-                >
-                    <ChevronLeftIcon fontSize="large" />
-                </button>
+            <div className='font-semibold text-3xl text-white p-4'>Upcoming</div>
 
-                <div className="flex gap-8 transition-all duration-300">
-                    {upcomingMovies
-                        .slice(currentIndex, currentIndex + itemsPerPage)
-                        .map((item) => (
+            {loading ? (
+                <div className="flex justify-center items-center my-10">
+                    <div className="animate-spin border-t-4 border-red-500 border-solid rounded-full w-16 h-16"></div>
+                </div>
+            ) : upcomingMovies.length > 0 ? (
+                <>
+                    <div className='grid grid-cols-2 md:grid-cols-5 gap-x-0 gap-y-4 px-2 ml-20'>
+                        {upcomingMovies.slice(0, visibleCount).map((item) => (
                             <HomeCard
                                 key={item.id}
                                 media={{
@@ -113,18 +100,28 @@ function Upcoming({ flag }) {
                                 setActiveModalId={setActiveModalId}
                             />
                         ))}
-                </div>
+                    </div>
 
-                <button
-                    onClick={handleNext}
-                    disabled={currentIndex + itemsPerPage >= upcomingMovies.length}
-                    className="text-white hover:scale-125 transition-all duration-300 p-2 disabled:opacity-30"
-                >
-                    <ChevronRightIcon fontSize="large" />
-                </button>
+                    {visibleCount < upcomingMovies.length && (
+                        <div className="flex justify-center my-6">
+                            <button
+                                onClick={handleLoadMore}
+                                className="text-white bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg"
+                            >
+                                Load More
+                            </button>
+                        </div>
+                    )}
+                </>
+            ) : (
+                <p className="text-white text-center mt-10">No Results Found</p>
+            )}
+
+            <div className="mt-auto">
+                <Footer />
             </div>
-        </div>
+        </div >
     )
 }
 
-export default Upcoming
+export default UpcomingPage;
