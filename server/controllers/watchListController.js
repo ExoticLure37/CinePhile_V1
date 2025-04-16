@@ -55,7 +55,7 @@ const createWatchList = async (req, res) => {
 const renameWatchList = async (req, res) => {
     try {
         const userId = req.user._id;
-        const watchlistId = req.params.watchlist_id;
+        const watchlist_id = req.params.watchlist_id;
         const newTitle = req.params.new_title;
 
         if (!newTitle) {
@@ -63,13 +63,13 @@ const renameWatchList = async (req, res) => {
         }
 
         const watchlist = await watchListModel.findByIdAndUpdate(
-            watchlistId,
+            watchlist_id,
             { title: newTitle },
             { new: true }
         );
 
         await userModel.updateMany(
-            { 'watchlists.watchlist_id': watchlistId },
+            { 'watchlists.watchlist_id': watchlist_id },
             { $set: { 'watchlists.$.title': newTitle } }
         );
 
@@ -157,18 +157,18 @@ const deleteWatchList = async (req, res) => {
 
         const userId = req.user._id;
         // const userId = "67e78282d87216cdd5e5cfed";
-        const watchlistId = req.params.watchlist_id;
+        const watchlist_id = req.params.watchlist_id;
 
 
-        await watchListModel.findByIdAndDelete(watchlistId);
+        await watchListModel.findByIdAndDelete(watchlist_id);
 
         //remove references from all users
         await userModel.updateMany(
-            { 'watchlists.watchlist_id': new mongoose.Types.ObjectId(watchlistId) },
+            { 'watchlists.watchlist_id': new mongoose.Types.ObjectId(watchlist_id) },
             {
                 $pull: {
                     watchlists: {
-                        watchlist_id: new mongoose.Types.ObjectId(watchlistId)
+                        watchlist_id: new mongoose.Types.ObjectId(watchlist_id)
                     }
                 }
             }
@@ -198,10 +198,10 @@ const deleteWatchList = async (req, res) => {
 const getWatchList = async (req, res) => {
     try {
         const userId = req.user._id;
-        const watchlistId = req.params.watchlist_id;
+        const watchlist_id = req.params.watchlist_id;
 
 
-        const watchList = await watchListModel.findById(watchlistId)
+        const watchList = await watchListModel.findById(watchlist_id)
             .populate('owner', 'username')
             .populate('members.user', 'username');
 
@@ -223,7 +223,7 @@ const getWatchList = async (req, res) => {
 const addItemToWatchList = async (req, res) => {
     try {
         const userId = req.user._id;
-        const watchlistId = req.params.watchlist_id;
+        const watchlist_id = req.params.watchlist_id;
 
         const newItem = {
             imdb_id: req.body.item.id,
@@ -236,7 +236,7 @@ const addItemToWatchList = async (req, res) => {
             return res.status(400).json({ message: "Incomplete item details." });
         }
 
-        const watchList = await watchListModel.findById(watchlistId);
+        const watchList = await watchListModel.findById(watchlist_id);
 
         if (!watchList) {
             return res.status(404).json({ message: "Watchlist not found." });
@@ -266,12 +266,12 @@ const addItemToWatchList = async (req, res) => {
 const removeItemFromWatchList = async (req, res) => {
     try {
         const userId = req.user._id;
-        const watchlistId = req.params.watchlist_id;
-        const itemId = req.params.item_id;
+        const watchlist_id = req.params.watchlist_id;
+        const item_id = req.params.item_id;
 
         const updatedWatchList = await watchListModel.findByIdAndUpdate(
-            watchlistId,
-            { $pull: { "items": { _id: itemId } } },
+            watchlist_id,
+            { $pull: { "items": { _id: item_id } } },
             { new: true }
         );
 
@@ -327,6 +327,67 @@ const addMember = async (req, res) => {
 
 };
 
+
+const rateItem = async (req, res) => {
+    try {
+        const { watchlist_id, item_id } = req.params;
+        const userId = req.user._id;
+        const { value } = req.body;
+
+        if (!value || value < 1 || value > 10) {
+            return res.status(400).json({ error: true, message: "Rating must be between 1 and 5" });
+        }
+
+        const watchlist = await watchListModel.findOne({
+            _id: watchlist_id,
+            $or: [
+                { owner: userId },
+                { 'members.user_id': userId }
+            ]
+        });
+
+        if (!watchlist) {
+            return res.status(404).json({ error: true, message: "Watchlist not found / access denied" });
+        }
+
+        const itemIndex = watchlist.items.findIndex(item => item._id.toString() === item_id);
+        if (itemIndex === -1) {
+            return res.status(404).json({ error: true, message: "Item not found in watchlist" });
+        }
+
+        const existingRatingIndex = watchlist.items[itemIndex].ratings.findIndex(r => r.user.toString() === userId.toString());
+
+        if (existingRatingIndex !== -1) {
+            watchlist.items[itemIndex].ratings[existingRatingIndex].value = value;
+            watchlist.items[itemIndex].ratings[existingRatingIndex].ratedAt = new Date();
+        } else {
+            watchlist.items[itemIndex].ratings.push({
+                user: userId,
+                value,
+                ratedAt: new Date()
+            });
+        }
+
+        const ratings = watchlist.items[itemIndex].ratings;
+        const sum = ratings.reduce((acc, r) => acc + r.value, 0);
+        const avg = ratings.length ? sum / ratings.length : 0;
+        watchlist.items[itemIndex].avg_rating = avg;
+
+
+        await watchlist.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Rating saved successfully",
+            item: watchlist.items[itemIndex]
+        });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: true, message: err.message });
+    }
+};
+
 /*
 
 // Update item metadata (e.g., mark series episodes as watched)
@@ -346,5 +407,5 @@ const markEpisodeAsWatched = async () => { };
 
 module.exports = {
     createWatchList, renameWatchList, getAllWatchLists, deleteAllWatchLists, deleteWatchList,
-    getWatchList, addItemToWatchList, removeItemFromWatchList, addMember
+    getWatchList, addItemToWatchList, removeItemFromWatchList, addMember, rateItem
 };

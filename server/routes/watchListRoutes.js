@@ -1,6 +1,6 @@
 const express = require('express');
 const { getAllWatchLists, createWatchList, renameWatchList, deleteAllWatchLists, deleteWatchList,
-    getWatchList, addItemToWatchList, removeItemFromWatchList ,addMember} = require('../controllers/watchListController');
+    getWatchList, addItemToWatchList, removeItemFromWatchList ,addMember,rateItem} = require('../controllers/watchListController');
 const { checkSharedWatchlistPermissions } = require("../middleware/checkSharedWatchlistPermissions");
 const { authUser } = require("../middleware/authMiddleware");
 
@@ -14,6 +14,9 @@ router.delete('/delete/:watchlist_id', authUser, checkSharedWatchlistPermissions
 router.get('/:watchlist_id', authUser, getWatchList);
 router.patch('/addToWatchlist/:watchlist_id', authUser, checkSharedWatchlistPermissions('canAdd'), addItemToWatchList);
 router.patch('/:watchlist_id/:item_id', authUser, checkSharedWatchlistPermissions('canRemove'), removeItemFromWatchList);
+
+router.post('/:watchlist_id/:item_id/rate', authUser, rateItem);
+
 
 //to share 
 router.patch("/shared/add-member/:watchlist_id", authUser, checkSharedWatchlistPermissions('canEdit'), addMember);
