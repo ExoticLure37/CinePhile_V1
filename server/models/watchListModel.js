@@ -29,6 +29,24 @@ const watchlistSchema = new mongoose.Schema({
         imdb_id: { type: String, required: true },
         name: { type: String, required: true },
         imageUrl: { type: String },
+        ratings: [{
+            user: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User',
+                required: true
+            },
+            value: {
+                type: Number,
+                min: 1,
+                max: 10,
+                required: true
+            },
+            ratedAt: {
+                type: Date,
+                default: Date.now
+            }
+        }],
+        avg_rating: { type: Number, default: 0 },
         addedBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
