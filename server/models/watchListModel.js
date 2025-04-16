@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const mongoose = require("mongoose");
 
 const watchListSchema = new mongoose.Schema({
@@ -21,5 +22,58 @@ const watchListSchema = new mongoose.Schema({
 });
 
 const watchListModel = mongoose.model("WatchList", watchListSchema);
+=======
+const mongoose = require('mongoose');
+const userModel = require('./userModel');
+
+const watchlistSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true,
+        maxlength: 50
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+        index: true
+    },
+    members: [{
+        user_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            index: true
+        },
+        permissions: {
+            canEdit: Boolean,
+            canAdd: Boolean,
+            canRemove: Boolean
+        }
+    }],
+    items: [{
+        imdb_id: { type: String, required: true },
+        name: { type: String, required: true },
+        imageUrl: { type: String },
+        addedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    }],
+}, { timestamps: true });
+
+
+watchlistSchema.pre('save', async function (next) {
+    if (this.isModified('title')) {
+        await userModel.updateMany(
+            { 'watchlists.watchlist_id': this._id },
+            { $set: { 'watchlists.$.title': this.title } }
+        );
+    }
+    next();
+});
+
+
+const watchListModel = mongoose.model('WatchList', watchlistSchema);
+>>>>>>> e9e04a7120f6163fb1b3d2a537865d290a0f1477
 
 module.exports = watchListModel;

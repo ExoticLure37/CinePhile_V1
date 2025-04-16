@@ -14,7 +14,7 @@ function LinkNavbar() {
     ];
 
     return (
-        <nav className="bg-[#141414] px-6 md:px-32 py-4 shadow-md">
+        <nav className="backdrop-blur-md bg-white/10 px-6 md:px-32 py-4 shadow-md">
             <div className="flex flex-wrap justify-center md:justify-between items-center gap-6">
                 {navLinks.map(({ path, label }) => {
                     const isActive = location.pathname === path;

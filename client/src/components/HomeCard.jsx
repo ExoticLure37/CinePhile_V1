@@ -55,7 +55,7 @@ const HomeCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
     }
 
     useEffect(()=>{
-        console.log(media)
+        // console.log(media)
     },[])
 
     // Close on outside click

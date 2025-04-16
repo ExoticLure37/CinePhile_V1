@@ -39,7 +39,7 @@ const FriendsWatchList = () => {
     <>
       <div className="flex flex-col min-h-screen bg-[#141414] text-white">
         <Navbar />
-        <div className="bg-slate-200 bg-opacity-20 sticky top-0 z-40 shadow-md">
+        <div className="bg-black/30 backdrop-blur-md sticky top-0 z-40">
           <LinkNavbar />
         </div>
 
