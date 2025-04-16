@@ -1,0 +1,116 @@
+import React, { useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import { useSelector } from "react-redux";
+const Contact = () => {
+  const user = useSelector((state) => state.userProfile);
+  const [formData, setFormData] = useState({
+    name: user.username || "",
+    email: user.email || "",
+    message: "",
+  });
+
+  //   console.log(formData);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const { name, email, message } = formData;
+    const backendUrl = "http://localhost:5000/user/contact";
+
+    if (!name || !email || !message) {
+      toast.error("All fields are required!");
+      return;
+    }
+
+    try {
+      // const token = localStorage.getItem("token"); // get token from storage
+
+      const response = await axios.post(
+        backendUrl,
+        { name, email, message },
+        { withCredentials: true }
+      );
+
+      console.log(formData);
+      console.log("Response from backend:", response.data);
+
+      toast.success(response.data.message || "Message sent successfully!");
+      setFormData({ name: name, email: email, message: "" });
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.error || "Failed to send message.");
+    }
+  };
+
+  return (
+    <div className="min-h-screen text-white bg-black">
+      <Navbar />
+
+      <div className="relative flex flex-col items-center justify-center py-20 px-6 overflow-hidden">
+        {/* Background image */}
+        <div className="absolute inset-0 bg-center bg-cover opacity-30 blur-sm bg-[url('/images/contactbg.jpg')]" />
+
+        <div className="relative z-10 w-full max-w-2xl flex flex-col items-center bg-black bg-opacity-60 backdrop-blur-md p-8 rounded-2xl border border-gray-700 shadow-2xl">
+          <h1 className="text-4xl font-bold text-yellow-400 mb-4">
+            Contact Us
+          </h1>
+          <p className="text-gray-300 text-center max-w-xl mb-10">
+            Got a question? We'd love to hear from you. Fill out the form below
+            and we'll respond as soon as possible.
+          </p>
+
+          <form onSubmit={handleSubmit} className="w-full space-y-6">
+            {["name", "email", "message"].map((field) => (
+              <div key={field}>
+                <label className="block text-gray-300 mb-2 capitalize">
+                  {field}
+                </label>
+                {field !== "message" ? (
+                  <input
+                    type={field === "email" ? "email" : "text"}
+                    name={field}
+                    value={formData[field]}
+                    onChange={handleChange}
+                    placeholder={`Enter your ${field}`}
+                    className="w-full px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                    required
+                  />
+                ) : (
+                  <textarea
+                    name={field}
+                    rows="4"
+                    value={formData[field]}
+                    onChange={handleChange}
+                    placeholder="Write your message here..."
+                    className="w-full px-4 py-2 bg-gray-900 text-white border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                    required
+                  ></textarea>
+                )}
+              </div>
+            ))}
+
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                className="bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-2 rounded-lg font-semibold hover:from-red-500 hover:to-red-600 transition-all shadow-lg"
+              >
+                Send Message
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default Contact;

@@ -113,7 +113,9 @@ const Navbar = () => {
                 <a className="hover:text-yellow-400">My List</a>
               </li>
               <li>
-                <a className="hover:text-yellow-400">Contact</a>
+                <Link to="/contact" className="hover:text-yellow-400">
+                  Contact
+                </Link>
               </li>
               <li>
                 <a className="hover:text-yellow-400">Settings</a>
