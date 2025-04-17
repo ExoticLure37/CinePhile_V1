@@ -6,6 +6,7 @@ import LinkNavbar from "../components/LinkNavbar";
 import IconBtn from "../components/IconBtn";
 import { useDispatch, useSelector } from "react-redux";
 import { setFriendList } from '../redux/user/userSlice';
+import FriendsWatchListModal from "../components/FriendsWatchListModal";
 
 const FriendsWatchList = () => {
   const navigate = useNavigate();
@@ -14,6 +15,9 @@ const FriendsWatchList = () => {
   const user = useSelector((state) => state.userProfile);
 
   const [friendsList, setFriendsList] = useState(user.friendList);
+  const [open,setOpen]= useState(false)
+  const [friendId,setFriendId]= useState('')
+  const [friendName,setFriendName]= useState('')
 
   useEffect(() => {
     getFriends();
@@ -32,6 +36,16 @@ const FriendsWatchList = () => {
       console.log(err);
     }
   }
+  const closeModal= async()=>{
+    setOpen(false)
+    setFriendId('')
+    setFriendName('')
+  }
+  const openModal= async(friendIdd,friendNamee)=>{
+    setOpen(true)
+    setFriendId(friendIdd)
+    setFriendName(friendNamee)
+  }
 
   console.log(friendsList)
 
@@ -49,6 +63,7 @@ const FriendsWatchList = () => {
             <ul className="space-y-4">
               {friendsList && friendsList.length > 0 ? (
                 friendsList.map((friend, index) => (
+                  <>
                   <li
                     key={friend._id}
                     className="flex items-center p-4 bg-[#2A2A2A] rounded-lg hover:bg-[#3A3A3A] transition-all shadow-sm border border-gray-600"
@@ -60,10 +75,11 @@ const FriendsWatchList = () => {
                     >
                       {friend._id.username}'s WatchLists
                     </Link>
-                    <div className="ml-auto">
+                    <div onClick={()=>openModal(friend._id._id,friend._id.username)} className="ml-auto">
                       <IconBtn text="View" />
                     </div>
                   </li>
+                  </>
                 ))
               ) : (
                 <p className="text-center text-gray-400">No friends found.</p>
@@ -72,6 +88,11 @@ const FriendsWatchList = () => {
           </div>
         </div>
       </div>
+      {
+        open && (<FriendsWatchListModal friendId={friendId} closeModal={closeModal} friendName={friendName}/>)
+      }
+
+
     </>
   );
 };

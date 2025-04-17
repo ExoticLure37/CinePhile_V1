@@ -13,7 +13,9 @@ const watchListSchema = new mongoose.Schema({
                 {
                     imdb_id: { type: String, required: true },
                     name: { type: String, required: true },
-                    imageUrl: { type: String, default: null }
+                    imageUrl: { type: String, default: null },
+                    url: {type:String, default:null},
+                    trailer: {type:String,default:null}
                 }
             ]
         }

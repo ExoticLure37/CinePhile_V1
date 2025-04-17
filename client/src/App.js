@@ -12,6 +12,9 @@ import Watchlist from "./pages/Watchlist";
 import FriendsWatchList from "./pages/FriendsWatchList";
 import Movies from "./pages/Movies";
 import TVShows from "./pages/TVShows";
+import Contact from "./pages/Contact";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
@@ -28,7 +31,19 @@ function App() {
         <Route path="/dashboard" element={<Profile />} />
         <Route path="/user/verify/:token" element={<VerifyEmail />} />
         <Route path="/user/verify/:newEmail/:userId" element={<VerifyUpdatedEmail />} />
+        <Route path="/contact" element={<Contact/>}/>
       </Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 const userModel = require("../models/userModel");
 const tempUserModel = require("../models/tempUserModel");
+const contactModel = require("../models/contactModel");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -595,10 +596,27 @@ const getProfile = async (req, res) => {
   }
 }
 
+const contact = async (req, res) => {
+  const { name, email, message } = req.body;
+
+  // Validate the data
+  if (!name || !email || !message) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  try {
+    const newContact = new contactModel({ name, email, message });
+    await newContact.save();
+    res.status(201).json({ message: "Message sent successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 module.exports = {
   register, login, resetPassword, verifyToken,
   addFriend, acceptFriendRequest, rejectFriendRequest,
   cancelFriendRequest, removeFriend, searchFriend, getPendingRequest, getRequestSent, getFriends, updatePersonalDetails
-  , updateEmail, verifyEmail, updatePassword, updateUsername, getProfile
+  , updateEmail, verifyEmail, updatePassword, updateUsername, getProfile,contact,
 };

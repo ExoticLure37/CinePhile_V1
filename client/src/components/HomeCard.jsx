@@ -33,11 +33,13 @@ const HomeCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
 
     const addToWatchlist = async (id) => {
         try {
+            //console.log("HELLO")
             console.log(media)
             const res = await axios.patch(`http://localhost:5000/watchlist/addToWatchlist/${id}`, { item: media }, { withCredentials: true });
             console.log(res.data);
         }
         catch (err) {
+            console.log("ERROR")
             console.log(err.response.data);
         }
     }

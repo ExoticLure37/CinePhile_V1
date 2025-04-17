@@ -1,6 +1,6 @@
 const express = require("express");
 const { authUser } = require("../middleware/authMiddleware");
-const { register, login, resetPassword, verifyToken, addFriend, getFriends, acceptFriendRequest, rejectFriendRequest, cancelFriendRequest, removeFriend, searchFriend, getPendingRequest, getRequestSent, updatePersonalDetails, updateEmail, verifyEmail, updatePassword, updateUsername, getProfile } = require("../controllers/userControllers");
+const { register, login, resetPassword, verifyToken, addFriend, getFriends, acceptFriendRequest, rejectFriendRequest, cancelFriendRequest, removeFriend, searchFriend, getPendingRequest, getRequestSent, updatePersonalDetails, updateEmail, verifyEmail, updatePassword, updateUsername, getProfile,contact, } = require("../controllers/userControllers");
 
 const router = express.Router();
 
@@ -24,5 +24,6 @@ router.patch("/updatePassword", authUser, updatePassword);
 router.patch("/updateUsername", authUser, updateUsername);
 router.get("/getProfile/:userId", getProfile);
 router.get("/verify/:newEmail/:userId", verifyEmail);
+router.post("/contact",authUser,contact);
 
 module.exports = router;

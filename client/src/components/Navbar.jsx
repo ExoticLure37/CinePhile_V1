@@ -113,7 +113,7 @@ const Navbar = () => {
                 <button className="hover:text-yellow-400">My List</button>
               </li>
               <li>
-                <button className="hover:text-yellow-400">Contact</button>
+                <Link to="/contact" className="hover:text-yellow-400">Contact</Link>
               </li>
               <li>
                 <button className="hover:text-yellow-400">Settings</button>

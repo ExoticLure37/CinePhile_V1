@@ -17,6 +17,7 @@ const Friends = () => {
 
   useEffect(() => {
     getFriends();
+    //console.log(friendsList)
   }, [])
 
   const getFriends = async () => {

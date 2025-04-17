@@ -181,10 +181,12 @@ const addItemToWatchList = async (req, res) => {
         const newItem = {
             imdb_id: req.body.item.id,
             name: req.body.item.originalTitle,
-            imageUrl: req.body.item.primaryImage
+            imageUrl: req.body.item.primaryImage,
+            url: req.body.item.url,
+            trailer: req.body.item.trailer
         };
 
-        if (!newItem || !newItem.imdb_id || !newItem.name) {
+        if (!newItem || !newItem.imdb_id || !newItem.name || !newItem.url || !newItem.trailer)  {
             return res.status(400).json({ message: "Incomplete item details." });
         }
 
@@ -210,12 +212,12 @@ const addItemToWatchList = async (req, res) => {
         // Push new item
         targetWatchlist.items.push(newItem);
         await updatedWatchList.save();
-
         return res.status(200).json({
             updatedItems: targetWatchlist.items,
             message: "Item added successfully."
         });
     } catch (err) {
+        console.log("CONTROLLLER ERROR")
         return res.status(500).json({ error: true, message: err.message });
     }
 };
@@ -223,6 +225,7 @@ const addItemToWatchList = async (req, res) => {
 // Remove an item from a specific watchlist
 const removeItemFromWatchList = async (req, res) => {
     try {
+        //console.log("HELLO")
         const userId = req.user._id;
         const watchlistId = req.params.watchlist_id;
         const itemId = req.params.item_id;
@@ -249,6 +252,62 @@ const removeItemFromWatchList = async (req, res) => {
 };
 
 
+
+const getFriendsWatchList = async (req, res) => {
+    try {
+        const friendId = req.params._id;
+
+        const watchList = await watchListModel.findById(friendId);
+        //console.log(watchList)
+        console.log("hello")
+
+        //if not found
+        if (!watchList) {
+            return res.status(404).json({ message: "No watchlists found for this user." });
+        }
+
+        return res.status(200).json({
+            watchlists: watchList.watchlists,
+            message: "success"
+        });
+    } catch (err) {
+        return res.status(500).json({ error: true, message: err.message });
+    }
+};
+
+
+const getFriendWatchListItems = async (req, res) => {
+    try {
+        const userId = req.params._id;
+        const watchlistId = req.params.watchlist_id;
+
+        console.log(userId)
+        console.log(watchlistId)
+
+
+        const watchList = await watchListModel.findOne(
+            { _id: userId, "watchlists._id": watchlistId },
+            { "watchlists.$": 1 }
+        );
+
+        if (!watchList || !watchList.watchlists.length) {
+            return res.status(404).json({ message: "Watchlist not found." });
+        }
+
+        const items = watchList.watchlists[0].items;
+
+        return res.status(200).json({
+            items,
+            message: "Items fetched successfully."
+        });
+    } catch (err) {
+        return res.status(500).json({ error: true, message: err.message });
+    }
+};
+
+
+
+
 /*
 
 // Update item metadata (e.g., mark series episodes as watched)
@@ -268,5 +327,6 @@ const markEpisodeAsWatched = async () => { };
 
 module.exports = {
     createWatchList, renameWatchList, getAllWatchLists, deleteAllWatchLists, deleteWatchList,
-    getWatchListItems, addItemToWatchList, removeItemFromWatchList
+    getWatchListItems, addItemToWatchList, removeItemFromWatchList, getFriendsWatchList,
+    getFriendWatchListItems
 };
