@@ -51,8 +51,25 @@ const userSchema = new mongoose.Schema({
   dob: {
     type: Date
   },
+  watchlists: [{
+    watchlist_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Watchlist',
+      required: true,
+      index: true
+    },
+    title: {
+      type: String,
+      required: true,
+      maxlength: 50
+    },
+    owner: {
+      type: Boolean,
+      default: false
+    }
+  }],
   timeStamp: {
-    type : Date
+    type: Date
   }
 });
 

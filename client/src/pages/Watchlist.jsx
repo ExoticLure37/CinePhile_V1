@@ -106,7 +106,7 @@ function Watchlist() {
                                                 <FaEdit size={20} />
                                             </button>
                                             <button
-                                                onClick={() => deleteWatchlist(type._id)}
+                                                onClick={() => deleteWatchlist(type.watchlist_id)}
                                                 className="text-red-500 hover:text-red-400 transition transform hover:scale-110"
                                                 title="Delete Watchlist"
                                             >

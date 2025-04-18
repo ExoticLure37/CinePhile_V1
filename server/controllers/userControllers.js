@@ -561,9 +561,9 @@ const updateUsername = async (req, res) => {
       .status(500)
       .json({ message: "Internal Serve Error", error: err.message });
   }
-//   catch (err) {
-//     return res.status(500).json({ message: "Internal Serve Error", error: err.message })
-//   }
+  //   catch (err) {
+  //     return res.status(500).json({ message: "Internal Serve Error", error: err.message })
+  //   }
 }
 
 const getProfile = async (req, res) => {
@@ -618,5 +618,5 @@ module.exports = {
   register, login, resetPassword, verifyToken,
   addFriend, acceptFriendRequest, rejectFriendRequest,
   cancelFriendRequest, removeFriend, searchFriend, getPendingRequest, getRequestSent, getFriends, updatePersonalDetails
-  , updateEmail, verifyEmail, updatePassword, updateUsername, getProfile,contact,
+  , updateEmail, verifyEmail, updatePassword, updateUsername, getProfile,contact
 };

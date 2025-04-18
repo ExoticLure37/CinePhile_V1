@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+const userModel = require("../models/userModel");
 const watchListModel = require("../models/watchListModel");
 
 // Create a new watchlist
@@ -9,38 +10,42 @@ const createWatchList = async (req, res) => {
 
         const title = req.params.title;
 
-        // console.log(userId);
 
         if (!title)
             return res.status(400).json({ message: "Title field is required " });
 
-        //check if the user already has a watchlist document
-        let watchList = await watchListModel.findById(userId);
+        const watchlist = await watchListModel.create({ title, owner: userId, items: [] });
 
-        if (!watchList) {
-            //create a new document if none exists
-            watchList = await watchListModel.create({
-                _id: userId,
-                watchlists: [{ title, items: [] }]
-            });
-        } else {
-
-            const existingTitle = watchList.watchlists.find(wl => wl.title.toLowerCase() === title.toLowerCase());
-
-            if (existingTitle) {
-                return res.status(400).json({ error: true, message: "Title already exists in the watchlist" });
+        const user = await userModel.findByIdAndUpdate(
+            userId,
+            {
+                $push: {
+                    watchlists: {
+                        watchlist_id: watchlist._id,
+                        title,
+                        owner: true
+                    }
+                }
+            },
+            {
+                new: true,
+                projection: { watchlists: 1, _id: 0 }
             }
-
-            //add a new title to the existing watchlist
-            watchList.watchlists.push({ title, items: [] });
-            await watchList.save();
-        }
+        );
 
         return res.status(200).json({
-            watchlists: watchList.watchlists,
+            watchlists: user.watchlists,
             message: "Watchlist added successfully."
         });
+
     } catch (err) {
+        if (err.code === 11000) {
+            return res.status(409).json({
+                error: true,
+                message: "Watchlist with this title already exists for the user"
+            });
+        }
+
         return res.status(500).json({ error: true, message: err.message });
     }
 };
@@ -50,27 +55,39 @@ const createWatchList = async (req, res) => {
 const renameWatchList = async (req, res) => {
     try {
         const userId = req.user._id;
-        const watchlistId = req.params.watchlist_id;
+        const watchlist_id = req.params.watchlist_id;
         const newTitle = req.params.new_title;
 
         if (!newTitle) {
             return res.status(400).json({ message: "New title is required." });
         }
 
-        const updatedWatchList = await watchListModel.findOneAndUpdate(
-            { _id: userId, "watchlists._id": watchlistId },
-            { $set: { "watchlists.$.title": newTitle } },
+        const watchlist = await watchListModel.findByIdAndUpdate(
+            watchlist_id,
+            { title: newTitle },
             { new: true }
         );
 
-        if (!updatedWatchList) {
-            return res.status(404).json({ message: "Watchlist not found." });
+        await userModel.updateMany(
+            { 'watchlists.watchlist_id': watchlist_id },
+            { $set: { 'watchlists.$.title': newTitle } }
+        );
+
+        const updatedUser = await userModel.findById(
+            userId,
+            { watchlists: 1, _id: 0 }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found." });
         }
 
         return res.status(200).json({
-            watchlists: updatedWatchList.watchlists,
+            watchlists: updatedUser.watchlists,
             message: "Watchlist title renamed successfully."
         });
+
+
     } catch (err) {
         return res.status(500).json({ error: true, message: err.message });
     }
@@ -82,59 +99,91 @@ const getAllWatchLists = async (req, res) => {
     try {
         const userId = req.user._id;
 
-        const watchList = await watchListModel.findById(userId);
+        // Fetch the user's watchlists
+        const userWatchlists = await userModel.findById(userId)
+            .select('watchlists')
+            .lean();
 
-        //if not found
-        if (!watchList) {
-            return res.status(404).json({ message: "No watchlists found for this user." });
+        // Check if userWatchlists or watchlists are undefined or null
+        if (!userWatchlists || !userWatchlists.watchlists) {
+            return res.status(404).json({ message: "No watchlists found." });
         }
 
+        // If watchlists array is empty
+        if (userWatchlists.watchlists.length === 0) {
+            return res.status(404).json({ message: "No watchlists found." });
+        }
+
+        console.log(userWatchlists.watchlists); // Check the watchlists content
         return res.status(200).json({
-            watchlists: watchList.watchlists,
+            watchlists: userWatchlists.watchlists,
             message: "success"
         });
+
     } catch (err) {
         return res.status(500).json({ error: true, message: err.message });
     }
 };
 
-//Delete an entire watchlist document
+
+//Delete all  watchlists  for a user 
 const deleteAllWatchLists = async (req, res) => {
     try {
         const userId = req.user._id;
 
-        const deletedDoc = await watchListModel.findByIdAndDelete(userId);
+        const result = await watchListModel.deleteMany({ owner: userId });
 
-        if (!deletedDoc) {
-            return res.status(404).json({ message: "Watchlist document not found." });
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: "No watchlists found to delete." });
         }
 
-        res.status(200).json({ message: "Deleted successfully" });
+        await userModel.updateOne(
+            { _id: userId },
+            { $pull: { watchlists: { owner: true } } }
+        );
 
+
+        res.status(200).json({ message: "Deleted successfully", deletedCount: result.deletedCount });
 
     } catch (err) {
         res.status(500).json({ error: true, message: err.message });
     }
 };
 
-//Delete a specific watchlist from user's document
+
+//Delete a specific watchlist 
 const deleteWatchList = async (req, res) => {
     try {
+
         const userId = req.user._id;
         // const userId = "67e78282d87216cdd5e5cfed";
-        const watchlistId = req.params.watchlist_id;
+        const watchlist_id = req.params.watchlist_id;
 
-        // console.log(userId);
 
-        const updatedDocument = await watchListModel.findOneAndUpdate(
-            { _id: userId },
-            { $pull: { watchlists: { _id: watchlistId } } },
-            { new: true }
+        await watchListModel.findByIdAndDelete(watchlist_id);
+
+        //remove references from all users
+        await userModel.updateMany(
+            { 'watchlists.watchlist_id': new mongoose.Types.ObjectId(watchlist_id) },
+            {
+                $pull: {
+                    watchlists: {
+                        watchlist_id: new mongoose.Types.ObjectId(watchlist_id)
+                    }
+                }
+            }
+        );
+
+
+        const updatedDocument = await userModel.findById(
+            userId,
+            { watchlists: 1, _id: 0 }
         );
 
         if (!updatedDocument) {
-            return res.status(404).json({ message: "Watchlist doc not found." });
+            return res.status(404).json({ message: "User not found." });
         }
+
 
         return res.status(200).json({
             message: "Watchlist deleted successfully.",
@@ -146,25 +195,22 @@ const deleteWatchList = async (req, res) => {
 };
 
 //get items in a specific watchlist
-const getWatchListItems = async (req, res) => {
+const getWatchList = async (req, res) => {
     try {
         const userId = req.user._id;
-        const watchlistId = req.params.watchlist_id;
+        const watchlist_id = req.params.watchlist_id;
 
 
-        const watchList = await watchListModel.findOne(
-            { _id: userId, "watchlists._id": watchlistId },
-            { "watchlists.$": 1 }
-        );
+        const watchList = await watchListModel.findById(watchlist_id)
+            .populate('owner', 'username')
+            .populate('members.user', 'username');
 
-        if (!watchList || !watchList.watchlists.length) {
+        if (!watchList) {
             return res.status(404).json({ message: "Watchlist not found." });
         }
 
-        const items = watchList.watchlists[0].items;
-
         return res.status(200).json({
-            items,
+            watchList,
             message: "Items fetched successfully."
         });
     } catch (err) {
@@ -177,7 +223,8 @@ const getWatchListItems = async (req, res) => {
 const addItemToWatchList = async (req, res) => {
     try {
         const userId = req.user._id;
-        const watchlistId = req.params.watchlist_id;
+        const watchlist_id = req.params.watchlist_id;
+
         const newItem = {
             imdb_id: req.body.item.id,
             name: req.body.item.originalTitle,
@@ -190,30 +237,27 @@ const addItemToWatchList = async (req, res) => {
             return res.status(400).json({ message: "Incomplete item details." });
         }
 
-        const updatedWatchList = await watchListModel.findOne({ _id: userId });
+        const watchList = await watchListModel.findById(watchlist_id);
 
-        if (!updatedWatchList) {
-            return res.status(404).json({ message: "Watchlist not found." });
-        }
-
-        const targetWatchlist = updatedWatchList.watchlists.find(w => w._id.toString() === watchlistId);
-
-        if (!targetWatchlist) {
+        if (!watchList) {
             return res.status(404).json({ message: "Watchlist not found." });
         }
 
         // Check for duplicate imdb_id
-        const alreadyExists = targetWatchlist.items.some(item => item.imdb_id === newItem.imdb_id);
+        const alreadyExists = watchList.items.some(item => item.imdb_id === newItem.imdb_id);
 
         if (alreadyExists) {
             return res.status(400).json({ message: "Item already exists in the watchlist." });
         }
 
         // Push new item
-        targetWatchlist.items.push(newItem);
-        await updatedWatchList.save();
+        // targetWatchlist.items.push(newItem);
+        // await updatedWatchList.save();
+        watchList.items.push(newItem);
+        await watchList.save();
+
         return res.status(200).json({
-            updatedItems: targetWatchlist.items,
+            updatedItems: watchList.items,
             message: "Item added successfully."
         });
     } catch (err) {
@@ -227,12 +271,12 @@ const removeItemFromWatchList = async (req, res) => {
     try {
         //console.log("HELLO")
         const userId = req.user._id;
-        const watchlistId = req.params.watchlist_id;
-        const itemId = req.params.item_id;
+        const watchlist_id = req.params.watchlist_id;
+        const item_id = req.params.item_id;
 
-        const updatedWatchList = await watchListModel.findOneAndUpdate(
-            { _id: userId, "watchlists._id": watchlistId },
-            { $pull: { "watchlists.$.items": { _id: itemId } } },
+        const updatedWatchList = await watchListModel.findByIdAndUpdate(
+            watchlist_id,
+            { $pull: { "items": { _id: item_id } } },
             { new: true }
         );
 
@@ -240,9 +284,8 @@ const removeItemFromWatchList = async (req, res) => {
             return res.status(404).json({ message: "Watchlist or item not found." });
         }
 
-        const updatedItems = updatedWatchList.watchlists.find(w => w._id.toString() === watchlistId).items;
         return res.status(200).json({
-            updatedItems,
+            updatedItems: updatedWatchList.items,
             message: "Item removed successfully."
         });
 
@@ -251,6 +294,104 @@ const removeItemFromWatchList = async (req, res) => {
     }
 };
 
+// for sharing
+const addMember = async (req, res) => {
+
+    try {
+        const { watchlist_id } = req.params;
+        const { memberId, permissions } = req.body;
+
+        const watchlist = await watchListModel.findById(watchlist_id);
+
+        if (watchlist.members.some(m => m.user.toString() === memberId)) {
+            return res.status(400).json({ error: true, message: "Member already exists" });
+        }
+
+        const updatedDoc = await watchListModel.findByIdAndUpdate(
+            watchlist_id,
+            { $push: { members: { user: memberId, permissions } } },
+            { new: true }
+        );
+
+        await userModel.findByIdAndUpdate(memberId,
+            {
+                $push: {
+                    watchlists: {
+                        watchlist_id: watchlist._id,
+                        title: watchlist.title,
+                        owner: false
+                    }
+                }
+            }
+        );
+
+        return res.status(200).json({ message: "Added successfully", members: updatedDoc.members });
+    } catch (err) {
+        return res.status(500).json({ error: true, message: err.message });
+    }
+
+};
+
+
+const rateItem = async (req, res) => {
+    try {
+        const { watchlist_id, item_id } = req.params;
+        const userId = req.user._id;
+        const { value } = req.body;
+
+        if (!value || value < 1 || value > 10) {
+            return res.status(400).json({ error: true, message: "Rating must be between 1 and 5" });
+        }
+
+        const watchlist = await watchListModel.findOne({
+            _id: watchlist_id,
+            $or: [
+                { owner: userId },
+                { 'members.user_id': userId }
+            ]
+        });
+
+        if (!watchlist) {
+            return res.status(404).json({ error: true, message: "Watchlist not found / access denied" });
+        }
+
+        const itemIndex = watchlist.items.findIndex(item => item._id.toString() === item_id);
+        if (itemIndex === -1) {
+            return res.status(404).json({ error: true, message: "Item not found in watchlist" });
+        }
+
+        const existingRatingIndex = watchlist.items[itemIndex].ratings.findIndex(r => r.user.toString() === userId.toString());
+
+        if (existingRatingIndex !== -1) {
+            watchlist.items[itemIndex].ratings[existingRatingIndex].value = value;
+            watchlist.items[itemIndex].ratings[existingRatingIndex].ratedAt = new Date();
+        } else {
+            watchlist.items[itemIndex].ratings.push({
+                user: userId,
+                value,
+                ratedAt: new Date()
+            });
+        }
+
+        const ratings = watchlist.items[itemIndex].ratings;
+        const sum = ratings.reduce((acc, r) => acc + r.value, 0);
+        const avg = ratings.length ? sum / ratings.length : 0;
+        watchlist.items[itemIndex].avg_rating = avg;
+
+
+        await watchlist.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Rating saved successfully",
+            item: watchlist.items[itemIndex]
+        });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: true, message: err.message });
+    }
+};
 
 
 const getFriendsWatchList = async (req, res) => {
@@ -328,5 +469,6 @@ const markEpisodeAsWatched = async () => { };
 module.exports = {
     createWatchList, renameWatchList, getAllWatchLists, deleteAllWatchLists, deleteWatchList,
     getWatchListItems, addItemToWatchList, removeItemFromWatchList, getFriendsWatchList,
-    getFriendWatchListItems
+    getFriendWatchListItems,
+    getWatchList, addItemToWatchList, removeItemFromWatchList, addMember, rateItem
 };

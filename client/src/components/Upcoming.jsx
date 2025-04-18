@@ -4,20 +4,60 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import axios from "axios";
-import HomeCard from "../components/HomeCard";
+import HomeCard from "./HomeCard";
 
-function Trending({ flag }) {
-    const [popularMovies, setPopularMovies] = useState([]);
+function Upcoming({ flag }) {
+    const [upcomingMovies, setUpcomingMovies] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const itemsPerPage = 6;
     const [activeModalId, setActiveModalId] = useState(null);
 
     useEffect(() => {
-        fetchData();
+        fetchUpcoming();
     }, []);
 
+    const fetchUpcoming = async () => {
+        try {
+            let response;
+            const apiKey = process.env.REACT_APP_RAPIDAPI_KEY;
+            const apiHost = process.env.REACT_APP_RAPIDAPI_HOST;
+            if (flag) {
+                response = await axios.get('https://imdb236.p.rapidapi.com/imdb/upcoming-releases', {
+                    params: {
+                        countryCode: 'IN',
+                        type: 'MOVIE',
+                    },
+                    headers: {
+                        'x-rapidapi-key': `${apiKey}`,
+                        'x-rapidapi-host': `${apiHost}`,
+                    },
+                });
+            }
+            else {
+                response = await axios.get('https://imdb236.p.rapidapi.com/imdb/upcoming-releases', {
+                    params: {
+                        countryCode: 'US',
+                        type: 'TV',
+                    },
+                    headers: {
+                        'x-rapidapi-key': `${apiKey}`,
+                        'x-rapidapi-host': `${apiHost}`,
+                    },
+                });
+            }
+
+
+            const allTitles = response.data.flatMap(group => group.titles);
+
+            // Slice if needed
+            setUpcomingMovies(allTitles.slice(0, 30));
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     const handleNext = () => {
-        if (currentIndex + itemsPerPage < popularMovies.length) {
+        if (currentIndex + itemsPerPage < upcomingMovies.length) {
             setCurrentIndex((prev) => prev + itemsPerPage);
         }
     };
@@ -28,44 +68,10 @@ function Trending({ flag }) {
         }
     };
 
-    const fetchData = async () => {
-        try {
-            // console.log(flag);
-            let response = null;
-            const apiKey = process.env.REACT_APP_RAPIDAPI_KEY;
-            const apiHost = process.env.REACT_APP_RAPIDAPI_HOST;
-            if (flag) {
-                response = await axios.get(
-                    "https://imdb236.p.rapidapi.com/imdb/most-popular-movies",
-                    {
-                        headers: {
-                            "x-rapidapi-key": `${apiKey}`,
-                            "x-rapidapi-host": `${apiHost}`
-                        }
-                    }
-                );
-            }
-            else {
-                response = await axios.get('https://imdb236.p.rapidapi.com/imdb/most-popular-tv', {
-                    headers: {
-                        'x-rapidapi-key': `${apiKey}`,
-                        'x-rapidapi-host': `${apiHost}`
-                    }
-                });
-            }
-
-            // console.log(response.data);
-
-            setPopularMovies(response.data.slice(0, 30)); // Store only 20 results
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
     const navigate = useNavigate();
 
     const handleNavigate = () => {
-        navigate("/trending", { state: { f: flag } });
+        navigate("/upcoming", { state: { f: flag } });
     };
 
     return (
@@ -74,7 +80,7 @@ function Trending({ flag }) {
                 onClick={handleNavigate}
                 className="font-bold text-4xl hover:text-5xl text-left transition-all duration-200"
             >
-                Trending <ArrowForwardIosIcon />
+                Upcoming <ArrowForwardIosIcon />
             </button>
 
             <div className="flex items-center gap-2">
@@ -87,7 +93,7 @@ function Trending({ flag }) {
                 </button>
 
                 <div className="flex gap-8 transition-all duration-300">
-                    {popularMovies
+                    {upcomingMovies
                         .slice(currentIndex, currentIndex + itemsPerPage)
                         .map((item) => (
                             <HomeCard
@@ -111,7 +117,7 @@ function Trending({ flag }) {
 
                 <button
                     onClick={handleNext}
-                    disabled={currentIndex + itemsPerPage >= popularMovies.length}
+                    disabled={currentIndex + itemsPerPage >= upcomingMovies.length}
                     className="text-white hover:scale-125 transition-all duration-300 p-2 disabled:opacity-30"
                 >
                     <ChevronRightIcon fontSize="large" />
@@ -121,4 +127,4 @@ function Trending({ flag }) {
     )
 }
 
-export default Trending
+export default Upcoming
