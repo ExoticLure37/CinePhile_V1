@@ -28,6 +28,8 @@ function TopMoviesShows({ flag }) {
     }
   };
 
+  // Fetching the movie data
+
   const fetchData = async () => {
     try {
       let response;
