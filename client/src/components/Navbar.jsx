@@ -24,6 +24,8 @@ const Navbar = () => {
   const fetchMovieByTitle = async () => {
     try {
       setIsLoading(true);
+      const apiKey = process.env.REACT_APP_RAPIDAPI_KEY;
+      const apiHost = process.env.REACT_APP_RAPIDAPI_HOST;
       const response = await axios.get(
         "https://imdb236.p.rapidapi.com/imdb/search",
         {
@@ -34,10 +36,9 @@ const Navbar = () => {
             sortField: "id",
           },
           headers: {
-            "x-rapidapi-key":
-              "ac756fd330msh8c169a5cfb93ae0p1fee36jsn17b73def8bef",
-            "x-rapidapi-host": "imdb236.p.rapidapi.com",
-          },
+            "x-rapidapi-key": `${apiKey}`,
+            "x-rapidapi-host": `${apiHost}`
+          }
         }
       );
       setSearchResults(response.data.results);

@@ -99,10 +99,14 @@ const getAllWatchLists = async (req, res) => {
     try {
         const userId = req.user._id;
 
+        // console.log(userId)
+
         // Fetch the user's watchlists
         const userWatchlists = await userModel.findById(userId)
             .select('watchlists')
             .lean();
+
+        // console.log(userWatchlists)
 
         // Check if userWatchlists or watchlists are undefined or null
         if (!userWatchlists || !userWatchlists.watchlists) {
@@ -114,7 +118,7 @@ const getAllWatchLists = async (req, res) => {
             return res.status(404).json({ message: "No watchlists found." });
         }
 
-        console.log(userWatchlists.watchlists); // Check the watchlists content
+        // console.log(userWatchlists.watchlists); // Check the watchlists content
         return res.status(200).json({
             watchlists: userWatchlists.watchlists,
             message: "success"
@@ -200,10 +204,13 @@ const getWatchList = async (req, res) => {
         const userId = req.user._id;
         const watchlist_id = req.params.watchlist_id;
 
+        // console.log(watchlist_id)
 
         const watchList = await watchListModel.findById(watchlist_id)
             .populate('owner', 'username')
-            .populate('members.user', 'username');
+            .populate('members.user_id', 'username');
+
+        // console.log(watchList)
 
         if (!watchList) {
             return res.status(404).json({ message: "Watchlist not found." });
@@ -224,6 +231,8 @@ const addItemToWatchList = async (req, res) => {
     try {
         const userId = req.user._id;
         const watchlist_id = req.params.watchlist_id;
+
+        // console.log(watchlist_id)
 
         const newItem = {
             imdb_id: req.body.item.id,
