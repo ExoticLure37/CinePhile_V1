@@ -231,7 +231,7 @@ const addItemToWatchList = async (req, res) => {
     try {
         const userId = req.user._id;
         const watchlist_id = req.params.watchlist_id;
-        console.log(req.body.item)
+        // console.log(req.body.item)
         const newItem = {
             imdb_id: req.body.item.id,
             name: req.body.item.originalTitle,
@@ -240,7 +240,9 @@ const addItemToWatchList = async (req, res) => {
             trailer: req.body.item.trailer
         };
 
-        if (!newItem || !newItem.imdb_id || !newItem.name || !newItem.url || !newItem.trailer)  {
+        // console.log(newItem)
+
+        if (!newItem || !newItem.imdb_id || !newItem.name || !newItem.url)  {
             return res.status(400).json({ message: "Incomplete item details." });
         }
 
@@ -280,6 +282,9 @@ const removeItemFromWatchList = async (req, res) => {
         const userId = req.user._id;
         const watchlist_id = req.params.watchlist_id;
         const item_id = req.params.item_id;
+
+        // console.log(watchlist_id);
+        // console.log(item_id);
 
         const updatedWatchList = await watchListModel.findByIdAndUpdate(
             watchlist_id,

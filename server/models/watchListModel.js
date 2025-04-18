@@ -13,20 +13,18 @@ const watchlistSchema = new mongoose.Schema({
         required: true,
         index: true
     },
-    watchlists: [
-        {
-            title: { type: String, required: true },
-            items: [
-                {
-                    imdb_id: { type: String, required: true },
-                    name: { type: String, required: true },
-                    imageUrl: { type: String, default: null },
-                    url: {type:String, default:null},
-                    trailer: {type:String,default:null}
-                }
-            ]
+    members: [{
+        user_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User', 
+            index: true
+        },
+        permissions: {
+            canEdit: Boolean,
+            canAdd: Boolean,
+            canRemove: Boolean
         }
-    ],
+    }],
     items: [{
         imdb_id: { type: String, required: true },
         name: { type: String, required: true },

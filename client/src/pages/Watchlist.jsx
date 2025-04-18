@@ -50,9 +50,9 @@ function Watchlist() {
 
     const navigate = useNavigate();
 
-    const handleNavigate = (id) => {
-        console.log(id)
-        navigate("/manageWatchlist", { state: { wt : id } });
+    const handleNavigate = (watchlist) => {
+        console.log(watchlist)
+        navigate("/manageWatchlist", { state: { wt : watchlist } });
     };
 
 
@@ -92,7 +92,7 @@ function Watchlist() {
 
                                         <div className="flex gap-4">
                                             <button
-                                                onClick={() => handleNavigate(type.watchlist_id)}
+                                                onClick={() => handleNavigate(type)}
                                                 className="text-yellow-400 hover:text-yellow-300 transition transform hover:scale-110"
                                                 title="Edit Watchlist"
                                             >
