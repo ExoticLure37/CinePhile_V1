@@ -12,6 +12,8 @@ const MediaCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
     const isModalOpen = activeModalId === mediaId;
     const [feedback, setFeedback] = useState({ type: null, message: "" });
     const [watchlists, setWatchlists] = useState([]);
+    const modalRef = useRef(null);
+
 
     const handlePlusClick = (e) => {
         e.stopPropagation();
@@ -36,6 +38,7 @@ const MediaCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
 
     const addToWatchlist = async (id) => {
         setFeedback({ type: null, message: "" });
+        // console.log(id)
         try {
             await axios.patch(
                 `http://localhost:5000/watchlist/addToWatchlist/${id}`,
@@ -56,7 +59,10 @@ const MediaCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
     useEffect(() => {
         getAllWatchList();
         const handleClickOutside = (e) => {
-            if (!plusButtonRef.current?.contains(e.target)) {
+            if (
+                !plusButtonRef.current?.contains(e.target) &&
+                !modalRef.current?.contains(e.target)
+            ) {
                 setActiveModalId(null);
             }
         };
@@ -112,6 +118,7 @@ const MediaCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
             {/* Watchlist Modal */}
             {isModalOpen && (
                 <div
+                    ref={modalRef}
                     className="absolute z-[9999] w-64 rounded-xl border border-gray-700 bg-gray-900 shadow-2xl p-4 animate-slide-up"
                     style={{
                         top: modalPos.top,
@@ -123,7 +130,7 @@ const MediaCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
                         {watchlists.map((wl) => (
                             <li
                                 key={wl._id}
-                                onClick={() => addToWatchlist(wl._id)}
+                                onClick={() => addToWatchlist(wl.watchlist_id)}
                                 className="px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-lg cursor-pointer transition"
                             >
                                 {wl.title}

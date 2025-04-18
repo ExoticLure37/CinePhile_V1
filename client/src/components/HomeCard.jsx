@@ -13,7 +13,9 @@ const HomeCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
     const [showWatchlistModal, setShowWatchlistModal] = useState(false);
     const [modalPos, setModalPos] = useState({ top: 0, left: 0 });
     const plusButtonRef = useRef(null);
+    const [feedback, setFeedback] = useState({ type: null, message: "" });
     const isModalOpen = activeModalId === mediaId;
+    const [watchlists, setWatchlists] = useState([]);
 
     const handlePlusClick = (e) => {
         e.stopPropagation();
@@ -44,7 +46,17 @@ const HomeCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
 
     useEffect(()=>{
         // console.log(media)
+        getAllWatchList();
     },[])
+
+    const getAllWatchList = async () => {
+        try {
+            const res = await axios.get("http://localhost:5000/watchlist/", { withCredentials: true });
+            setWatchlists(res.data.watchlists);
+        } catch (err) {
+            console.log(err.response.data);
+        }
+    };
 
     // Close on outside click
     useEffect(() => {
@@ -148,7 +160,9 @@ const HomeCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
                             {/*<img className="h-[70vh] w-full" src={media.primaryImage} alt="" />*/}
                             <button
                                 className="absolute top-3 right-4 text-white font-bold text-xl z-10 hover:text-red-600 transition"
-                                onClick={() => setOpen(false)}
+                                onClick={() => {setOpen(false);
+                                    setActiveModalId(null);
+                                }}
                             >
                                 ✕
                             </button>
@@ -179,9 +193,9 @@ const HomeCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
 
                                     {/* Tooltip */}
                                     {showTooltip && (
-                                        <div className="absolute left-[18vh] -translate-x-[80%] top-[110%] bg-black text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-50">
+                                        <button onClick={() => setShowWatchlistModal(mediaId)} className="absolute left-[18vh] -translate-x-[80%] top-[110%] bg-black text-white text-xs px-2 py-1 rounded-md shadow-md whitespace-nowrap z-50">
                                             Add to Watchlist
-                                        </div>
+                                        </button>
                                     )}
                                 </div>
                             </div>
@@ -215,6 +229,45 @@ const HomeCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
                     </div>
                 )
             }
+
+
+{isModalOpen && (
+                <div
+                    className="absolute z-[9999] w-64 rounded-xl border border-gray-700 bg-gray-900 shadow-2xl p-4 animate-slide-up"
+                    style={{
+                        top: modalPos.top,
+                        left: modalPos.left,
+                    }}
+                >
+                    <h4 className="text-white font-semibold text-sm mb-3">Select Watchlist</h4>
+                    <ul className="space-y-1 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
+                        {watchlists.map((wl) => (
+                            <li
+                                key={wl._id}
+                                onClick={() => addToWatchlist(wl._id)}
+                                className="px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded-lg cursor-pointer transition"
+                            >
+                                {wl.title}
+                            </li>
+                        ))}
+                    </ul>
+
+                    <div className="mt-4 pt-3 text-right border-t border-gray-700 relative">
+                        {feedback.type && (
+                            <div className={`absolute top-[-2.5rem] right-0 px-4 py-2 rounded-md text-sm font-semibold shadow-lg transition-all animate-slide-down
+                            ${feedback.type === "success" ? "bg-green-600 text-white" : "bg-red-600 text-white"}`}>
+                                {feedback.message}
+                            </div>
+                        )}
+                        <button
+                            onClick={() => setActiveModalId(null)}
+                            className="text-xs text-red-400 hover:text-red-300 transition"
+                        >
+                            ✕ Close
+                        </button>
+                    </div>
+                </div>
+            )}
 
             
         </>

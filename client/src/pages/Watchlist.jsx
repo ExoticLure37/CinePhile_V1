@@ -26,6 +26,7 @@ function Watchlist() {
         try {
             const res = await axios.get("http://localhost:5000/watchlist/", { withCredentials: true });
             setWatchlists(res.data.watchlists);
+            // console.log(res.data.watchlists);
         } catch (err) {
             console.log(err.response?.data);
         }
@@ -50,7 +51,7 @@ function Watchlist() {
         }
     }
 
-    const getWatclistDetail = async (id) => {
+    const getWatchlistDetail = async (id) => {
         try {
             const res = await axios.get(`http://localhost:5000/watchlist/${id}`, { withCredentials: true });
             setCurrentWatchlist(res.data.items);
@@ -97,7 +98,7 @@ function Watchlist() {
                                             <button
                                                 onClick={() => {
                                                     setManageModal(true);
-                                                    getWatclistDetail(type._id);
+                                                    getWatchlistDetail(type.watchlist_id);
                                                     setWatchListId(type._id);
                                                 }}
                                                 className="text-yellow-400 hover:text-yellow-300 transition transform hover:scale-110"
@@ -169,7 +170,7 @@ function Watchlist() {
                                                 setActiveModalId={setActiveModalId}
                                                 watchListId={watchListId}
                                                 mediaId={item._id}
-                                                onRemove={() => getWatclistDetail(watchListId)}
+                                                onRemove={() => getWatchlistDetail(watchListId)}
                                             />
                                         ))}
                                     </div>
