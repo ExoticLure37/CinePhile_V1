@@ -42,13 +42,14 @@ const FriendsWatchListMovieModal = ({
     //console.log("WATCHLIST");
     //console.log(watchlists);
     //console.log(friendId)
+    console.log(movies)
   }, []);
 
   useEffect(() => {
     console.log("Updated movies:", movies);
-    if (movies) {
-      console.log(movies);
-    }
+    // if (movies) {
+    //   console.log(movies);
+    // }
   }, [movies]);
 
   return (

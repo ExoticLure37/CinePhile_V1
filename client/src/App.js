@@ -12,15 +12,12 @@ import Watchlist from "./pages/Watchlist";
 import FriendsWatchList from "./pages/FriendsWatchList";
 import Movies from "./pages/Movies";
 import TVShows from "./pages/TVShows";
-<<<<<<< HEAD
 import Contact from "./pages/Contact";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-=======
 import TrendingPage from "./pages/TrendingPage";
 import UpcomingPage from "./pages/UpcomingPage";
 import TopMoviesShowsPage from "./pages/TopMoviesShowsPage";
->>>>>>> f647f6f82c60167cfba17f8b3e84d118364e76fd
 
 function App() {
   return (
@@ -37,13 +34,10 @@ function App() {
         <Route path="/dashboard" element={<Profile />} />
         <Route path="/user/verify/:token" element={<VerifyEmail />} />
         <Route path="/user/verify/:newEmail/:userId" element={<VerifyUpdatedEmail />} />
-<<<<<<< HEAD
         <Route path="/contact" element={<Contact/>}/>
-=======
         <Route path="/trending" element={<TrendingPage />} />
         <Route path="/upcoming" element={<UpcomingPage />} />
         <Route path="/top-movies-shows" element={<TopMoviesShowsPage />} />
->>>>>>> f647f6f82c60167cfba17f8b3e84d118364e76fd
       </Routes>
       <ToastContainer
         position="top-right"

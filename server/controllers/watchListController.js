@@ -224,7 +224,7 @@ const addItemToWatchList = async (req, res) => {
     try {
         const userId = req.user._id;
         const watchlist_id = req.params.watchlist_id;
-
+        console.log(req.body.item)
         const newItem = {
             imdb_id: req.body.item.id,
             name: req.body.item.originalTitle,
@@ -467,8 +467,7 @@ const markEpisodeAsWatched = async () => { };
 
 
 module.exports = {
-    createWatchList, renameWatchList, getAllWatchLists, deleteAllWatchLists, deleteWatchList,
-    getWatchListItems, addItemToWatchList, removeItemFromWatchList, getFriendsWatchList,
+    createWatchList, renameWatchList, getAllWatchLists, deleteAllWatchLists, deleteWatchList, addItemToWatchList, removeItemFromWatchList, getFriendsWatchList,
     getFriendWatchListItems,
     getWatchList, addItemToWatchList, removeItemFromWatchList, addMember, rateItem
 };
