@@ -18,6 +18,7 @@ import "react-toastify/dist/ReactToastify.css";
 import TrendingPage from "./pages/TrendingPage";
 import UpcomingPage from "./pages/UpcomingPage";
 import TopMoviesShowsPage from "./pages/TopMoviesShowsPage";
+import ManageWatchlist from "./pages/ManageWatchlist";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         <Route path="/trending" element={<TrendingPage />} />
         <Route path="/upcoming" element={<UpcomingPage />} />
         <Route path="/top-movies-shows" element={<TopMoviesShowsPage />} />
+        <Route path="/manageWatchlist" element={<ManageWatchlist />} />
       </Routes>
       <ToastContainer
         position="top-right"
