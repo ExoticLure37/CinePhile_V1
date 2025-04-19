@@ -5,6 +5,7 @@ import LinkNavbar from '../components/LinkNavbar';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLocation } from 'react-router-dom';
+import EditIcon from '@mui/icons-material/Edit';
 
 function ManageWatchlist() {
     const [visibleResults, setVisibleResults] = useState(10);
@@ -12,6 +13,16 @@ function ManageWatchlist() {
     const [currentWatchlist, setCurrentWatchlist] = useState();
     const [showAddMemberModal, setShowAddMemberModal] = useState(false);
     const [friendList, setFriendList] = useState([]);
+
+    const [selectedFriend, setSelectedFriend] = useState(null);
+    const [permissions, setPermissions] = useState({
+        canEdit: false,
+        canAdd: false,
+        canRemove: false,
+    });
+    const [showPermissionModal, setShowPermissionModal] = useState(false);
+
+    const [memberList, setMemberList] = useState([]);
 
     const location = useLocation();
     const watchlist = location.state?.wt;
@@ -40,17 +51,38 @@ function ManageWatchlist() {
 
     const getWatchlistDetail = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/watchlist/${watchlist.watchlist_id}`, { withCredentials: true });
+            const res = await axios.get(`http://localhost:5000/watchlist/${watchlist.watchlist_id}`,
+
+                { withCredentials: true });
             setCurrentWatchlist(res.data.watchList.items);
-            // console.log(res.data.watchList.items);
+            // console.log(res.data);
+            setMemberList(res.data.watchList.members)
         } catch (err) {
             console.log(err);
         }
     };
 
     const addMember = async (id) => {
+        // console.log(selectedFriend._id._id)
         try {
-            await axios.post(`http://localhost:5000/watchlist/shared/add-member/${watchlist.watchlist_id}`,{})
+
+            if (showPermissionModal === "Add") {
+                await axios.patch(`http://localhost:5000/watchlist/shared/add-member/${watchlist.watchlist_id}`, {
+                    memberId: selectedFriend._id._id,
+                    permissions
+                },
+                    { withCredentials: true })
+            }
+            else {
+                await axios.patch(`http://localhost:5000/watchlist/shared/add-member/${watchlist.watchlist_id}`, {
+                    memberId: selectedFriend._id._id,
+                    permissions
+                },
+                    { withCredentials: true })
+            }
+
+
+            setShowPermissionModal(false)
         }
         catch (err) {
             console.log(err);
@@ -78,18 +110,18 @@ function ManageWatchlist() {
                                 <div className="w-7 h-7 rounded-full bg-green-500 text-white text-xs flex items-center justify-center font-semibold">Y</div>
                                 You (Owner)
                             </li>
-                            <li className="flex items-center gap-2">
-                                <div className="w-7 h-7 rounded-full bg-gray-600 text-white text-xs flex items-center justify-center font-semibold">J</div>
-                                john_doe
-                            </li>
-                            <li className="flex items-center gap-2">
-                                <div className="w-7 h-7 rounded-full bg-gray-600 text-white text-xs flex items-center justify-center font-semibold">J</div>
-                                jane_smith
-                            </li>
+                            {memberList.map((item) => <li key={item._id} className="flex items-center gap-2">
+                                <div className="w-7 h-7 rounded-full bg-gray-500 text-white text-xs flex items-center justify-center font-semibold">J</div>
+                                {item.user_id.username}
+
+                                <button onClick={() => setShowPermissionModal("Edit")} className='text-end ml-auto hover:text-gray-400'>
+                                    <EditIcon />
+                                </button>
+                            </li>)}
                         </ul>
 
                         <button
-                            onClick={() => setShowAddMemberModal(true)}
+                            onClick={() => setShowAddMemberModal("Add")}
                             className="mt-6 w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200"
                         >
                             + Add Member
@@ -171,7 +203,10 @@ function ManageWatchlist() {
                                             </div>
                                             <span className="text-white text-sm font-medium">{friend._id.username}</span>
                                         </div>
-                                        <button onClick={() => addMember(friend._id._id)} className="px-3 py-1 text-sm font-medium bg-green-600 hover:bg-green-700 rounded-md transition">
+                                        <button onClick={() => {
+                                            setSelectedFriend(friend);
+                                            setShowPermissionModal(true)
+                                        }} className="px-3 py-1 text-sm font-medium bg-green-600 hover:bg-green-700 rounded-md transition">
                                             Add
                                         </button>
                                     </li>
@@ -194,6 +229,62 @@ function ManageWatchlist() {
                     </div>
                 </div>
             )}
+
+            {showPermissionModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
+                    <div className="bg-gradient-to-b from-[#222] via-[#1c1c1c] to-[#111] w-full max-w-md p-8 rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-gray-700">
+                        <h2 className="text-2xl font-extrabold text-white mb-6 text-center border-b border-gray-600 pb-3 tracking-wide">
+                            Set Permissions for <span className="text-green-400">{selectedFriend?._id?.username}</span>
+                        </h2>
+
+                        <div className="space-y-6 mb-8">
+                            {[
+                                { key: "canEdit", label: "Can Edit Watchlist" },
+                                { key: "canAdd", label: "Can Add Items" },
+                                { key: "canRemove", label: "Can Remove Items" },
+                            ].map(({ key, label }) => (
+                                <div key={key} className="flex items-center justify-between bg-[#2b2b2b] px-4 py-3 rounded-lg border border-gray-600 hover:shadow-md transition">
+                                    <span className="text-white text-sm font-medium">{label}</span>
+                                    <label className="relative inline-flex items-center cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={permissions[key]}
+                                            onChange={(e) =>
+                                                setPermissions((prev) => ({
+                                                    ...prev,
+                                                    [key]: e.target.checked,
+                                                }))
+                                            }
+                                            className="sr-only peer"
+                                        />
+                                        <div className="w-11 h-6 bg-gray-600 rounded-full peer peer-checked:bg-green-500 transition-all duration-300 peer-focus:ring-2 peer-focus:ring-green-300 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => {
+                                    setShowPermissionModal(false);
+                                    setSelectedFriend(null);
+                                    setPermissions({ canEdit: false, canAdd: false, canRemove: false });
+                                }}
+                                className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition duration-200 shadow-md"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={addMember}
+                                className="px-5 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white font-semibold transition duration-200 shadow-md"
+                            >
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
 
             <Footer />
         </div>

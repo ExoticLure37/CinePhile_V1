@@ -210,8 +210,6 @@ const getWatchList = async (req, res) => {
             .populate('owner', 'username')
             .populate('members.user_id', 'username');
 
-        // console.log(watchList)
-
         if (!watchList) {
             return res.status(404).json({ message: "Watchlist not found." });
         }
@@ -242,7 +240,7 @@ const addItemToWatchList = async (req, res) => {
 
         // console.log(newItem)
 
-        if (!newItem || !newItem.imdb_id || !newItem.name || !newItem.url)  {
+        if (!newItem || !newItem.imdb_id || !newItem.name || !newItem.url) {
             return res.status(400).json({ message: "Incomplete item details." });
         }
 
@@ -307,23 +305,28 @@ const removeItemFromWatchList = async (req, res) => {
 };
 
 // for sharing
+// for sharing
 const addMember = async (req, res) => {
 
     try {
         const { watchlist_id } = req.params;
         const { memberId, permissions } = req.body;
 
+        // console.log(memberId)
+
         const watchlist = await watchListModel.findById(watchlist_id);
 
-        if (watchlist.members.some(m => m.user.toString() === memberId)) {
+        if (watchlist?.members.some(m => m.user_id.toString() === memberId)) {
             return res.status(400).json({ error: true, message: "Member already exists" });
         }
 
         const updatedDoc = await watchListModel.findByIdAndUpdate(
             watchlist_id,
-            { $push: { members: { user: memberId, permissions } } },
+            { $push: { members: { user_id: memberId, permissions } } },
             { new: true }
         );
+
+        // console.log(updatedDoc)
 
         await userModel.findByIdAndUpdate(memberId,
             {
