@@ -8,6 +8,7 @@ const tokenModel = require("../models/token");
 const sendEmail = require("../utils/sendEmail");
 const crypto = require("crypto");
 const mongoose = require("mongoose");
+const uploadOnCloundinary = require("../utils/cloudinary");
 
 // const redisClient = require("../utils/redisClient");
 
@@ -614,9 +615,29 @@ const contact = async (req, res) => {
   }
 };
 
+const uploadProfilePicture = async (req,res) => {
+  const userId = req.user._id;
+  const localPath = req.file.path;
+
+  try {
+    // Upload to Cloudinary
+    const res = await uploadOnCloundinary(localPath) ;
+
+    const user = await userModel.findByIdAndUpdate(
+      userId,
+      { profilePic: result.secure_url },
+      { new: true }
+    );
+
+    res.json({ success: true, profilePic: result.secure_url });
+  } catch (err) {
+    return res.status(500).json({ error: 'Upload to Cloudinary failed' });
+  }
+}
+
 module.exports = {
   register, login, resetPassword, verifyToken,
   addFriend, acceptFriendRequest, rejectFriendRequest,
   cancelFriendRequest, removeFriend, searchFriend, getPendingRequest, getRequestSent, getFriends, updatePersonalDetails
-  , updateEmail, verifyEmail, updatePassword, updateUsername, getProfile,contact
+  , updateEmail, verifyEmail, updatePassword, updateUsername, getProfile,contact,uploadProfilePicture
 };
