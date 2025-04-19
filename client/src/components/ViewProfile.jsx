@@ -6,6 +6,29 @@ import EditEmailModal from "./EditEmailModal";
 import EditPhoneNumberModal from "./EditPhoneNumberModal";
 import profileimage from "../image/photo.jpg";
 
+// Icon for inline edit (pencil)
+const EditIcon = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="ml-2 p-2 rounded-full hover:bg-blue-600 hover:text-white transition duration-200"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+      stroke="currentColor"
+      className="w-5 h-5"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M16.862 3.487a1.25 1.25 0 011.768 0l1.883 1.883a1.25 1.25 0 010 1.768l-9.9 9.9a1.25 1.25 0 01-.884.366H6.25a.75.75 0 01-.75-.75v-3.479a1.25 1.25 0 01.366-.884l9.996-9.996zM15.25 5.75L6.25 14.75v2.5h2.5l9-9-2.5-2.5z"
+      />
+    </svg>
+  </button>
+);
+
 export default function ViewProfile() {
   const user = useSelector((state) => state.userProfile);
   const [showPersonalModal, setShowPersonalModal] = useState(false);
@@ -20,36 +43,14 @@ export default function ViewProfile() {
     return `${day}/${month}/${year}`;
   };
 
-  const EditIcon = ({ onClick }) => (
-    <button
-      onClick={onClick}
-      className="ml-2 p-2 rounded-full hover:bg-blue-600 hover:text-white transition duration-200"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={2}
-        stroke="currentColor"
-        className="w-5 h-5"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M16.862 3.487a1.25 1.25 0 011.768 0l1.883 1.883a1.25 1.25 0 010 1.768l-9.9 9.9a1.25 1.25 0 01-.884.366H6.25a.75.75 0 01-.75-.75v-3.479a1.25 1.25 0 01.366-.884l9.996-9.996zM15.25 5.75L6.25 14.75v2.5h2.5l9-9-2.5-2.5z"
-        />
-      </svg>
-    </button>
-  );
-
   return (
     <div className="max-w-5xl mx-auto px-6 py-8">
-      {/* Profile Card */}
+      {/* Profile Header */}
       <div className="flex flex-col sm:flex-row items-center justify-between bg-gradient-to-r from-[#1e293b] to-[#0f172a] p-6 rounded-3xl shadow-xl">
         <div className="flex items-center gap-6">
           <img
             src={profileimage}
-            alt={`profile-${user.fullname}`}
+            alt={`profile-${user.fullname || "user"}`}
             className="w-24 h-24 rounded-full object-cover border-4 border-blue-500 shadow-lg"
           />
           <div>
@@ -111,17 +112,20 @@ export default function ViewProfile() {
       {/* Modals */}
       {showPersonalModal && (
         <EditPersonalDetailsModal
-          onClose={() => setShowPersonalModal(false)}
           user={user}
+          onClose={() => setShowPersonalModal(false)}
         />
       )}
       {showEmailModal && (
-        <EditEmailModal onClose={() => setShowEmailModal(false)} user={user} />
+        <EditEmailModal
+          user={user}
+          onClose={() => setShowEmailModal(false)}
+        />
       )}
       {showPhoneModal && (
         <EditPhoneNumberModal
-          onClose={() => setShowPhoneModal(false)}
           user={user}
+          onClose={() => setShowPhoneModal(false)}
         />
       )}
     </div>

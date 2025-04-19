@@ -43,9 +43,9 @@ const Sidebar = () => {
     curUser && (
       <div className="flex h-screen bg-gradient-to-tr from-[#1f1f1f] to-[#2c2c2c] text-white">
         {/* Sidebar */}
-        <div className="w-64 p-6 bg-gradient-to-b from-gray-900 to-gray-800 shadow-2xl flex flex-col justify-between sticky top-0 h-screen">
+        <div className="w-64 p-6 bg-gradient-to-b from-gray-950 to-gray-900 border-r border-gray-800 shadow-2xl flex flex-col justify-between sticky top-0 h-screen">
           <div>
-            <h2 className="text-3xl font-bold text-center mb-8 text-yellow-400">
+            <h2 className="text-3xl font-bold text-center mb-8 text-yellow-400 tracking-wider">
               🎬 Menu
             </h2>
             <ul>
@@ -60,8 +60,8 @@ const Sidebar = () => {
                 <li
                   key={section}
                   className={`p-3 my-2 flex items-center gap-4 rounded-xl text-base font-medium tracking-wide cursor-pointer transition-all duration-200 ${activeSection === section
-                      ? "bg-blue-600 text-white shadow-md scale-[1.02]"
-                      : "hover:bg-gray-700 hover:text-blue-400"
+                      ? "bg-blue-600 text-white shadow-inner ring-2 ring-yellow-400 scale-[1.02]"
+                      : "hover:bg-gray-800 hover:text-yellow-400"
                     }`}
                   onClick={() => setActiveSection(section)}
                 >
@@ -83,7 +83,9 @@ const Sidebar = () => {
               ))}
             </ul>
           </div>
-          <p className="text-sm text-gray-400 text-center mt-6">© 2025 ProjectV</p>
+          <p className="text-sm text-gray-500 text-center mt-6 tracking-wide">
+            © 2025 ProjectV
+          </p>
         </div>
 
         {/* Main Content */}

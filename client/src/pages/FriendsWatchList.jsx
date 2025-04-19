@@ -11,43 +11,37 @@ import FriendsWatchListModal from "../components/FriendsWatchListModal";
 const FriendsWatchList = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const user = useSelector((state) => state.userProfile);
 
   const [friendsList, setFriendsList] = useState(user.friendList);
-  const [open,setOpen]= useState(false)
-  const [friendId,setFriendId]= useState('')
-  const [friendName,setFriendName]= useState('')
+  const [open, setOpen] = useState(false);
+  const [friendId, setFriendId] = useState('');
+  const [friendName, setFriendName] = useState('');
 
   useEffect(() => {
     getFriends();
-  }, [])
+  }, []);
 
   const getFriends = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/user/getFriends", {
-        withCredentials: true
-      })
-
+      const res = await axios.get("http://localhost:5000/user/getFriends", { withCredentials: true });
       dispatch(setFriendList({ friendList: res.data.friendList }));
-      // setFriendList(res.data.friendList);
-    }
-    catch (err) {
+    } catch (err) {
       console.log(err);
     }
-  }
-  const closeModal= async()=>{
-    setOpen(false)
-    setFriendId('')
-    setFriendName('')
-  }
-  const openModal= async(friendIdd,friendNamee)=>{
-    setOpen(true)
-    setFriendId(friendIdd)
-    setFriendName(friendNamee)
-  }
+  };
 
-  console.log(friendsList)
+  const closeModal = () => {
+    setOpen(false);
+    setFriendId('');
+    setFriendName('');
+  };
+
+  const openModal = (friendIdd, friendNamee) => {
+    setOpen(true);
+    setFriendId(friendIdd);
+    setFriendName(friendNamee);
+  };
 
   return (
     <>
@@ -57,42 +51,44 @@ const FriendsWatchList = () => {
           <LinkNavbar />
         </div>
 
-        <div className="flex flex-col items-center justify-center px-4 py-10">
-          <h1 className="text-4xl font-extrabold mb-8 text-gray-200">My Friends</h1>
-          <div className="w-full max-w-2xl bg-[#1F1F1F] p-6 rounded-xl shadow-xl border border-gray-700">
-            <ul className="space-y-4">
-              {friendsList && friendsList.length > 0 ? (
-                friendsList.map((friend, index) => (
-                  <>
+        <div className="flex flex-col items-center px-4 py-10">
+          <h1 className="text-3xl font-bold mb-6 text-gray-200 drop-shadow">👥 Friends Watchlist</h1>
+
+          <div className="w-full max-w-2xl bg-[#1F1F1F] p-5 rounded-2xl shadow-lg border border-gray-700">
+            {friendsList && friendsList.length > 0 ? (
+              <ul className="space-y-3">
+                {friendsList.map((friend, index) => (
                   <li
                     key={friend._id}
-                    className="flex items-center p-4 bg-[#2A2A2A] rounded-lg hover:bg-[#3A3A3A] transition-all shadow-sm border border-gray-600"
+                    className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-[#2A2A2A] via-[#1E1E1E] to-[#141414] hover:from-[#333333] hover:to-[#292929] transition-all border border-gray-600 shadow-md"
                   >
-                    <span className="text-lg font-semibold text-gray-300">{index + 1}.</span>
+                    <span className="text-base font-medium text-gray-300">#{index + 1}</span>
                     <Link
                       to={`/profile/${friend._id._id}`}
-                      className="ml-3 text-lg font-medium text-gray-100 hover:text-blue-400 transition-all"
+                      className="text-base font-semibold text-white hover:text-blue-400 transition"
                     >
-                      {friend._id.username}'s WatchLists
+                      {friend._id.username}'s Watchlists
                     </Link>
-                    <div onClick={()=>openModal(friend._id._id,friend._id.username)} className="ml-auto">
+                    <div className="ml-auto" onClick={() => openModal(friend._id._id, friend._id.username)}>
                       <IconBtn text="View" />
                     </div>
                   </li>
-                  </>
-                ))
-              ) : (
-                <p className="text-center text-gray-400">No friends found.</p>
-              )}
-            </ul>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-center text-gray-400 italic">No friends found.</p>
+            )}
           </div>
         </div>
       </div>
-      {
-        open && (<FriendsWatchListModal friendId={friendId} closeModal={closeModal} friendName={friendName}/>)
-      }
 
-
+      {open && (
+        <FriendsWatchListModal
+          friendId={friendId}
+          closeModal={closeModal}
+          friendName={friendName}
+        />
+      )}
     </>
   );
 };
