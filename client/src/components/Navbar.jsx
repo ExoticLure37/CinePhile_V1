@@ -4,6 +4,7 @@ import { logout } from "../redux/user/userSlice";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import MediaCard from "./MediaCard";
+import NavLinks from "./NavLinks";
 
 const Navbar = () => {
   const currentUser = useSelector((state) => state.userProfile);
@@ -52,15 +53,19 @@ const Navbar = () => {
   return (
     <div>
       {/* Top Navbar */}
-      <div className="navbar w-full flex justify-between items-center py-3 px-6 text-white bg-gradient-to-r from-[#e50914] to-[#b00610] shadow-md">
-        <div className="flex-1">
-          <Link
-            to="/"
-            className="text-2xl font-bold tracking-wide hover:text-gray-200 transition-all"
-          >
-            project<span className="text-yellow-400">V</span>
-          </Link>
-        </div>
+      <div className="navbar w-full flex justify-between items-center py-3 px-6 text-white bg-gradient-to-r shadow-md">
+        <Link
+          to="/"
+        >
+          <img
+            src="logo.png"
+            alt="Cinephile"
+            style={{ width: '180px', height: 'auto' }}
+          />
+
+        </Link>
+
+        <NavLinks />
         <div className="flex-none flex items-center gap-4">
           <div className="flex items-center bg-gray-800 rounded-full px-4 py-2 shadow-inner border border-gray-700 focus-within:ring-2 focus-within:ring-yellow-400">
             <input
