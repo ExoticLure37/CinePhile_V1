@@ -41,7 +41,7 @@ const watchlistSchema = new mongoose.Schema({
     members: [{
         user_id: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
+            ref: 'User', 
             index: true
         },
         permissions: {

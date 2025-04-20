@@ -4,6 +4,7 @@ import { logout } from "../redux/user/userSlice";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import MediaCard from "./MediaCard";
+import NavLinks from "./NavLinks";
 
 const Navbar = () => {
   const currentUser = useSelector((state) => state.userProfile);
@@ -24,6 +25,8 @@ const Navbar = () => {
   const fetchMovieByTitle = async () => {
     try {
       setIsLoading(true);
+      const apiKey = process.env.REACT_APP_RAPIDAPI_KEY;
+      const apiHost = process.env.REACT_APP_RAPIDAPI_HOST;
       const response = await axios.get(
         "https://imdb236.p.rapidapi.com/imdb/search",
         {
@@ -34,10 +37,9 @@ const Navbar = () => {
             sortField: "id",
           },
           headers: {
-            "x-rapidapi-key":
-              "ac756fd330msh8c169a5cfb93ae0p1fee36jsn17b73def8bef",
-            "x-rapidapi-host": "imdb236.p.rapidapi.com",
-          },
+            "x-rapidapi-key": `${apiKey}`,
+            "x-rapidapi-host": `${apiHost}`
+          }
         }
       );
       setSearchResults(response.data.results);
@@ -51,15 +53,19 @@ const Navbar = () => {
   return (
     <div>
       {/* Top Navbar */}
-      <div className="navbar w-full flex justify-between items-center py-3 px-6 text-white bg-gradient-to-r from-[#e50914] to-[#b00610] shadow-md">
-        <div className="flex-1">
-          <Link
-            to="/"
-            className="text-2xl font-bold tracking-wide hover:text-gray-200 transition-all"
-          >
-            project<span className="text-yellow-400">V</span>
-          </Link>
-        </div>
+      <div className="navbar w-full flex justify-between items-center py-3 px-6 text-white bg-gradient-to-r shadow-md">
+        <Link
+          to="/"
+        >
+          <img
+            src="logo.png"
+            alt="Cinephile"
+            style={{ width: '180px', height: 'auto' }}
+          />
+
+        </Link>
+
+        <NavLinks />
         <div className="flex-none flex items-center gap-4">
           <div className="flex items-center bg-gray-800 rounded-full px-4 py-2 shadow-inner border border-gray-700 focus-within:ring-2 focus-within:ring-yellow-400">
             <input
@@ -113,12 +119,10 @@ const Navbar = () => {
                 <button className="hover:text-yellow-400">My List</button>
               </li>
               <li>
-                <Link to="/contact" className="hover:text-yellow-400">
-                  Contact
-                </Link>
+                <Link to="/contact" className="hover:text-yellow-400">Contact</Link>
               </li>
               <li>
-                <button className="hover:text-yellow-400">Settings</button>
+                <Link to="/settings" className="hover:text-yellow-400">Settings</Link>
               </li>
               {currentUser.username !== "" && (
                 <li>

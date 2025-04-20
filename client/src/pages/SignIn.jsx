@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux"
-import { setFriendList, setUserProfile } from "../redux/user/userSlice"
+import { useDispatch } from "react-redux";
+import { setFriendList, setUserProfile } from "../redux/user/userSlice";
 import axios from "axios";
+import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 
 function SignIn() {
   const [email, setEmail] = useState("");
@@ -11,7 +13,6 @@ function SignIn() {
   const [error, setError] = useState("");
 
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -25,93 +26,114 @@ function SignIn() {
         { withCredentials: true }
       );
 
-      // console.log(res.data);
-
-      dispatch(setUserProfile({
-        fullname: res.data.fullname,
-        username: res.data.username,
-        email: res.data.email,
-        gender: res.data.gender,
-        about: res.data.about,
-        dob: res.data.dob,
-        phone_number: res.data.phone_number
-      }))
-
-      navigate("/movies"); // Redirect after successful login
+      dispatch(
+        setUserProfile({
+          fullname: res.data.fullname,
+          username: res.data.username,
+          email: res.data.email,
+          gender: res.data.gender,
+          about: res.data.about,
+          dob: res.data.dob,
+          phone_number: res.data.phone_number,
+        })
+      );
+      toast("Ligin Successfull");
+      console.log("success");
+      navigate("/movies");
     } catch (err) {
-      setError(err.response?.data?.message || "Login Failed!");
+      setError(err.response?.data?.message || "Login failed!");
     }
   };
 
   return (
-    <div className="h-screen flex flex-col items-center bg-[#141414] text-white px-4">
-      {/* Netflix-style Header */}
-      <div className="w-full flex justify-between items-center  mt-4 py-4 px-6 bg-[#E50914] rounded-lg">
-        <h1 className="text-2xl font-bold">projectV</h1>
-        <span className="text-white font-large"></span>
-      </div>
+    <div className="signIn center">
+      {/* yahan logo insert  */}
+      <h6 className="absolute top-6 text-2xl font-extrabold text-[#E50914] tracking-wide z-10">
+        CinePhile<span className="text-white">Logo</span>
+      </h6>
 
-      {/* Netflix-style Sign-in Form */}
-      <div className="w-full max-w-md bg-[#1F1F1F] p-8 rounded-lg shadow-lg mt-20">
-        <h1 className="text-3xl font-bold text-center mb-6">Sign In</h1>
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col">
-            <label className="mb-1 text-sm font-semibold">E-mail</label>
-            <input
-              className="rounded-md p-3 bg-[#333] text-white border border-gray-600 focus:outline-none focus:border-white"
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="flex flex-col">
-            <label className="mb-1 text-sm font-semibold">Password</label>
-            <input
-              className="rounded-md p-3 bg-[#333] text-white border border-gray-600 focus:outline-none focus:border-white"
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                className="rounded-sm accent-[#E50914]"
-                checked={rememberMe}
-                onChange={() => setRememberMe(!rememberMe)}
-              />
-              <span>Remember Me</span>
-            </div>
-            <Link to="/" className="text-gray-400 hover:underline">
-              Forget password
-            </Link>
-          </div>
-
-          {error && <p className="text-red-500 text-center">{error}</p>}
-
-          <button
-            type="submit"
-            className="bg-[#E50914] text-white py-3 rounded-md font-semibold hover:bg-[#b2070e] transition-all duration-200"
+      <div className="h-screen w-screen bg-black flex items-center justify-center text-white px-4">
+        <div className="flex flex-col md:flex-row w-full max-w-5xl shadow-lg rounded-lg overflow-hidden gap-10 md:gap-20">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1 }}
+            className="w-full md:w-1/2 bg-black flex flex-col justify-center items-center px-10 py-10 text-center"
           >
-            Sign In
-          </button>
-        </form>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Catch up on your favorite movies.
+            </h2>
+            <p className="text-gray-300 text-md font-sans">
+              Sign in to CinePhile and start enjoying! ❤️.
+            </p>
+          </motion.div>
 
-        <div className="text-center mt-6">
-          <span className="text-gray-400">New to projectV?</span>
-          <Link to="/">
-            <button className="block w-full mt-2 text-white font-semibold hover:underline">
-              Sign up now.
-            </button>
-          </Link>
+          {/* Right */}
+          <div className="w-full md:w-1/2 bg-black px-10 py-10">
+            <h2 className="text-2xl font-bold mb-6 text-center">Sign In</h2>
+
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <div className="flex flex-col">
+                <label className="mb-1 text-sm font-semibold">E-mail</label>
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="p-3 rounded bg-[#2c2c2c] border border-gray-700 text-white focus:outline-none focus:border-white"
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="mb-1 text-sm font-semibold">Password</label>
+                <input
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="p-3 rounded bg-[#2c2c2c] border border-gray-700 text-white focus:outline-none focus:border-white"
+                  required
+                />
+              </div>
+
+              <div className="flex items-center justify-between text-sm">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    className="rounded-sm accent-[#E50914]"
+                    checked={rememberMe}
+                    onChange={() => setRememberMe(!rememberMe)}
+                  />
+                  Remember me
+                </label>
+                <Link
+                  to="/forgot-password"
+                  className="text-gray-400 hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+
+              {error && <p className="text-red-500 text-center">{error}</p>}
+
+              <button
+                type="submit"
+                className="mt-4 bg-[#E50914] hover:bg-[#b2070e] transition duration-200 text-white py-3 rounded font-semibold"
+              >
+                Sign In
+              </button>
+            </form>
+
+            <div className="text-center mt-6">
+              <p className="text-gray-400">New to CinePhile?</p>
+              <Link to="/">
+                <button className="block w-full mt-2 text-white font-semibold hover:underline">
+                  Sign up now.
+                </button>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>

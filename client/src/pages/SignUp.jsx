@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+// import Footer from "../components/Footer";
+import { motion } from "framer-motion";
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -11,7 +13,6 @@ function SignUp() {
     password: "",
     confirmPassword: "",
   });
-  const [error, setError] = useState("");
 
   const navigate = useNavigate();
   const backendUrl = "http://localhost:5000/user/register";
@@ -43,8 +44,15 @@ function SignUp() {
       console.log(formData);
       const response = await axios.post(backendUrl, formData);
       console.log(response.data);
+      setFormData({
+        fullname: "",
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
       console.log("Verification mail is sent successfully");
-      
+      toast("Email sent successfully");
     } catch (error) {
       console.error(error);
     }
@@ -53,52 +61,72 @@ function SignUp() {
   };
 
   return (
-    <div className="h-screen overflow-x-hidden overflow-hidden overflow-y-hidden flex flex-col justify-center items-center bg-[#141414] text-white px-4">
-      {/* Netflix-style Header */}
-      <div className="w-full flex justify-between items-center py-4 px-6 bg-[#E50914] rounded-lg">
-        <h1 className="text-2xl font-bold">projectV</h1>
-        <span className="text-white font-large"></span>
-      </div>
+    <div className="signUp center">
+      <h6 className="absolute top-6 text-2xl md:text-2xl font-extrabold text-[#E50914] tracking-wide z-10">
+        CinePhile<span className="text-white">image</span>
+      </h6>
 
-      {/* Netflix-style Sign-in Form */}
-      <div className="w-full max-w-md bg-[#1F1F1F] px-10 py-6 rounded-lg shadow-lg mt-6">
-        <h1 className="text-2xl font-bold text-center mb-4">Sign Up</h1>
-
-        {error && <p className="text-red-500 text-center">{error}</p>}
-
-        <form onSubmit={submitHandler} className="flex flex-col gap-3">
-          {Object.entries(formData).map(([key, value]) => (
-            <div className="flex flex-col" key={key}>
-              <label className="mb-1 text-sm font-semibold">
-                {key.charAt(0).toUpperCase() + key.slice(1)}
-              </label>
-              <input
-                className="rounded-md p-2 bg-[#333] text-white border border-gray-600 focus:outline-none focus:border-white"
-                type={key.includes("password") ? "password" : "text"}
-                name={key}
-                placeholder={`Enter your ${key}`}
-                value={value}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          ))}
-
-          <button
-            type="submit"
-            className="bg-[#E50914] mt-2 text-white py-3 rounded-md font-semibold hover:bg-[#b2070e] transition-all duration-200"
+      <div className="h-screen w-screen bg-black flex items-center justify-center text-white px-4">
+        <div className="flex flex-col md:flex-row w-full max-w-5xl shadow-lg rounded-lg overflow-hidden gap-10 md:gap-20">
+          {/* Left  */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1 }}
+            className="w-full md:w-1/2 bg-black flex flex-col justify-center items-center px-10 py-10 text-center"
           >
-            Create Account
-          </button>
-        </form>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Your movies. Your friends. One place
+            </h2>
+            <p className="text-gray-300 text-md font-sans">
+              With ProjectV, discover trending titles, build watchlists, and
+              connect over what you ❤️.
+            </p>
+          </motion.div>
 
-        <div className="text-center mt-4">
-          <span className="text-gray-400">Already have an account?</span>
-          <Link to="/signin">
-            <button className="block w-full mt-2 text-white font-semibold hover:underline">
-              Sign in now.
-            </button>
-          </Link>
+          {/* Right  */}
+          <div className="w-full md:w-1/2 bg-black px-10 py-10">
+            <h2 className="text-2xl font-bold mb-6 text-center">
+              Create your account
+            </h2>
+
+            <form onSubmit={submitHandler} className="flex flex-col gap-4">
+              {Object.entries(formData).map(([key, value]) => (
+                <div key={key} className="flex flex-col">
+                  <label className="text-sm font-semibold mb-1 capitalize">
+                    {key.replace(/([A-Z])/g, " $1")}
+                  </label>
+                  <input
+                    type={key.includes("password") ? "password" : "text"}
+                    name={key}
+                    placeholder={
+                      key !== "confirmPassword" ? `${key}` : "re enter password"
+                    }
+                    value={value}
+                    onChange={handleChange}
+                    className="p-2 rounded bg-[#2c2c2c] border border-gray-700 text-white focus:outline-none focus:border-white"
+                    required
+                  />
+                </div>
+              ))}
+
+              <button
+                type="submit"
+                className="mt-4 bg-[#E50914] hover:bg-[#b2070e] transition duration-200 text-white py-3 rounded font-semibold"
+              >
+                Create Account
+              </button>
+            </form>
+
+            <div className="text-center mt-4">
+              <p className="text-gray-400">Already have an account?</p>
+              <Link to="/signin">
+                <span className="text-white font-semibold hover:underline">
+                  Sign in now.
+                </span>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>

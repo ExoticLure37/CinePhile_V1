@@ -15,6 +15,11 @@ import TVShows from "./pages/TVShows";
 import Contact from "./pages/Contact";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import TrendingPage from "./pages/TrendingPage";
+import UpcomingPage from "./pages/UpcomingPage";
+import TopMoviesShowsPage from "./pages/TopMoviesShowsPage";
+import ManageWatchlist from "./pages/ManageWatchlist";
+import Setting from "./pages/Settings";
 
 function App() {
   return (
@@ -35,6 +40,11 @@ function App() {
           element={<VerifyUpdatedEmail />}
         />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/trending" element={<TrendingPage />} />
+        <Route path="/upcoming" element={<UpcomingPage />} />
+        <Route path="/top-movies-shows" element={<TopMoviesShowsPage />} />
+        <Route path="/manageWatchlist" element={<ManageWatchlist />} />
+        <Route path="/settings" element={<Setting />} />
       </Routes>
       <ToastContainer
         position="top-right"

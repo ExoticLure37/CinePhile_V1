@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -27,6 +27,8 @@ function TopMoviesShows({ flag }) {
       setCurrentIndex((prev) => prev - itemsPerPage);
     }
   };
+
+  // Fetching the movie data
 
   const fetchData = async () => {
     try {
@@ -57,11 +59,20 @@ function TopMoviesShows({ flag }) {
     }
   };
 
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate("/top-movies-shows", { state: { f: flag } });
+  };
+
   return (
     <div className="flex flex-col gap-5 relative">
-      <Link className="font-bold text-4xl hover:text-5xl transition-all duration-200">
-        Top Movies <ArrowForwardIosIcon />
-      </Link>
+      <button
+        onClick={handleNavigate}
+        className="font-bold text-4xl hover:text-5xl text-left transition-all duration-200"
+      >
+        Top {flag ? "Movies" : "Shows"} <ArrowForwardIosIcon />
+      </button>
 
       <div className="flex items-center gap-2">
         <button

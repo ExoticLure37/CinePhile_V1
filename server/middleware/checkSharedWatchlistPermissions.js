@@ -8,7 +8,7 @@ const checkSharedWatchlistPermissions = (requiredPermission) => {
         return res.status(404).json({ error: 'Watchlist not found' });
 
       const member = watchlist?.members.find(m => 
-        m.user._id.toString() === req.user._id.toString()
+        m.user_id.toString() === req.user._id.toString()
       );
       
       if (req.user._id.toString()!==watchlist.owner.toString() && !member?.permissions[requiredPermission]) {
