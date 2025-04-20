@@ -1,16 +1,16 @@
 const express = require('express');
 const { getAllWatchLists, createWatchList, renameWatchList, deleteAllWatchLists, deleteWatchList,
-    getWatchListItems, addItemToWatchList, removeItemFromWatchList, 
+    getWatchListItems, addItemToWatchList, removeItemFromWatchList,
     getFriendsWatchList,
-    getFriendWatchListItems,getWatchList ,addMember,rateItem} = require('../controllers/watchListController');
+    getFriendWatchListItems, getWatchList, addMember,removeMember,editPermissions, rateItem } = require('../controllers/watchListController');
 const { checkSharedWatchlistPermissions } = require("../middleware/checkSharedWatchlistPermissions");
 const { authUser } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
 router.get('/', authUser, getAllWatchLists);
-router.get('/friends-watchlist/:_id',getFriendsWatchList)
-router.get('/friends-watchlist-movie/:_id/:watchlist_id',getFriendWatchListItems)
+router.get('/friends-watchlist/:_id', getFriendsWatchList)
+router.get('/friends-watchlist-movie/:_id/:watchlist_id', getFriendWatchListItems)
 router.post('/create/:title', authUser, createWatchList);
 router.patch('/rename/:watchlist_id/:new_title', authUser, checkSharedWatchlistPermissions('canEdit'), renameWatchList);
 router.delete('/delete', authUser, deleteAllWatchLists);
@@ -19,12 +19,12 @@ router.get('/:watchlist_id', authUser, getWatchList);
 router.patch('/addToWatchlist/:watchlist_id', authUser, checkSharedWatchlistPermissions('canAdd'), addItemToWatchList);
 router.patch('/:watchlist_id/:item_id', authUser, checkSharedWatchlistPermissions('canRemove'), removeItemFromWatchList);
 
-router.post('/:watchlist_id/:item_id/rate', authUser, rateItem);
+router.patch('/:watchlist_id/:item_id/rate', authUser, rateItem);
 
 
-//to share 
-router.patch("/shared/add-member/:watchlist_id", authUser, checkSharedWatchlistPermissions('canEdit'), addMember);
-
-// router.put('/shared/update-permissons/:watchlist_id');//update persmiison 
+//for shared watchlists 
+router.patch("/shared/:watchlist_id/members", authUser, checkSharedWatchlistPermissions('canEdit'), addMember);
+router.patch("/shared/:watchlist_id/members/:member_id", authUser, checkSharedWatchlistPermissions('canEdit'), removeMember);
+router.patch("/shared/:watchlist_id/members/:member_id/permissions", authUser, editPermissions);
 
 module.exports = router;

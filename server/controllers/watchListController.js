@@ -347,6 +347,81 @@ const addMember = async (req, res) => {
 
 };
 
+const removeMember = async (req, res) => {
+    try {
+        const { watchlist_id, member_id } = req.params;
+
+        const watchlist = await watchListModel.findById(watchlist_id);
+        if (!watchlist) {
+            return res.status(404).json({ error: true, message: "Watchlist not found" });
+        }
+
+        if (String(watchlist.owner) === String(member_id)) {
+            return res.status(403).json({ error: true, message: "Cannot remove the owner of the watchlist" });
+        }
+
+        const updatedDoc = await watchListModel.findByIdAndUpdate(
+            watchlist_id,
+            { $pull: { members: { user_id: member_id } } },
+            { new: true }
+        );
+
+        await userModel.findByIdAndUpdate(
+            member_id,
+            {
+                $pull: {
+                    watchlists: {
+                        watchlist_id: watchlist._id,
+                    }
+                }
+            }
+        );
+
+        return res.status(200).json({
+            message: "Member removed successfully",
+            members: updatedDoc.members
+        });
+    } catch (err) {
+        return res.status(500).json({ error: true, message: err.message });
+    }
+
+};
+
+const editPermissions = async (req, res) => {
+    try {
+        const user_id = req.user._id; 
+        const { watchlist_id, member_id } = req.params;
+        const { newPermissions } = req.body;
+
+        const watchlist = await watchListModel.findById(watchlist_id);
+        if (!watchlist) {
+            return res.status(404).json({ error: true, message: "Watchlist not found" });
+        }
+
+        if (String(watchlist.owner) !== String(user_id)) {
+            return res.status(403).json({ error: true, message: "Only the owner can edit permissions." });
+        }
+
+        const memberIndex = watchlist.members.findIndex(
+            (m) => String(m.user_id) === String(member_id)
+        );
+
+        if (memberIndex === -1) {
+            return res.status(404).json({ error: true, message: "Member not found in this watchlist." });
+        }
+
+        watchlist.members[memberIndex].permissions = newPermissions;
+        await watchlist.save();
+
+        return res.status(200).json({
+            message: "Member permissions updated successfully",
+            member: watchlist.members[memberIndex],
+        });
+    } catch (err) {
+        return res.status(500).json({ error: true, message: err.message });
+    }
+};
+
 
 const rateItem = async (req, res) => {
     try {
@@ -484,5 +559,5 @@ const markEpisodeAsWatched = async () => { };
 module.exports = {
     createWatchList, renameWatchList, getAllWatchLists, deleteAllWatchLists, deleteWatchList, addItemToWatchList, removeItemFromWatchList, getFriendsWatchList,
     getFriendWatchListItems,
-    getWatchList, addItemToWatchList, removeItemFromWatchList, addMember, rateItem
+    getWatchList, addItemToWatchList, removeItemFromWatchList, addMember, removeMember, editPermissions, rateItem
 };
