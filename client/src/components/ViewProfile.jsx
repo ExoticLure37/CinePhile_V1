@@ -1,12 +1,14 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
 import IconBtn from "./IconBtn";
 import EditPersonalDetailsModal from "./EditPersonalDetailsModal";
 import EditEmailModal from "./EditEmailModal";
 import EditPhoneNumberModal from "./EditPhoneNumberModal";
 import profileimage from "../image/photo.jpg";
+import { setUserProfile } from "../redux/user/userSlice.js";
+// import {toast} from "react-toastify";
 
-// Icon for inline edit (pencil)
+// Pencil icon component
 const EditIcon = ({ onClick }) => (
   <button
     onClick={onClick}
@@ -31,6 +33,8 @@ const EditIcon = ({ onClick }) => (
 
 export default function ViewProfile() {
   const user = useSelector((state) => state.userProfile);
+  const dispatch = useDispatch();
+
   const [showPersonalModal, setShowPersonalModal] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [showPhoneModal, setShowPhoneModal] = useState(false);
@@ -55,7 +59,7 @@ export default function ViewProfile() {
           />
           <div>
             <p className="text-2xl font-bold text-white">{user.fullname}</p>
-            <p className="text-sm text-blue-300">{user.gender || "Not Provided"}</p>
+            <p className="text-sm text-blue-300">{user.about || "New User"}</p>
           </div>
         </div>
       </div>
@@ -73,7 +77,9 @@ export default function ViewProfile() {
           </div>
           <div>
             <p className="text-sm text-gray-400">Gender</p>
-            <p className="text-lg font-medium">{user.gender || "Not Provided"}</p>
+            <p className="text-lg font-medium">
+              {user.gender || "Not Provided"}
+            </p>
           </div>
           <div>
             <p className="text-sm text-gray-400">Date of Birth</p>
@@ -93,18 +99,24 @@ export default function ViewProfile() {
               <p className="text-sm text-gray-400">Email</p>
               <EditIcon onClick={() => setShowEmailModal(true)} />
             </div>
-            <p className="text-lg font-medium">{user.email || "Not Provided"}</p>
+            <p className="text-lg font-medium">
+              {user.email || "Not Provided"}
+            </p>
           </div>
           <div>
             <div className="flex items-center mb-1">
               <p className="text-sm text-gray-400">Phone Number</p>
               <EditIcon onClick={() => setShowPhoneModal(true)} />
             </div>
-            <p className="text-lg font-medium">{user.phone_number || "Not Provided"}</p>
+            <p className="text-lg font-medium">
+              {user.phone_number || "Not Provided"}
+            </p>
           </div>
           <div>
             <p className="text-sm text-gray-400">User ID</p>
-            <p className="text-lg font-medium">{user.username || "Not Provided"}</p>
+            <p className="text-lg font-medium">
+              {user.username || "Not Provided"}
+            </p>
           </div>
         </div>
       </div>
@@ -114,13 +126,13 @@ export default function ViewProfile() {
         <EditPersonalDetailsModal
           user={user}
           onClose={() => setShowPersonalModal(false)}
+          onUpdate={(updatedUser) => {
+            dispatch(setUserProfile(updatedUser));
+          }}
         />
       )}
       {showEmailModal && (
-        <EditEmailModal
-          user={user}
-          onClose={() => setShowEmailModal(false)}
-        />
+        <EditEmailModal user={user} onClose={() => setShowEmailModal(false)} />
       )}
       {showPhoneModal && (
         <EditPhoneNumberModal
