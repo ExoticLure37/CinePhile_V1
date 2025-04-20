@@ -391,7 +391,9 @@ const editPermissions = async (req, res) => {
     try {
         const user_id = req.user._id; 
         const { watchlist_id, member_id } = req.params;
-        const { newPermissions } = req.body;
+        const { permissions } = req.body;
+
+        // console.log(permissions)
 
         const watchlist = await watchListModel.findById(watchlist_id);
         if (!watchlist) {
@@ -410,7 +412,7 @@ const editPermissions = async (req, res) => {
             return res.status(404).json({ error: true, message: "Member not found in this watchlist." });
         }
 
-        watchlist.members[memberIndex].permissions = newPermissions;
+        watchlist.members[memberIndex].permissions = permissions;
         await watchlist.save();
 
         return res.status(200).json({
