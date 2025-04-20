@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-export default function EditPersonalDetailsModal({ onClose, user }) {
+export default function EditPersonalDetailsModal({ onClose, user, onUpdate }) {
   const [formData, setFormData] = useState({
     fullname: user.fullname || "",
     gender: user.gender || "",
@@ -11,7 +13,7 @@ export default function EditPersonalDetailsModal({ onClose, user }) {
   const formatForInput = (isoString) => {
     if (!isoString) return "";
     const date = new Date(isoString);
-    return date.toISOString().split("T")[0]; // extracting
+    return date.toISOString().split("T")[0];
   };
 
   const handleChange = (e) => {
@@ -21,95 +23,98 @@ export default function EditPersonalDetailsModal({ onClose, user }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const token = localStorage.getItem("token");
-    if (token) {
-      document.cookie = `token=${token}; path=/`; // This sets the token as a cookie
-    }
+    if (token) document.cookie = `token=${token}; path=/`;
 
     try {
-      const response = await fetch(
+      const { data } = await axios.patch(
         "http://localhost:5000/user/updatePersonalDetails",
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
+        formData,
+        { withCredentials: true }
       );
-
-      const data = await response.json();
-      if (response.ok) {
-        console.log("Update Successful:", data);
-        onClose();
-      } else {
-        console.error("Error Updating:", data.message);
-      }
-    } catch (error) {
-      console.error("Network Error:", error.message);
+      onUpdate(data);
+      onClose();
+      toast.success("Information Updated", { theme: "dark" });
+    } catch (err) {
+      console.error(err);
+      toast.error("Update failed", { theme: "dark" });
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-gray-900 p-6 rounded-xl shadow-lg w-[400px]">
-        <h2 className="text-xl font-semibold text-white mb-4">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-lg flex items-center justify-center z-50">
+      <div className="w-[100%] max-w-md bg-gradient-to-br from-[#0f172a] to-[#1e293b] border-2 border-blue-800 rounded-2xl p-4 text-white shadow-xl">
+        <h2 className="text-2xl font-semibold text-center text-blue-400 mb-6">
           Edit Personal Details
         </h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-400 mb-2">Name</label>
-            <input
-              type="text"
-              name="fullname"
-              value={formData.fullname}
-              onChange={handleChange}
-              className="w-full p-2 bg-gray-800 text-white rounded-md border border-gray-700"
-            />
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Row: Name | DOB | Gender */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Name</label>
+              <input
+                type="text"
+                name="fullname"
+                value={formData.fullname}
+                onChange={handleChange}
+                className="w-full p-2 bg-[#2c3e50] rounded-lg border border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-600"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">DOB</label>
+              <input
+                type="date"
+                name="dob"
+                value={formatForInput(formData.dob)}
+                onChange={handleChange}
+                className="w-full p-2 bg-[#2c3e50] rounded-lg border border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-600"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Gender</label>
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                className="w-full p-2 bg-[#2c3e50] rounded-lg border border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-600"
+              >
+                <option value="">Select</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+            </div>
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-400 mb-2">Gender</label>
-            <input
-              type="text"
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              className="w-full p-2 bg-gray-800 text-white rounded-md border border-gray-700"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-400 mb-2">DOB</label>
-            <input
-              type="date"
-              name="dob"
-              value={formatForInput(formData.dob)}
-              onChange={handleChange}
-              className="w-full p-2 bg-gray-800 text-white rounded-md border border-gray-700"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-400 mb-2">About</label>
+
+          {/* Full‑width About */}
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">About</label>
             <textarea
               name="about"
+              rows={4}
               value={formData.about}
               onChange={handleChange}
-              className="w-full h-24 p-2 bg-gray-800 text-white rounded-md border border-gray-700"
+              className="w-full p-2 bg-[#2c3e50] rounded-lg border border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-600 resize-none"
             />
           </div>
-          <div className="flex justify-end gap-3">
+
+          {/* Actions */}
+          <div className="flex justify-between gap-4 pt-4">
             <button
               type="button"
-              className="px-4 py-2 bg-gray-600 rounded-md"
               onClick={onClose}
+              className="flex-1 py-2 text-gray-300 bg-[#444f5b] rounded-lg hover:bg-[#3b434b] transition"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-500 rounded-md text-white"
+              className="flex-1 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
             >
-              Save
+              Save Changes
             </button>
           </div>
         </form>
