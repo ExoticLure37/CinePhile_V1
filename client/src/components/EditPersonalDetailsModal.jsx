@@ -43,14 +43,13 @@ export default function EditPersonalDetailsModal({ onClose, user, onUpdate }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-lg flex items-center justify-center z-50">
-      <div className="w-[100%] max-w-md bg-gradient-to-br from-[#0f172a] to-[#1e293b] border-2 border-blue-800 rounded-2xl p-4 text-white shadow-xl">
+      <div className="w-full max-w-xl bg-gradient-to-br from-[#0f172a] to-[#1e293b] border-2 border-blue-800 rounded-2xl p-6 text-white shadow-xl">
         <h2 className="text-2xl font-semibold text-center text-blue-400 mb-6">
           Edit Personal Details
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Row: Name | DOB | Gender */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_1fr] gap-y-4 gap-x-6">
             <div>
               <label className="block text-sm text-gray-400 mb-1">Name</label>
               <input
@@ -58,7 +57,7 @@ export default function EditPersonalDetailsModal({ onClose, user, onUpdate }) {
                 name="fullname"
                 value={formData.fullname}
                 onChange={handleChange}
-                className="w-full p-2 bg-[#2c3e50] rounded-lg border border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-600"
+                className="w-full min-w-0 flex-1 p-2 bg-[#2c3e50] rounded-lg border border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-600"
               />
             </div>
 
@@ -69,7 +68,7 @@ export default function EditPersonalDetailsModal({ onClose, user, onUpdate }) {
                 name="dob"
                 value={formatForInput(formData.dob)}
                 onChange={handleChange}
-                className="w-full p-2 bg-[#2c3e50] rounded-lg border border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-600"
+                className="w-full min-w-0 flex-1 p-2 bg-[#2c3e50] rounded-lg border border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-600"
               />
             </div>
 
@@ -79,7 +78,7 @@ export default function EditPersonalDetailsModal({ onClose, user, onUpdate }) {
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
-                className="w-full p-2 bg-[#2c3e50] rounded-lg border border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-600"
+                className="w-full min-w-0 flex-1 p-2 bg-[#2c3e50] rounded-lg border border-transparent focus:border-blue-500 focus:ring-1 focus:ring-blue-600"
               >
                 <option value="">Select</option>
                 <option>Male</option>
@@ -89,7 +88,6 @@ export default function EditPersonalDetailsModal({ onClose, user, onUpdate }) {
             </div>
           </div>
 
-          {/* Full‑width About */}
           <div>
             <label className="block text-sm text-gray-400 mb-1">About</label>
             <textarea
@@ -101,7 +99,6 @@ export default function EditPersonalDetailsModal({ onClose, user, onUpdate }) {
             />
           </div>
 
-          {/* Actions */}
           <div className="flex justify-between gap-4 pt-4">
             <button
               type="button"
