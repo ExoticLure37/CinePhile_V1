@@ -12,10 +12,23 @@ const tvProgressSchema = new mongoose.Schema({
         required: true,
         index: true
     },
+    title: { type: String, required: true },
+    imageUrl: { type: String },
+    status: {
+        type: String,
+        enum: ['watching', 'watched', 'none'],
+        index: true,
+        default: 'none'
+    },
     totalEpisodes: Number,
-    watchedEpisodes: Number,
+    watchedEpisodes: {type:Number,default:0},
     seasons: [{
         season: Number,
+        status: {
+            type: String,
+            enum: ['watching', 'watched', 'none'],
+            default: 'none'
+        },
         episodes: [{
             episode: Number,
             watched: { type: Boolean, default: false },

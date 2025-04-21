@@ -35,12 +35,6 @@ const watchlistSchema = new mongoose.Schema({
             enum: ['movie', 'tv'],
             default: 'movie'
         },
-        status: {
-            type: String,
-            enum: ['watching', 'watched', 'none'],
-            default: 'none'
-        },
-        lastWatched: Date,
         ratings: [{
             user: {
                 type: mongoose.Schema.Types.ObjectId,
