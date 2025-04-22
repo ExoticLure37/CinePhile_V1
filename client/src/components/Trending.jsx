@@ -34,6 +34,10 @@ function Trending({ flag }) {
             let response = null;
             const apiKey = process.env.REACT_APP_RAPIDAPI_KEY;
             const apiHost = process.env.REACT_APP_RAPIDAPI_HOST;
+
+            // console.log(apiHost)
+            // console.log(apiKey)
+
             if (flag) {
                 response = await axios.get(
                     "https://imdb236.p.rapidapi.com/imdb/most-popular-movies",
