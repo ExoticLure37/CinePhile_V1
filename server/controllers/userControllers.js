@@ -619,6 +619,9 @@ const uploadProfilePicture = async (req,res) => {
   const userId = req.user._id;
   const localPath = req.file.path;
 
+  // console.log(userId);
+  // console.log(localPath);
+
   try {
     // Upload to Cloudinary
     const res = await uploadOnCloundinary(localPath) ;

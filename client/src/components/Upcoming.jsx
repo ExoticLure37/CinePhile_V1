@@ -100,7 +100,7 @@ function Upcoming({ flag }) {
                                 key={item.id}
                                 media={{
                                     ...item,
-                                    primaryImage: item.primaryImage,
+                                    primaryImage: item.primaryImage || null,
                                     primaryTitle: item.originalTitle || "No Title",
                                     genres: item.genres || [],
                                     spokenLanguages: item.spokenLanguages || ["en"],

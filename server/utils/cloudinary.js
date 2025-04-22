@@ -13,6 +13,8 @@ const uploadOnCloundinary = async (localFilePath) => {
             return null;
         }
 
+        console.log(localFilePath);
+
         const res = await cloudinary.uploader
             .upload(
                 localFilePath, {
