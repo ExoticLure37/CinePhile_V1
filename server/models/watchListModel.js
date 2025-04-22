@@ -16,7 +16,7 @@ const watchlistSchema = new mongoose.Schema({
     members: [{
         user_id: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User', 
+            ref: 'User',
             index: true
         },
         permissions: {
@@ -29,6 +29,12 @@ const watchlistSchema = new mongoose.Schema({
         imdb_id: { type: String, required: true },
         name: { type: String, required: true },
         imageUrl: { type: String },
+        mediaType: {
+            type: String,
+            required: true,
+            enum: ['movie', 'tv'],
+            default: 'movie'
+        },
         ratings: [{
             user: {
                 type: mongoose.Schema.Types.ObjectId,
@@ -46,11 +52,11 @@ const watchlistSchema = new mongoose.Schema({
                 default: Date.now
             }
         }],
-        avg_rating: { type: Number, default: 0 },
+        avgRating: { type: Number, default: 0 },
         addedBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
-        }
+        },
     }],
 }, { timestamps: true });
 
