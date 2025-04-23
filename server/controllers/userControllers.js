@@ -611,20 +611,17 @@ const contact = async (req, res) => {
     res.status(201).json({ message: "Message sent successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal server error" });
-  }
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
 
-const uploadProfilePicture = async (req,res) => {
+const uploadProfilePicture = async (req, res) => {
   const userId = req.user._id;
   const localPath = req.file.path;
 
-  // console.log(userId);
-  // console.log(localPath);
-
   try {
     // Upload to Cloudinary
-    const res = await uploadOnCloundinary(localPath) ;
+    const result = await uploadOnCloundinary(userId,localPath);
 
     const user = await userModel.findByIdAndUpdate(
       userId,
@@ -634,7 +631,7 @@ const uploadProfilePicture = async (req,res) => {
 
     res.json({ success: true, profilePic: result.secure_url });
   } catch (err) {
-    return res.status(500).json({ error: 'Upload to Cloudinary failed' });
+    return res.status(500).json({ error: true, message: 'Upload to Cloudinary failed' });
   }
 }
 
@@ -642,5 +639,5 @@ module.exports = {
   register, login, resetPassword, verifyToken,
   addFriend, acceptFriendRequest, rejectFriendRequest,
   cancelFriendRequest, removeFriend, searchFriend, getPendingRequest, getRequestSent, getFriends, updatePersonalDetails
-  , updateEmail, verifyEmail, updatePassword, updateUsername, getProfile,contact,uploadProfilePicture
+  , updateEmail, verifyEmail, updatePassword, updateUsername, getProfile, contact, uploadProfilePicture
 };

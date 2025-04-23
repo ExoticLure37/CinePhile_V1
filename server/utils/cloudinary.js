@@ -7,26 +7,27 @@ cloudinary.config({
     api_secret: 'h6E7uVEMOGgBxbh-F0q6VQVhh0o'
 });
 
-const uploadOnCloundinary = async (localFilePath) => {
+const uploadOnCloundinary = async (userId,localFilePath) => {
     try {
         if (!localFilePath) {
             return null;
         }
 
-        console.log(localFilePath);
+        // console.log(localFilePath);
 
         const res = await cloudinary.uploader
             .upload(
                 localFilePath, {
-                resource_type: "auto"
-            }
-            );
+                resource_type: "auto", 
+                folder:"profilePictures",
+                public_id: `user_${userId}`
+            });
         fs.unlinkSync(localFilePath);
         return res;
     } catch (err) {
-
-        return null;
+        // console.log(err);
+        return err;
     }
 };
 
-module.exports = uploadOnCloundinary ;
+module.exports = uploadOnCloundinary;
