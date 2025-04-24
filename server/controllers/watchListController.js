@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 
 const userModel = require("../models/userModel");
 const watchListModel = require("../models/watchListModel");
+const favoriteModel = require("../models/favoriteModel");
+
+
 
 // Create a new watchlist
 const createWatchList = async (req, res) => {
@@ -389,7 +392,7 @@ const removeMember = async (req, res) => {
 
 const editPermissions = async (req, res) => {
     try {
-        const user_id = req.user._id; 
+        const user_id = req.user._id;
         const { watchlist_id, member_id } = req.params;
         const { permissions } = req.body;
 
@@ -538,6 +541,101 @@ const getFriendWatchListItems = async (req, res) => {
     }
 };
 
+const markWatchListAsFavorite = async (req, res) => {
+    const session = await mongoose.startSession();
+    try {
+        session.startTransaction();
+
+        const userId = req.user._id;
+        const watchlistId = req.params.watchlist_id;
+
+        const favorite = await favoriteModel.create([{
+            userId,
+            watchlistId
+        }], { session });
+
+        const updatedWatchlist = await watchListModel.findByIdAndUpdate(
+            watchlistId,
+            { $inc: { favoritesCount: 1 } },
+            { new: true, session }
+        ).select("favoritesCount");
+
+        await session.commitTransaction();
+
+        return res.status(200).json({
+            success: true,
+            favorite: favorite[0],
+            updatedWatchlist,
+            message: "Marked favorite successfully"
+        });
+
+    } catch (err) {
+        await session.abortTransaction();
+
+        if (err.code === 11000) {
+            return res.status(400).json({
+                error: true,
+                message: "Already favorited this watchlist"
+            });
+        }
+        return res.status(500).json({
+            error: true,
+            message: err.message
+        });
+    } finally {
+        session.endSession();
+    }
+};
+
+
+const unMarkWatchListAsFavorite = async (req, res) => {
+    const session = await mongoose.startSession();
+    try {
+        session.startTransaction();
+
+        const userId = req.user._id;
+        const watchlistId = req.params.watchlist_id;
+
+        // Delete the favorite entry within the transaction session
+        const result = await favoriteModel.deleteOne({
+            userId,
+            watchlistId
+        }).session(session);
+
+        if (result.deletedCount === 0) {
+            await session.abortTransaction();
+            session.endSession();
+            return res.status(404).json({
+                error: true,
+                message: "Favorite entry not found"
+            });
+        }
+
+        // Decrement favoritesCount atomically within the transaction session
+        const updatedWatchlist = await watchListModel.findByIdAndUpdate(
+            watchlistId,
+            { $inc: { favoritesCount: -1 } },
+            { new: true, session }
+        ).select("favoritesCount");
+
+        await session.commitTransaction();
+
+        return res.status(200).json({
+            success: true,
+            updatedWatchlist,
+            message: "Unmarked favorite successfully"
+        });
+
+    } catch (err) {
+        await session.abortTransaction();
+        return res.status(500).json({
+            error: true,
+            message: err.message
+        });
+    } finally {
+        session.endSession();
+    }
+};
 
 
 
@@ -561,5 +659,6 @@ const markEpisodeAsWatched = async () => { };
 module.exports = {
     createWatchList, renameWatchList, getAllWatchLists, deleteAllWatchLists, deleteWatchList, addItemToWatchList, removeItemFromWatchList, getFriendsWatchList,
     getFriendWatchListItems,
-    getWatchList, addItemToWatchList, removeItemFromWatchList, addMember, removeMember, editPermissions, rateItem
+    getWatchList, addItemToWatchList, removeItemFromWatchList, addMember, removeMember, editPermissions, rateItem,
+    markWatchListAsFavorite, unMarkWatchListAsFavorite
 };

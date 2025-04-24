@@ -58,6 +58,10 @@ const watchlistSchema = new mongoose.Schema({
             ref: 'User'
         },
     }],
+    favoritesCount: {
+        type: Number,
+        default: 0
+    },
 }, { timestamps: true });
 
 

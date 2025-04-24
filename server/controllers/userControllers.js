@@ -635,9 +635,16 @@ const uploadProfilePicture = async (req, res) => {
   }
 }
 
+const getFavoritedWatchlists = async (req,res) => {
+  try{
+    return res.status(200).json({message:"Not implemented yet"}); 
+  }catch(err){
+    return res.status(500).json({error:true,message:err.message});
+  }
+}
 module.exports = {
   register, login, resetPassword, verifyToken,
   addFriend, acceptFriendRequest, rejectFriendRequest,
   cancelFriendRequest, removeFriend, searchFriend, getPendingRequest, getRequestSent, getFriends, updatePersonalDetails
-  , updateEmail, verifyEmail, updatePassword, updateUsername, getProfile, contact, uploadProfilePicture
+  , updateEmail, verifyEmail, updatePassword, updateUsername, getProfile, contact, uploadProfilePicture,getFavoritedWatchlists
 };

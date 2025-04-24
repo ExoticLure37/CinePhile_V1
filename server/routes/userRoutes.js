@@ -2,7 +2,7 @@ const express = require("express");
 const { authUser } = require("../middleware/authMiddleware");
 const { register, login, resetPassword, verifyToken, addFriend, getFriends, acceptFriendRequest, rejectFriendRequest, cancelFriendRequest,
     removeFriend, searchFriend, getPendingRequest, getRequestSent, updatePersonalDetails, updateEmail, verifyEmail, 
-    updatePassword, updateUsername, getProfile, contact, uploadProfilePicture } = require("../controllers/userControllers");
+    updatePassword, updateUsername, getProfile, contact, uploadProfilePicture,getFavoritedWatchlists} = require("../controllers/userControllers");
 const upload = require("../middleware/upload");
 
 
@@ -28,6 +28,8 @@ router.get("/getProfile/:userId", getProfile);
 router.get("/verify/:newEmail/:userId", verifyEmail);
 router.post("/contact", authUser, contact);
 router.patch("/verify/:newEmail/:userId", verifyEmail);
+
+router.get("/favorites",getFavoritedWatchlists);
 
 router.post("/upload-profile-picture",authUser, upload.single('profilePic'), uploadProfilePicture);
 module.exports = router;
