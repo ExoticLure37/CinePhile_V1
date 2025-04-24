@@ -47,7 +47,7 @@ function Upcoming({ flag }) {
             }
 
 
-            const allTitles = response.data.flatMap(group => group.titles);
+            const allTitles = response.data.flatMap(group => group.titles).filter(item => item && item.id);
 
             // Slice if needed
             setUpcomingMovies(allTitles.slice(0, 30));
