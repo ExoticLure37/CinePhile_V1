@@ -57,7 +57,6 @@ function App() {
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
-        
       </Routes>
       <ToastContainer
         position="top-right"
