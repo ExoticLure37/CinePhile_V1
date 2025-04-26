@@ -1,28 +1,3 @@
-<<<<<<< HEAD
-const mongoose = require("mongoose");
-
-const watchListSchema = new mongoose.Schema({
-  _id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  watchlists: [
-    {
-      title: { type: String, required: true },
-      items: [
-        {
-          imdb_id: { type: String, required: true },
-          name: { type: String, required: true },
-          imageUrl: { type: String, default: null },
-        },
-      ],
-    },
-  ],
-});
-
-const watchListModel = mongoose.model("WatchList", watchListSchema);
-=======
 const mongoose = require('mongoose');
 const userModel = require('./userModel');
 
@@ -98,6 +73,5 @@ watchlistSchema.pre('save', async function (next) {
 
 
 const watchListModel = mongoose.model('WatchList', watchlistSchema);
->>>>>>> e9e04a7120f6163fb1b3d2a537865d290a0f1477
 
 module.exports = watchListModel;

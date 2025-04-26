@@ -37,7 +37,7 @@ function SignIn() {
           phone_number: res.data.phone_number,
         })
       );
-      toast("Ligin Successfull");
+      toast.success("Login Successfull");
       console.log("success");
       navigate("/movies");
     } catch (err) {
@@ -47,9 +47,8 @@ function SignIn() {
 
   return (
     <div className="signIn center">
-      {/* yahan logo insert  */}
-      <h6 className="absolute top-6 text-2xl font-extrabold text-[#E50914] tracking-wide z-10">
-        CinePhile<span className="text-white">Logo</span>
+      <h6 className="absolute top-2 text-1xl md:text-1xl font-extrabold text-[#E50914] tracking-wide z-10">
+        <img src="logo.png" alt="LOGO" className="h-8 w-auto md:h-14" />
       </h6>
 
       <div className="h-screen w-screen bg-black flex items-center justify-center text-white px-4">

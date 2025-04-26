@@ -51,31 +51,31 @@ const userSchema = new mongoose.Schema({
   dob: {
     type: Date,
   },
-  watchlists: [{
-    watchlist_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Watchlist',
-      required: true,
-      index: true
+  watchlists: [
+    {
+      watchlist_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Watchlist",
+        required: true,
+        index: true,
+      },
+      title: {
+        type: String,
+        required: true,
+        maxlength: 50,
+      },
+      owner: {
+        type: Boolean,
+        default: false,
+      },
     },
-    title: {
-      type: String,
-      required: true,
-      maxlength: 50
-    },
-    owner: {
-      type: Boolean,
-      default: false
-    }
-  }],
+  ],
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
+
   timeStamp: {
-<<<<<<< HEAD
     type: Date,
   },
-=======
-    type: Date
-  }
->>>>>>> e9e04a7120f6163fb1b3d2a537865d290a0f1477
 });
 
 // Hhash passwd

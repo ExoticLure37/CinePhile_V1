@@ -5,7 +5,7 @@ export default function LogOut() {
 
   const handleLogout = () => {
     localStorage.removeItem("authToken"); // Remove authentication token
-    navigate("/login"); // Redirect to login page
+    navigate("/signin"); // Redirect to login page
   };
 
   return (
