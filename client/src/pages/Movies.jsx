@@ -83,21 +83,6 @@ function Movies() {
       </div>
 
       <div className="flex flex-col my-8 gap-10 ml-10">
-        {/* Watching Section */}
-        <div className="flex flex-col gap-5">
-          <Link className="font-bold text-4xl hover:text-5xl transition-all duration-300">
-            Watching <ArrowForwardIosIcon />
-          </Link>
-          <div className="flex gap-8">
-            {[...Array(5)].map((_, i) => (
-              <div
-                key={i}
-                className="bg-red-600 h-60 w-1/6 rounded-md"
-              ></div>
-            ))}
-          </div>
-        </div>
-
         {/* Trending Section - Netflix-style Scroll */}
         <Trending flag={true} />
 

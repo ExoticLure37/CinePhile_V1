@@ -6,7 +6,8 @@ import EditEmailModal from "./EditEmailModal";
 import EditPhoneNumberModal from "./EditPhoneNumberModal";
 import profileimage from "../image/photo.jpg";
 import { setUserProfile } from "../redux/user/userSlice.js";
-
+import axios from "axios";
+// import {toast} from "react-toastify";
 // Pencil icon component
 const EditIcon = ({ onClick }) => (
   <button
@@ -30,6 +31,8 @@ const EditIcon = ({ onClick }) => (
   </button>
 );
 
+
+
 export default function ViewProfile() {
   const user = useSelector((state) => state.userProfile);
   const dispatch = useDispatch();
@@ -46,16 +49,56 @@ export default function ViewProfile() {
     return `${day}/${month}/${year}`;
   };
 
+  const handleProfileImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("profilePic", file);
+
+    try {
+      const res = await axios.post("http://localhost:5000/user/upload-profile-picture", formData, {
+        withCredentials: true, 
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const data = res.data;
+
+      if (data.success) {
+        dispatch(setUserProfile({ ...user, profilePic: data.profilePic }))
+      } else {
+        console.error(data.error);
+      }
+    }
+    catch (err) {
+      console.error("Error uploading profile picture:", err);
+    }
+  }
+
   return (
     <div className="max-w-5xl mx-auto px-6 py-8">
       {/* Profile Header */}
-      <div className="flex flex-col sm:flex-row items-center justify-between bg-gradient-to-r from-[#1e293b] to-[#0f172a] p-6 rounded-3xl shadow-xl transform transition-all hover:scale-105 hover:shadow-2xl duration-300">
+      <div className="flex flex-col sm:flex-row items-center justify-between bg-gradient-to-r from-[#1e293b] to-[#0f172a] p-6 rounded-3xl shadow-xl">
         <div className="flex items-center gap-6">
-          <img
-            src={profileimage}
-            alt={`profile-${user.fullname || "user"}`}
-            className="w-24 h-24 rounded-full object-cover border-4 border-blue-500 shadow-lg transition-transform duration-300 hover:scale-110"
-          />
+          <label className="relative cursor-pointer group">
+            <img
+              src={user.profilePic || profileimage}
+              alt={`profile-${user.fullname || "user"}`}
+              className="w-60 h-28 rounded-full object-cover border-4 border-blue-500 shadow-lg"
+            />
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white text-xs opacity-0 group-hover:opacity-100 transition rounded-full">
+              Change
+            </div>
+            <input type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleProfileImageUpload} />
+          </label>
           <div>
             <p className="text-2xl font-bold text-white">{user.fullname}</p>
             <p className="text-sm text-blue-300">{user.about || "New User"}</p>
@@ -64,48 +107,58 @@ export default function ViewProfile() {
       </div>
 
       {/* Personal Details */}
-      <div className="mt-10 bg-[#1f2937]/90 backdrop-blur-md p-6 rounded-2xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl duration-300">
+      <div className="mt-10 bg-[#1f2937]/90 backdrop-blur-md p-6 rounded-2xl shadow-lg">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-white">Personal Details</h2>
           <IconBtn text="Edit" onClick={() => setShowPersonalModal(true)} />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-gray-200">
-          <div className="hover:scale-105 hover:bg-gray-600 hover:shadow-lg p-4 rounded-lg transition-all duration-300">
+          <div>
             <p className="text-sm text-gray-400">Name</p>
             <p className="text-lg font-medium">{user.fullname}</p>
           </div>
-          <div className="hover:scale-105 hover:bg-gray-600 hover:shadow-lg p-4 rounded-lg transition-all duration-300">
+          <div>
             <p className="text-sm text-gray-400">Gender</p>
-            <p className="text-lg font-medium">{user.gender || "Not Provided"}</p>
+            <p className="text-lg font-medium">
+              {user.gender || "Not Provided"}
+            </p>
           </div>
-          <div className="hover:scale-105 hover:bg-gray-600 hover:shadow-lg p-4 rounded-lg transition-all duration-300">
+          <div>
             <p className="text-sm text-gray-400">Date of Birth</p>
-            <p className="text-lg font-medium">{user.dob ? formatDate(user.dob) : "Not Provided"}</p>
+            <p className="text-lg font-medium">
+              {user.dob ? formatDate(user.dob) : "Not Provided"}
+            </p>
           </div>
         </div>
       </div>
 
       {/* Account Settings */}
-      <div className="mt-8 bg-[#1f2937]/90 backdrop-blur-md p-6 rounded-2xl shadow-lg transform transition-all hover:scale-105 hover:shadow-xl duration-300">
+      <div className="mt-8 bg-[#1f2937]/90 backdrop-blur-md p-6 rounded-2xl shadow-lg">
         <h2 className="text-xl font-bold text-white mb-6">Account Settings</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 text-gray-200">
-          <div className="hover:scale-105 hover:bg-gray-600 hover:shadow-lg p-4 rounded-lg transition-all duration-300">
+          <div>
             <div className="flex items-center mb-1">
               <p className="text-sm text-gray-400">Email</p>
               <EditIcon onClick={() => setShowEmailModal(true)} />
             </div>
-            <p className="text-lg font-medium">{user.email || "Not Provided"}</p>
+            <p className="text-lg font-medium">
+              {user.email || "Not Provided"}
+            </p>
           </div>
-          <div className="hover:scale-105 hover:bg-gray-600 hover:shadow-lg p-4 rounded-lg transition-all duration-300">
+          <div>
             <div className="flex items-center mb-1">
               <p className="text-sm text-gray-400">Phone Number</p>
               <EditIcon onClick={() => setShowPhoneModal(true)} />
             </div>
-            <p className="text-lg font-medium">{user.phone_number || "Not Provided"}</p>
+            <p className="text-lg font-medium">
+              {user.phone_number || "Not Provided"}
+            </p>
           </div>
-          <div className="hover:scale-105 hover:bg-gray-600 hover:shadow-lg p-4 rounded-lg transition-all duration-300">
+          <div>
             <p className="text-sm text-gray-400">User ID</p>
-            <p className="text-lg font-medium">{user.username || "Not Provided"}</p>
+            <p className="text-lg font-medium">
+              {user.username || "Not Provided"}
+            </p>
           </div>
         </div>
       </div>

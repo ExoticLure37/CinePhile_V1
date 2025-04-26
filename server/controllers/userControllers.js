@@ -620,7 +620,7 @@ const uploadProfilePicture = async (req, res) => {
 
   try {
     // Upload to Cloudinary
-    const res = await uploadOnCloundinary(localPath);
+    const result = await uploadOnCloundinary(userId, localPath);
 
     const user = await userModel.findByIdAndUpdate(
       userId,
@@ -630,7 +630,9 @@ const uploadProfilePicture = async (req, res) => {
 
     res.json({ success: true, profilePic: result.secure_url });
   } catch (err) {
-    return res.status(500).json({ error: "Upload to Cloudinary failed" });
+    return res
+      .status(500)
+      .json({ error: true, message: "Upload to Cloudinary failed" });
   }
 };
 
@@ -707,6 +709,21 @@ const resetforgotPassword = async (req, res) => {
   }
 };
 
+const getFavoritedWatchlists = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const favorites = await favoriteModel
+      .find({ userId })
+      .populate("watchlistId", "title favoritesCount")
+      .lean();
+
+    const watchlists = favorites.map((fav) => fav.watchlistId);
+
+    return res.status(200).json({ watchlists });
+  } catch (err) {
+    return res.status(500).json({ error: true, message: err.message });
+  }
+};
 module.exports = {
   register,
   login,
@@ -729,6 +746,7 @@ module.exports = {
   getProfile,
   contact,
   uploadProfilePicture,
-  forgotPassword,
+  getFavoritedWatchlists,
   resetforgotPassword,
+  forgotPassword,
 };

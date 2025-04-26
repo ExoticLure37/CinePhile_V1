@@ -47,7 +47,7 @@ function Upcoming({ flag }) {
             }
 
 
-            const allTitles = response.data.flatMap(group => group.titles);
+            const allTitles = response.data.flatMap(group => group.titles).filter(item => item && item.id);
 
             // Slice if needed
             setUpcomingMovies(allTitles.slice(0, 30));
@@ -100,7 +100,7 @@ function Upcoming({ flag }) {
                                 key={item.id}
                                 media={{
                                     ...item,
-                                    primaryImage: item.primaryImage,
+                                    primaryImage: item.primaryImage || null,
                                     primaryTitle: item.originalTitle || "No Title",
                                     genres: item.genres || [],
                                     spokenLanguages: item.spokenLanguages || ["en"],

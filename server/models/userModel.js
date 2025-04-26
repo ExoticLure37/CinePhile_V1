@@ -20,6 +20,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  profilePic: {
+    type: String
+  },
   friends: [
     {
       _id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

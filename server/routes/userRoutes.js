@@ -22,6 +22,7 @@ const {
   getProfile,
   contact,
   uploadProfilePicture,
+  getFavoritedWatchlists,
   forgotPassword,
   resetforgotPassword,
 } = require("../controllers/userControllers");
@@ -55,7 +56,17 @@ router.post(
   uploadProfilePicture
 );
 
+router.get("/favorites", getFavoritedWatchlists);
+
+router.post(
+  "/upload-profile-picture",
+  authUser,
+  upload.single("profilePic"),
+  uploadProfilePicture
+);
+
 //forgot password routes
-router.post("/forgot-password",authUser, forgotPassword);
-router.post("/reset-password/:token",authUser, resetforgotPassword);
+router.post("/forgot-password", authUser, forgotPassword);
+router.post("/reset-password/:token", authUser, resetforgotPassword);
+
 module.exports = router;

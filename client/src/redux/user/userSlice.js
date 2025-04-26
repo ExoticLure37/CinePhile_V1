@@ -12,7 +12,8 @@ const userSlice = createSlice({
     phone_number: "",
     friendList: [],
     pending_requests: [],
-    request_sent: []
+    request_sent: [],
+    profilePic : "",
   },
   reducers: {
     setUserProfile: (state, action) => {
@@ -24,6 +25,7 @@ const userSlice = createSlice({
       state.dob = action.payload.dob;
       state.phone_number = action.payload.phone_number;
       state.friendList = action.payload.friendList;
+      state.profilePic = action.payload.profilePic;
     },
     setFriendList: (state, action) => {
       state.friendList = action.payload.friendList;
