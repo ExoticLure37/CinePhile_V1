@@ -1,15 +1,16 @@
 const express = require('express');
-const { getAllWatchLists, createWatchList, renameWatchList, deleteAllWatchLists, deleteWatchList,
+const { getAllWatchLists, getUserWatchLists, createWatchList, renameWatchList, deleteAllWatchLists, deleteWatchList,
     getWatchListItems, addItemToWatchList, removeItemFromWatchList,
     getFriendsWatchList,
-    getFriendWatchListItems, getWatchList, addMember,removeMember,editPermissions, rateItem,
-    markWatchListAsFavorite,unMarkWatchListAsFavorite } = require('../controllers/watchListController');
+    getFriendWatchListItems, getWatchList, addMember, removeMember, editPermissions, rateItem,
+    markWatchListAsFavorite, unMarkWatchListAsFavorite } = require('../controllers/watchListController');
 const { checkSharedWatchlistPermissions } = require("../middleware/checkSharedWatchlistPermissions");
 const { authUser } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
 router.get('/', authUser, getAllWatchLists);
+router.get('/user', authUser, getUserWatchLists);
 router.get('/friends-watchlist/:_id', getFriendsWatchList)
 router.get('/friends-watchlist-movie/:_id/:watchlist_id', getFriendWatchListItems)
 router.post('/create/:title', authUser, createWatchList);
@@ -21,8 +22,8 @@ router.patch('/addToWatchlist/:watchlist_id', authUser, checkSharedWatchlistPerm
 router.patch('/:watchlist_id/:item_id', authUser, checkSharedWatchlistPermissions('canRemove'), removeItemFromWatchList);
 
 router.patch('/:watchlist_id/:item_id/rate', authUser, rateItem);
-router.post('/watchlists/:watchlist_id/favorite',authUser,markWatchListAsFavorite);
-router.delete('/watchlists/:watchlist_id/favorite',authUser,unMarkWatchListAsFavorite);
+router.post('/:watchlist_id/favorite', authUser, markWatchListAsFavorite);
+router.delete('/:watchlist_id/favorite', authUser, unMarkWatchListAsFavorite);
 
 //for shared watchlists 
 router.patch("/shared/:watchlist_id/members", authUser, checkSharedWatchlistPermissions('canEdit'), addMember);

@@ -6,6 +6,21 @@ const favoriteModel = require("../models/favoriteModel");
 
 
 
+const getAllWatchLists = async (req, res) => {
+    try {
+        const { sortBy = 'createdAt', order = 'desc' } = req.query;
+
+        const sortOrder = order === 'asc' ? 1 : -1;
+
+        const watchLists = await watchListModel.find().sort({ [sortBy]: sortOrder });
+
+        res.status(200).json({ watchLists });
+    } catch (err) {
+        res.status(500).json({ error: true, message: err.message });
+    }
+};
+
+
 // Create a new watchlist
 const createWatchList = async (req, res) => {
     try {
@@ -98,7 +113,7 @@ const renameWatchList = async (req, res) => {
 
 
 //Fetch all watchlists for a user
-const getAllWatchLists = async (req, res) => {
+const getUserWatchLists = async (req, res) => {
     try {
         const userId = req.user._id;
 
@@ -657,7 +672,7 @@ const markEpisodeAsWatched = async () => { };
 
 
 module.exports = {
-    createWatchList, renameWatchList, getAllWatchLists, deleteAllWatchLists, deleteWatchList, addItemToWatchList, removeItemFromWatchList, getFriendsWatchList,
+    getAllWatchLists, createWatchList, renameWatchList, getUserWatchLists, deleteAllWatchLists, deleteWatchList, addItemToWatchList, removeItemFromWatchList, getFriendsWatchList,
     getFriendWatchListItems,
     getWatchList, addItemToWatchList, removeItemFromWatchList, addMember, removeMember, editPermissions, rateItem,
     markWatchListAsFavorite, unMarkWatchListAsFavorite
