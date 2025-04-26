@@ -20,6 +20,11 @@ import UpcomingPage from "./pages/UpcomingPage";
 import TopMoviesShowsPage from "./pages/TopMoviesShowsPage";
 import ManageWatchlist from "./pages/ManageWatchlist";
 import Setting from "./pages/Settings";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import AboutUs from "./pages/AboutUs";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 function App() {
   return (
@@ -45,6 +50,14 @@ function App() {
         <Route path="/top-movies-shows" element={<TopMoviesShowsPage />} />
         <Route path="/manageWatchlist" element={<ManageWatchlist />} />
         <Route path="/settings" element={<Setting />} />
+
+        {/*check again...*/}
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/user/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/about-us" element={<AboutUs />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
+        
       </Routes>
       <ToastContainer
         position="top-right"
