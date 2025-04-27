@@ -9,6 +9,8 @@ const sendEmail = require("../utils/sendEmail");
 const crypto = require("crypto");
 const mongoose = require("mongoose");
 const uploadOnCloundinary = require("../utils/cloudinary");
+const favoriteModel = require("../models/favoriteModel");
+const watchListModel = require("../models/watchListModel")
 
 // const redisClient = require("../utils/redisClient");
 
@@ -711,7 +713,9 @@ const resetforgotPassword = async (req, res) => {
 
 const getFavoritedWatchlists = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.user._id;
+
+    // console.log(userId);
     const favorites = await favoriteModel
       .find({ userId })
       .populate("watchlistId", "title favoritesCount")
@@ -724,6 +728,7 @@ const getFavoritedWatchlists = async (req, res) => {
     return res.status(500).json({ error: true, message: err.message });
   }
 };
+
 module.exports = {
   register,
   login,

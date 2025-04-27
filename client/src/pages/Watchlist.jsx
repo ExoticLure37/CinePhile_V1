@@ -8,22 +8,25 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import axios from "axios";
 import WatchlistCard from "../components/WatchlistCard";
 import { useNavigate } from "react-router-dom";
+import GradeIcon from '@mui/icons-material/Grade';
 
 function Watchlist() {
     const [showModal, setShowModal] = useState(false);
     const [manageModal, setManageModal] = useState(null);
     const [watchlistType, setWatchlistType] = useState("");
     const [watchlists, setWatchlists] = useState([]);
+    const [favoriteWatchlist, setFavoriteWatchlist] = useState(new Set());
 
     useEffect(() => {
         getAllWatchList();
+        getFavoriteWatchlist();
     }, [])
 
     const getAllWatchList = async () => {
         try {
-            const res = await axios.get("http://localhost:5000/watchlist/", { withCredentials: true });
+            const res = await axios.get("http://localhost:5000/watchlist/user", { withCredentials: true });
             setWatchlists(res.data.watchlists);
-            // console.log(res.data.watchlists);
+            console.log(res.data.watchlists);
         } catch (err) {
             console.log(err.response?.data);
         }
@@ -46,6 +49,53 @@ function Watchlist() {
         } catch (err) {
             console.log(err.response?.data);
         }
+    }
+
+    const getFavoriteWatchlist = async () => {
+        try {
+            const res = await axios.get("http://localhost:5000/user/favorites", { withCredentials: true })
+
+            // console.log(res.data)
+            const watchlist = res.data.watchlists;
+
+            setFavoriteWatchlist((prevFavoriteWatchlist) => {
+                const newSet = new Set(prevFavoriteWatchlist);
+                if(watchlist.length > 0) watchlist.forEach((item) => newSet.add(item));
+                return newSet;
+            });
+        }
+        catch (err) {
+            console.log(err.response)
+        }
+    }
+
+    const addWatchlistFavorite = async (watchlistId) => {
+        try {
+            axios.post(`http://localhost:5000/watchlist/${watchlistId}/favorite`, {}, { withCredentials: true })
+
+            // console.log(res.data)
+
+            getFavoriteWatchlist();
+        }
+        catch (err) {
+            console.log(err.response)
+        }
+    }
+
+    const removeWatchlistFavorite = async (watchlistId) => {
+        try {
+            axios.delete(`http://localhost:5000/watchlist/${watchlistId}/favorite`, {}, { withCredentials: true })
+            // console.log(res.data);
+
+            getFavoriteWatchlist();
+        }
+        catch (err) {
+            console.log(err.resposne);
+        }
+    }
+
+    const checkIsPresent = (id) => {
+        return [...favoriteWatchlist].some(item => item.watchlistId === id);
     }
 
     const navigate = useNavigate();
@@ -92,6 +142,17 @@ function Watchlist() {
                                         </div>
 
                                         <div className="flex gap-3">
+                                            <button
+                                                onClick={checkIsPresent(type.watchlist_id) ? () => {
+                                                    removeWatchlistFavorite(type.watchlist_id)
+                                                } : () => {
+                                                    addWatchlistFavorite(type.watchlist_id)
+                                                }}
+                                                className={`${checkIsPresent(type.watchlist_id) ? "text-yellow-400 hover:text-yellow-300" : "text-gray-200 hover:text-gray-50"} transition transform hover:scale-110`}
+                                                title="Edit Watchlist"
+                                            >
+                                                <GradeIcon size={16} />
+                                            </button>
                                             <button
                                                 onClick={() => handleNavigate(type)}
                                                 className="text-yellow-400 hover:text-yellow-300 transition transform hover:scale-110"
@@ -141,7 +202,7 @@ function Watchlist() {
                 )}
             </div>
             <Footer className="w-full" />
-        </div>
+        </div >
 
     );
 }
