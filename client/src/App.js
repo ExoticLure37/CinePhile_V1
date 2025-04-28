@@ -8,7 +8,6 @@ import VerifyEmail from "./pages/VerifyEmail";
 import Friends from "./pages/Friends";
 import VerifyUpdatedEmail from "./pages/VerifyUpdatedEmail";
 import FriendProfile from "./pages/FriendProfile";
-import Watchlist from "./pages/Watchlist";
 import FriendsWatchList from "./pages/FriendsWatchList";
 import Movies from "./pages/Movies";
 import TVShows from "./pages/TVShows";
@@ -25,6 +24,7 @@ import ResetPassword from "./pages/ResetPassword";
 import AboutUs from "./pages/AboutUs";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import WatchlistHome from "./pages/WatchlistHome";
 
 function App() {
   return (
@@ -36,7 +36,7 @@ function App() {
         <Route path="/tvshows" element={<TVShows />} />
         <Route path="/friends" element={<Friends />} />
         <Route path="/friends-watchlist" element={<FriendsWatchList />} />
-        <Route path="/watchlist" element={<Watchlist />} />
+        <Route path="/watchlist" element={<WatchlistHome />} />
         <Route path="/profile/:friendId" element={<FriendProfile />} />
         <Route path="/dashboard" element={<Profile />} />
         <Route path="/user/verify/:token" element={<VerifyEmail />} />

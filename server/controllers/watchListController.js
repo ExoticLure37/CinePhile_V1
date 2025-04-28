@@ -14,7 +14,12 @@ const getAllWatchLists = async (req, res) => {
 
         const watchLists = await watchListModel.find().sort({ [sortBy]: sortOrder });
 
-        res.status(200).json({ watchLists });
+        const updatedWatchLists = watchLists.map((item) => ({
+            ...item._doc,
+            watchlist_id: item._id,
+        }));
+
+        res.status(200).json({ watchlists: updatedWatchLists });
     } catch (err) {
         res.status(500).json({ error: true, message: err.message });
     }
@@ -571,11 +576,13 @@ const markWatchListAsFavorite = async (req, res) => {
         //     userId,
         //     watchlistId
         // }], { session });
-        
+
         const favorite = await favoriteModel.create([{
             userId,
             watchlistId
         }]);
+
+        // console.log(favorite)
 
         const updatedWatchlist = await watchListModel.findByIdAndUpdate(
             watchlistId,
@@ -595,12 +602,12 @@ const markWatchListAsFavorite = async (req, res) => {
     } catch (err) {
         // await session.abortTransaction();
 
-        if (err.code === 11000) {
-            return res.status(400).json({
-                error: true,
-                message: "Already favorited this watchlist"
-            });
-        }
+        // if (err.code === 11000) {
+        //     return res.status(400).json({
+        //         error: true,
+        //         message: "Already favorited this watchlist"
+        //     });
+        // }
         return res.status(500).json({
             error: true,
             message: err.message
