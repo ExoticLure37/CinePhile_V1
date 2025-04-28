@@ -76,6 +76,6 @@ watchlistSchema.pre('save', async function (next) {
 });
 
 
-const watchListModel = mongoose.model('WatchList', watchlistSchema);
+const watchListModel = mongoose.model('Watchlist', watchlistSchema);
 
 module.exports = watchListModel;

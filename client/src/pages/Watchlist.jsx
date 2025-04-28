@@ -60,7 +60,7 @@ function Watchlist() {
 
             setFavoriteWatchlist((prevFavoriteWatchlist) => {
                 const newSet = new Set(prevFavoriteWatchlist);
-                if(watchlist.length > 0) watchlist.forEach((item) => newSet.add(item));
+                if (watchlist.length > 0) watchlist.forEach((item) => newSet.add(item));
                 return newSet;
             });
         }
@@ -71,7 +71,7 @@ function Watchlist() {
 
     const addWatchlistFavorite = async (watchlistId) => {
         try {
-            axios.post(`http://localhost:5000/watchlist/${watchlistId}/favorite`, {}, { withCredentials: true })
+            const res = await axios.post(`http://localhost:5000/watchlist/${watchlistId}/favorite`, {}, { withCredentials: true });
 
             // console.log(res.data)
 
@@ -84,18 +84,18 @@ function Watchlist() {
 
     const removeWatchlistFavorite = async (watchlistId) => {
         try {
-            axios.delete(`http://localhost:5000/watchlist/${watchlistId}/favorite`, {}, { withCredentials: true })
+            const res = await axios.delete(`http://localhost:5000/watchlist/${watchlistId}/favorite`, { withCredentials: true });
             // console.log(res.data);
 
             getFavoriteWatchlist();
         }
         catch (err) {
-            console.log(err.resposne);
+            console.log(err.response);
         }
     }
 
     const checkIsPresent = (id) => {
-        return [...favoriteWatchlist].some(item => item.watchlistId === id);
+        return [...favoriteWatchlist].some(item => item?._id === id);
     }
 
     const navigate = useNavigate();

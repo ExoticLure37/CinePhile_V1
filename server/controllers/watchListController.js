@@ -571,7 +571,7 @@ const markWatchListAsFavorite = async (req, res) => {
         //     userId,
         //     watchlistId
         // }], { session });
-
+        
         const favorite = await favoriteModel.create([{
             userId,
             watchlistId
@@ -595,12 +595,12 @@ const markWatchListAsFavorite = async (req, res) => {
     } catch (err) {
         // await session.abortTransaction();
 
-        // if (err.code === 11000) {
-        //     return res.status(400).json({
-        //         error: true,
-        //         message: "Already favorited this watchlist"
-        //     });
-        // }
+        if (err.code === 11000) {
+            return res.status(400).json({
+                error: true,
+                message: "Already favorited this watchlist"
+            });
+        }
         return res.status(500).json({
             error: true,
             message: err.message
