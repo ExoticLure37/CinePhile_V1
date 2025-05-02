@@ -96,9 +96,19 @@ function Movies() {
         <MediaCarousel
           title="Upcoming"
           endpoint={upcomingEndPoint}
+          params={{
+            countryCode: 'IN',
+            type: 'MOVIE'
+          }}
           navigateTo="/upcoming"
           flag={true}
-          normalizeData={(data) => data}
+          normalizeData={(data) =>
+            Object.values(data)
+              .flatMap((group) => group.titles || [])
+              .filter((item) => item && item.id)
+          }
+
+
         />
 
 

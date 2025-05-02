@@ -98,9 +98,19 @@ function TVShows() {
                 <MediaCarousel
                     title="Upcoming"
                     endpoint={upcomingEndPoint}
+                    params={{
+                        countryCode: 'IN',
+                        type: 'TV'
+                    }}
                     navigateTo="/upcoming"
-                    flag={false}
-                    normalizeData={(data) => data}
+                    flag={true}
+                    normalizeData={(data) =>
+                        Object.values(data)
+                            .flatMap((group) => group.titles || [])
+                            .filter((item) => item && item.id)
+                    }
+
+
                 />
 
 
