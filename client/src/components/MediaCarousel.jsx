@@ -57,7 +57,7 @@ function MediaCarousel({ title, endpoint, params = {}, navigateTo, flag, normali
 
     return (
         <div className="flex flex-col gap-5 relative">
-            {(title!=="Upcoming" && mediaItems.length === 0 )? (
+            {(mediaItems.length === 0 )? (
                 <Skeleton />
             ) : (
                 <>
