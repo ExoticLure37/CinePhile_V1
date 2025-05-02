@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import MediaCarousel from "../components/MediaCarousel";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -14,14 +15,13 @@ import {
 } from "../redux/user/userSlice";
 import LinkNavbar from "../components/LinkNavbar";
 import HomeCard from "../components/HomeCard";
-import Trending from "../components/Trending";
-import Upcoming from "../components/Upcoming";
-import TopMoviesShows from "../components/TopMoviesShows";
 
 function Movies() {
   const currentUser = useSelector((state) => state.userProfile);
   const dispatch = useDispatch();
-
+  const trendingEndPoint = "https://imdb236.p.rapidapi.com/imdb/most-popular-movies";
+  const upcomingEndPoint = "https://imdb236.p.rapidapi.com/imdb/upcoming-releases";
+  const topmoviesEndPoint = "https://imdb236.p.rapidapi.com/imdb/top250-movies";
   useEffect(() => {
     const fetchAll = async () => {
       try {
@@ -84,13 +84,33 @@ function Movies() {
 
       <div className="flex flex-col my-8 gap-10 ml-10">
         {/* Trending Section - Netflix-style Scroll */}
-        <Trending flag={true} />
+        <MediaCarousel
+          title="Trending"
+          endpoint={trendingEndPoint}
+          navigateTo="/trending"
+          flag={true}
+          normalizeData={(data) => data}
+        />
 
         {/* Upcoming Section */}
-        <Upcoming flag={true} />
+        <MediaCarousel
+          title="Upcoming"
+          endpoint={upcomingEndPoint}
+          navigateTo="/upcoming"
+          flag={true}
+          normalizeData={(data) => data}
+        />
+
 
         {/* Latest Section */}
-        <TopMoviesShows flag={true} />
+        <MediaCarousel
+          title="Top Movies"
+          endpoint={topmoviesEndPoint}
+          navigateTo="/top-movies-shows"
+          flag={true}
+          normalizeData={(data) => data}
+        />
+
       </div>
 
       <Footer />
