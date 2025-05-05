@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { cache, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -6,17 +6,31 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import HomeCard from "./HomeCard";
 import Skeleton from "./Skeleton";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { setCachedResults } from "../redux/cachedResults/cachedResultsSlice";
 
-function MediaCarousel({ title, endpoint, params = {}, navigateTo, flag, normalizeData }) {
+function MediaCarousel({ title, endpoint, params = {}, navigateTo, flag, normalizeData, cacheKey }) {
     const [mediaItems, setMediaItems] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const itemsPerPage = 6;
     const [activeModalId, setActiveModalId] = useState(null);
     const navigate = useNavigate();
+    const cachedResults = useSelector((state) => state.cachedResults);
+
+    const dispatch = useDispatch();
+
+    // console.log(cachedResults);
 
     useEffect(() => {
-        fetchMedia();
-    }, []);
+        // Only run on mount
+        if (cachedResults[cacheKey]?.length > 0) {
+            setMediaItems(cachedResults[cacheKey]);
+        } else {
+            fetchMedia();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // Only run once on mount
+
 
     const fetchMedia = async () => {
         try {
@@ -34,6 +48,7 @@ function MediaCarousel({ title, endpoint, params = {}, navigateTo, flag, normali
             const rawData = response.data;
             const items = normalizeData(rawData);
             setMediaItems(items.slice(0, 30));
+            dispatch(setCachedResults({ [cacheKey]: items.slice(0, 30) }));
         } catch (err) {
             console.error(err);
         }
@@ -57,7 +72,7 @@ function MediaCarousel({ title, endpoint, params = {}, navigateTo, flag, normali
 
     return (
         <div className="flex flex-col gap-5 relative">
-            {(mediaItems.length === 0 )? (
+            {(mediaItems.length === 0) ? (
                 <Skeleton />
             ) : (
                 <>

@@ -92,6 +92,7 @@ function TVShows() {
                     navigateTo="/trending"
                     flag={false}
                     normalizeData={(data) => data}
+                    cacheKey="trendingWebSeries"
                 />
 
                 {/* Upcoming Section */}
@@ -109,8 +110,7 @@ function TVShows() {
                             .flatMap((group) => group.titles || [])
                             .filter((item) => item && item.id)
                     }
-
-
+                    cacheKey="upcomingWebSeries"
                 />
 
 
@@ -121,6 +121,7 @@ function TVShows() {
                     navigateTo="/top-movies-shows"
                     flag={false}
                     normalizeData={(data) => data}
+                    cacheKey="topWebSeries"
                 />
             </div>
 

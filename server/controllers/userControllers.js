@@ -119,6 +119,7 @@ const login = async (req, res) => {
       gender: user.gender,
       dob: user.dob,
       phone_number: user.phone_number,
+      profilePic: user.profilePic
     });
   } catch (er) {
     return res

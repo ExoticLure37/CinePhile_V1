@@ -89,7 +89,7 @@ export default function ViewProfile() {
             <img
               src={user.profilePic || profileimage}
               alt={`profile-${user.fullname || "user"}`}
-              className="w-60 h-28 rounded-full object-cover border-4 border-blue-500 shadow-lg"
+              className="w-56 h-28 rounded-full object-cover border-4 border-blue-500 shadow-lg"
             />
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white text-xs opacity-0 group-hover:opacity-100 transition rounded-full">
               Change

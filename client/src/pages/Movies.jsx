@@ -90,6 +90,7 @@ function Movies() {
           navigateTo="/trending"
           flag={true}
           normalizeData={(data) => data}
+          cacheKey="trendingMovies"
         />
 
         {/* Upcoming Section */}
@@ -107,8 +108,7 @@ function Movies() {
               .flatMap((group) => group.titles || [])
               .filter((item) => item && item.id)
           }
-
-
+          cacheKey="upcomingMovies"
         />
 
 
@@ -119,6 +119,7 @@ function Movies() {
           navigateTo="/top-movies-shows"
           flag={true}
           normalizeData={(data) => data}
+          cacheKey="topMovies"
         />
 
       </div>
