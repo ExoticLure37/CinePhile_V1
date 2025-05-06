@@ -3,6 +3,7 @@ import WatchlistCard from '../components/WatchlistCard';
 import axios from 'axios';
 import LinkNavbar from '../components/LinkNavbar';
 import Navbar from '../components/Navbar';
+import Comments from '../components/Comments';
 import Footer from '../components/Footer';
 import { useLocation } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
@@ -30,7 +31,9 @@ function ManageWatchlist() {
     useEffect(() => {
         getWatchlistDetail();
         getFriends();
+        getComments();
     }, []);
+
 
     // console.log(selectedFriend)
 
@@ -57,6 +60,18 @@ function ManageWatchlist() {
             console.log(err);
         }
     };
+    
+    const getComments = async () => {
+        try {
+            const res = await axios.get(`http://localhost:5000/comments/${watchlist.watchlist_id}`, {
+                withCredentials: true
+            });
+            
+            console.log(res.data)
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     const addMember = async (memberId) => {
         try {
@@ -207,6 +222,7 @@ function ManageWatchlist() {
                             <p className="text-sm text-gray-400 mt-2">Start adding movies or shows you want to keep track of!</p>
                         </div>
                     )}
+                    <Comments/>
                 </div>
             </div>
 
