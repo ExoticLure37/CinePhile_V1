@@ -18,11 +18,8 @@ export default function EditEmailModal({ onClose, user }) {
         // error 
         const response = await axios.post(
           `http://localhost:5000/user/updateEmail`,
-          {
-            userId: user.id,
-            withCredentials: true,
-            newEmail: newEmail,
-          }
+          {newEmail},
+          {withCredentials:true}
         );
         alert("Verification link sent to new email!");
 

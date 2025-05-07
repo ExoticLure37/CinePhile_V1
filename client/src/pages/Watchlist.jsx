@@ -76,7 +76,7 @@ function Watchlist() {
                         </button>
 
                         <div className="mt-6 w-full max-w-5xl bg-[#1c1c1e] p-6 rounded-2xl shadow-xl border border-gray-800">
-                            {watchlists.length === 0 ? (
+                            {(watchlists ?? []).length === 0 ? (
                                 <div className="text-center text-gray-400 py-8 italic">No watchlists created yet.</div>
                             ) : (
                                 watchlists.map((type, index) => (

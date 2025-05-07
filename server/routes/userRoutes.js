@@ -43,7 +43,7 @@ router.patch("/rejectFriendRequest", authUser, rejectFriendRequest);
 router.patch("/cancelFriendRequest", authUser, cancelFriendRequest);
 router.patch("/removeFriend", authUser, removeFriend);
 router.patch("/updatePersonalDetails", authUser, updatePersonalDetails);
-router.patch("/updateEmail", authUser, updateEmail);
+router.patch("/updateEmail", authUser, forgotPassword);
 router.patch("/updatePassword", authUser, updatePassword);
 router.patch("/updateUsername", authUser, updateUsername);
 router.get("/getProfile/:userId", getProfile);
