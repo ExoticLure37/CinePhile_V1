@@ -18,7 +18,7 @@ const favoriteSchema = new mongoose.Schema({
 });
 
 
-favoriteSchema.index({ user: 1, watchlist: 1 }, { unique: true });
+favoriteSchema.index({ userId: 1, watchlistId: 1 }, { unique: true });
 
 const favoriteModel = mongoose.model('Favorite', favoriteSchema);
 

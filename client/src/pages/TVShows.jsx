@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import MediaCarousel from "../components/MediaCarousel";
 import Footer from "../components/Footer";
 import axios from "axios";
 import {
@@ -14,13 +15,14 @@ import {
 } from "../redux/user/userSlice";
 import LinkNavbar from "../components/LinkNavbar";
 import HomeCard from "../components/HomeCard";
-import Trending from "../components/Trending";
-import Upcoming from "../components/Upcoming";
-import TopMoviesShows from "../components/TopMoviesShows";
+
 
 function TVShows() {
-    const currentUser = useSelector((state) => state.userProfile);
     const dispatch = useDispatch();
+    const currentUser = useSelector((state) => state.userProfile);
+    const trendingEndPoint = "https://imdb236.p.rapidapi.com/imdb/most-popular-tv";
+    const upcomingEndPoint = "https://imdb236.p.rapidapi.com/imdb/upcoming-releases";
+    const topmoviesEndPoint = "https://imdb236.p.rapidapi.com/imdb/top250-tv";
 
     useEffect(() => {
         const fetchAll = async () => {
@@ -83,15 +85,44 @@ function TVShows() {
             </div>
 
             <div className="flex flex-col my-8 gap-10 ml-10">
-
                 {/* Trending Section - Netflix-style Scroll */}
-                <Trending flag={false} />
+                <MediaCarousel
+                    title="Trending Shows"
+                    endpoint={trendingEndPoint}
+                    navigateTo="/trending"
+                    flag={false}
+                    normalizeData={(data) => data}
+                    cacheKey="trendingWebSeries"
+                />
 
                 {/* Upcoming Section */}
-                <Upcoming flag={false} />
+                <MediaCarousel
+                    title="Upcoming"
+                    endpoint={upcomingEndPoint}
+                    params={{
+                        countryCode: 'IN',
+                        type: 'TV'
+                    }}
+                    navigateTo="/upcoming"
+                    flag={true}
+                    normalizeData={(data) =>
+                        Object.values(data)
+                            .flatMap((group) => group.titles || [])
+                            .filter((item) => item && item.id)
+                    }
+                    cacheKey="upcomingWebSeries"
+                />
+
 
                 {/* Latest Section */}
-                <TopMoviesShows flag={false} />
+                <MediaCarousel
+                    title="Top Tv Shows"
+                    endpoint={topmoviesEndPoint}
+                    navigateTo="/top-movies-shows"
+                    flag={false}
+                    normalizeData={(data) => data}
+                    cacheKey="topWebSeries"
+                />
             </div>
 
             <Footer />

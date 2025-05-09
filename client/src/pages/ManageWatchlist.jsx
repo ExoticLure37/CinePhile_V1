@@ -3,11 +3,11 @@ import WatchlistCard from "../components/WatchlistCard";
 import axios from "axios";
 import LinkNavbar from "../components/LinkNavbar";
 import Navbar from "../components/Navbar";
+import Comments from "../components/Comments";
 import Footer from "../components/Footer";
 import { useLocation } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
-import Comments from "../components/Comments";
 
 function ManageWatchlist() {
   const [visibleResults, setVisibleResults] = useState(10);
@@ -31,6 +31,7 @@ function ManageWatchlist() {
   useEffect(() => {
     getWatchlistDetail();
     getFriends();
+    getComments();
   }, []);
 
   // console.log(selectedFriend)
@@ -57,6 +58,21 @@ function ManageWatchlist() {
       setCurrentWatchlist(res.data.watchList.items);
       setMemberList(res.data.watchList.members);
       console.log(res.data.watchList.members);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getComments = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/comments/${watchlist.watchlist_id}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      console.log(res.data);
     } catch (err) {
       console.log(err);
     }
@@ -250,6 +266,8 @@ function ManageWatchlist() {
               </p>
             </div>
           )}
+          <Comments watchlist_id={watchlist.watchlist_id} />
+          {/* <Comments /> */}
         </div>
       </div>
 
@@ -376,7 +394,7 @@ function ManageWatchlist() {
           </div>
         </div>
       )}
-      <Comments />
+
       <Footer />
     </div>
   );

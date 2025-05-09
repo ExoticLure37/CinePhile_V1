@@ -14,7 +14,12 @@ const getAllWatchLists = async (req, res) => {
 
         const watchLists = await watchListModel.find().sort({ [sortBy]: sortOrder });
 
-        res.status(200).json({ watchLists });
+        const updatedWatchLists = watchLists.map((item) => ({
+            ...item._doc,
+            watchlist_id: item._id,
+        }));
+
+        res.status(200).json({ watchlists: updatedWatchLists });
     } catch (err) {
         res.status(500).json({ error: true, message: err.message });
     }
@@ -557,25 +562,35 @@ const getFriendWatchListItems = async (req, res) => {
 };
 
 const markWatchListAsFavorite = async (req, res) => {
-    const session = await mongoose.startSession();
+    // const session = await mongoose.startSession();
     try {
-        session.startTransaction();
+        // session.startTransaction();
 
         const userId = req.user._id;
         const watchlistId = req.params.watchlist_id;
 
+        // console.log(userId);
+        // console.log(watchlistId);
+
+        // const favorite = await favoriteModel.create([{
+        //     userId,
+        //     watchlistId
+        // }], { session });
+
         const favorite = await favoriteModel.create([{
             userId,
             watchlistId
-        }], { session });
+        }]);
+
+        // console.log(favorite)
 
         const updatedWatchlist = await watchListModel.findByIdAndUpdate(
             watchlistId,
             { $inc: { favoritesCount: 1 } },
-            { new: true, session }
+            // { new: true, session }
         ).select("favoritesCount");
 
-        await session.commitTransaction();
+        // await session.commitTransaction();
 
         return res.status(200).json({
             success: true,
@@ -585,55 +600,60 @@ const markWatchListAsFavorite = async (req, res) => {
         });
 
     } catch (err) {
-        await session.abortTransaction();
+        // await session.abortTransaction();
 
-        if (err.code === 11000) {
-            return res.status(400).json({
-                error: true,
-                message: "Already favorited this watchlist"
-            });
-        }
+        // if (err.code === 11000) {
+        //     return res.status(400).json({
+        //         error: true,
+        //         message: "Already favorited this watchlist"
+        //     });
+        // }
         return res.status(500).json({
             error: true,
             message: err.message
         });
     } finally {
-        session.endSession();
+        // session.endSession();
     }
 };
 
 
 const unMarkWatchListAsFavorite = async (req, res) => {
-    const session = await mongoose.startSession();
+    // const session = await mongoose.startSession();
     try {
-        session.startTransaction();
+        // session.startTransaction();
 
         const userId = req.user._id;
         const watchlistId = req.params.watchlist_id;
 
         // Delete the favorite entry within the transaction session
+        // const result = await favoriteModel.deleteOne({
+        //     userId,
+        //     watchlistId
+        // }).session(session);
+
         const result = await favoriteModel.deleteOne({
             userId,
             watchlistId
-        }).session(session);
+        });
 
-        if (result.deletedCount === 0) {
-            await session.abortTransaction();
-            session.endSession();
-            return res.status(404).json({
-                error: true,
-                message: "Favorite entry not found"
-            });
-        }
+        // if (result.deletedCount === 0) {
+        //     await session.abortTransaction();
+        //     session.endSession();
+        //     return res.status(404).json({
+        //         error: true,
+        //         message: "Favorite entry not found"
+        //     });
+        // }
 
         // Decrement favoritesCount atomically within the transaction session
         const updatedWatchlist = await watchListModel.findByIdAndUpdate(
             watchlistId,
             { $inc: { favoritesCount: -1 } },
-            { new: true, session }
+            // { new: true, session }
         ).select("favoritesCount");
 
-        await session.commitTransaction();
+        // await session.commitTransaction();
 
         return res.status(200).json({
             success: true,
@@ -642,13 +662,13 @@ const unMarkWatchListAsFavorite = async (req, res) => {
         });
 
     } catch (err) {
-        await session.abortTransaction();
+        // await session.abortTransaction();
         return res.status(500).json({
             error: true,
             message: err.message
         });
     } finally {
-        session.endSession();
+        // session.endSession();
     }
 };
 

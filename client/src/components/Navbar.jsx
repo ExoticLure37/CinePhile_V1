@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/user/userSlice";
+import { logoutHandler as clearCachedResults } from "../redux/cachedResults/cachedResultsSlice";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import MediaCard from "./MediaCard";
@@ -19,6 +20,7 @@ const Navbar = () => {
 
   const logoutHandler = () => {
     dispatch(logout());
+    dispatch(clearCachedResults());
     navigate("/signin");
   };
 

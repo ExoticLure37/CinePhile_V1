@@ -56,7 +56,7 @@ router.post(
   uploadProfilePicture
 );
 
-router.get("/favorites", getFavoritedWatchlists);
+router.get("/favorites", authUser, getFavoritedWatchlists);
 
 router.post(
   "/upload-profile-picture",

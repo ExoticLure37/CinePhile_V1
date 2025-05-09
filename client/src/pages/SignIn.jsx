@@ -35,10 +35,12 @@ function SignIn() {
           about: res.data.about,
           dob: res.data.dob,
           phone_number: res.data.phone_number,
+          profilePic : res.data.profilePic
         })
       );
       toast.success("Login Successfull");
       console.log("success");
+      // console.log(res.data)
       navigate("/movies");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed!");

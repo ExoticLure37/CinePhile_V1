@@ -10,7 +10,7 @@ import LinkNavbar from '../components/LinkNavbar'
 const Profile = () => {
 
     const curUser = useSelector((state) => state.userProfile)
-    console.log(curUser)
+    // console.log(curUser)
 
     return (
         curUser.fullname ?
