@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import axios from "axios";
-import LinkNavbar from "../components/LinkNavbar";
 import IconBtn from "../components/IconBtn";
 import { useDispatch, useSelector } from "react-redux";
 import { setFriendList } from '../redux/user/userSlice';
@@ -32,9 +31,7 @@ const Friends = () => {
   return (
     <div className="flex flex-col min-h-screen bg-[#141414] text-white">
       <Navbar />
-      <div className="bg-black/30 backdrop-blur-md sticky top-0 z-40">
-        <LinkNavbar />
-      </div>
+
 
       <div className="flex flex-col items-center px-4 py-10">
         <h1 className="text-3xl font-bold mb-6 text-gray-200 drop-shadow">👥 My Friends</h1>

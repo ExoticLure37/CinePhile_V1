@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import WatchlistCard from "../components/WatchlistCard";
 import axios from "axios";
-import LinkNavbar from "../components/LinkNavbar";
 import Navbar from "../components/Navbar";
 import Comments from "../components/Comments";
 import Footer from "../components/Footer";
@@ -127,9 +126,6 @@ function ManageWatchlist() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-tr from-[#111] via-[#181818] to-[#141414] text-white">
       <Navbar />
-      <div className="bg-black/60 backdrop-blur-md sticky top-0 z-40">
-        <LinkNavbar />
-      </div>
 
       {/* Members Panel Trigger (hover area) */}
       <div

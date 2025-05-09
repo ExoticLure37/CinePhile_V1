@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const userModel = require("../models/userModel");
 const watchListModel = require("../models/watchListModel");
 const favoriteModel = require("../models/favoriteModel");
-
+const commmentModel = require("../models/commentModel");
+const commentModel = require("../models/commentModel");
 
 
 const getAllWatchLists = async (req, res) => {
@@ -200,8 +201,13 @@ const deleteWatchList = async (req, res) => {
                 }
             }
         );
+        
+        //remove all comments 
+        await commentModel.deleteMany({contentId:watchlist_id});
 
-
+        //remove all favorites reference
+        await favoriteModel.deleteMany({watchlistId:watchlist_id});
+        
         const updatedDocument = await userModel.findById(
             userId,
             { watchlists: 1, _id: 0 }

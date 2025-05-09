@@ -5,7 +5,6 @@ import IconBtn from "../components/IconBtn";
 import EditPersonalDetailsModal from "../components/EditPersonalDetailsModal";
 // import EditAccountSettingsModal from "../components/EditAccountSettingsModal";
 import profileimage from "../image/photo.jpg";
-import LinkNavbar from "../components/LinkNavbar";
 import Navbar from "../components/Navbar";
 import { useDispatch, useSelector } from "react-redux";
 import { setFriendList, setPendingRequest, setRequestSent } from "../redux/user/userSlice";
@@ -175,9 +174,7 @@ export default function FriendProfile() {
     return (
         <div className="flex flex-col min-h-screen bg-[#141414] text-white">
             <Navbar />
-            <div className="bg-slate-200 bg-opacity-20 sticky top-0 z-40 shadow-md">
-                <LinkNavbar />
-            </div>
+
             <div className="max-w-4xl mx-auto flex-col p-6">
                 <h1 className="mb-10 text-4xl mx-auto font-bold text-center  text-white">Profile</h1>
 

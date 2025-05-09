@@ -13,7 +13,6 @@ import {
     setPendingRequest,
     setRequestSent
 } from "../redux/user/userSlice";
-import LinkNavbar from "../components/LinkNavbar";
 import HomeCard from "../components/HomeCard";
 
 
@@ -80,9 +79,6 @@ function TVShows() {
     return (
         <div className="min-h-screen flex flex-col bg-[#141414]">
             <Navbar />
-            <div className="bg-black/30 backdrop-blur-md sticky top-0 z-40">
-                <LinkNavbar />
-            </div>
 
             <div className="flex flex-col my-8 gap-10 ml-10">
                 {/* Trending Section - Netflix-style Scroll */}

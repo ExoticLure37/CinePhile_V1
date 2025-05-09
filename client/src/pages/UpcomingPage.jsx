@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import LinkNavbar from '../components/LinkNavbar'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import axios from 'axios';
@@ -69,9 +68,6 @@ function UpcomingPage() {
     return (
         <div className="min-h-screen flex flex-col bg-[#141414]">
             <Navbar />
-            <div className="bg-black/30 backdrop-blur-md sticky top-0 z-40">
-                <LinkNavbar />
-            </div>
 
             <div className='font-semibold text-3xl text-white p-4'>Upcoming</div>
 

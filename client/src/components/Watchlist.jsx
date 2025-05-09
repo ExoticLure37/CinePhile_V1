@@ -1,7 +1,6 @@
 // Watchlist.jsx (Refined with enhanced CSS for appeal)
 import React, { useEffect, useState } from "react";
 import Footer from "./Footer";
-import LinkNavbar from "./LinkNavbar";
 import Navbar from "./Navbar";
 import { FaPlus, FaTimes, FaEdit } from "react-icons/fa";
 import DeleteIcon from '@mui/icons-material/Delete';
