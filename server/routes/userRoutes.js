@@ -50,11 +50,11 @@ router.get("/getProfile/:userId", getProfile);
 router.get("/verify/:newEmail/:userId", verifyEmail);
 router.post("/contact", authUser, contact);
 router.patch("/verify/:newEmail/:userId", verifyEmail);
-router.post(
-  "/upload-profile-picture",
-  upload.single("profilePic"),
-  uploadProfilePicture
-);
+// router.post(
+//   "/upload-profile-picture",
+//   upload.single("profilePic"),
+//   uploadProfilePicture
+// );
 
 router.get("/favorites", authUser, getFavoritedWatchlists);
 

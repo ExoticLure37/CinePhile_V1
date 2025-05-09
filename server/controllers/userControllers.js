@@ -10,7 +10,7 @@ const crypto = require("crypto");
 const mongoose = require("mongoose");
 const uploadOnCloundinary = require("../utils/cloudinary");
 const favoriteModel = require("../models/favoriteModel");
-const watchListModel = require("../models/watchListModel")
+const watchListModel = require("../models/watchListModel");
 
 // const redisClient = require("../utils/redisClient");
 
@@ -119,7 +119,7 @@ const login = async (req, res) => {
       gender: user.gender,
       dob: user.dob,
       phone_number: user.phone_number,
-      profilePic: user.profilePic
+      profilePic: user.profilePic,
     });
   } catch (er) {
     return res
@@ -620,6 +620,8 @@ const contact = async (req, res) => {
 const uploadProfilePicture = async (req, res) => {
   const userId = req.user._id;
   const localPath = req.file.path;
+
+  console.log(userId);
 
   try {
     // Upload to Cloudinary
