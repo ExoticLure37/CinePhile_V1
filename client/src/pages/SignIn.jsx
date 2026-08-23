@@ -7,6 +7,8 @@ import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 
 function SignIn() {
+  console.log("ENV:", process.env);
+  console.log("BACKEND:", process.env.REACT_APP_BACKEND_BASE_URL);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -15,15 +17,18 @@ function SignIn() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  //   console.log("Backend URL:", process.env.REACT_APP_BACKEND_BASE_URL);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    console.log("Backend URL:", process.env.REACT_APP_BACKEND_BASE_URL);
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/user/login",
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/login`,
         { email, password, rememberMe },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       dispatch(
@@ -35,8 +40,8 @@ function SignIn() {
           about: res.data.about,
           dob: res.data.dob,
           phone_number: res.data.phone_number,
-          profilePic : res.data.profilePic
-        })
+          profilePic: res.data.profilePic,
+        }),
       );
       toast.success("Login Successfull");
       console.log("success");

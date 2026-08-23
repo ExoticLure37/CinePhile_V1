@@ -9,121 +9,151 @@ import MediaCarousel from "../components/MediaCarousel";
 import Footer from "../components/Footer";
 import axios from "axios";
 import {
-    setFriendList,
-    setPendingRequest,
-    setRequestSent
+  setFriendList,
+  setPendingRequest,
+  setRequestSent,
 } from "../redux/user/userSlice";
 import HomeCard from "../components/HomeCard";
 
-
 function TVShows() {
-    const dispatch = useDispatch();
-    const currentUser = useSelector((state) => state.userProfile);
-    const trendingEndPoint = "https://imdb236.p.rapidapi.com/imdb/most-popular-tv";
-    const upcomingEndPoint = "https://imdb236.p.rapidapi.com/imdb/upcoming-releases";
-    const topmoviesEndPoint = "https://imdb236.p.rapidapi.com/imdb/top250-tv";
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.userProfile);
+  const trendingEndPoint =
+    "https://imdb236.p.rapidapi.com/imdb/most-popular-tv";
+  const upcomingEndPoint =
+    "https://imdb236.p.rapidapi.com/imdb/upcoming-releases";
+  const topmoviesEndPoint = "https://imdb236.p.rapidapi.com/imdb/top250-tv";
 
-    useEffect(() => {
-        const fetchAll = async () => {
-            try {
-                const [friendsRes, pendingRes, sentRes] = await Promise.all([
-                    axios.get("http://localhost:5000/user/getFriends", { withCredentials: true }),
-                    axios.get("http://localhost:5000/user/pendingRequests", { withCredentials: true }),
-                    axios.get("http://localhost:5000/user/requestSent", { withCredentials: true })
-                ]);
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const [friendsRes, pendingRes, sentRes] = await Promise.all([
+          axios.get(
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/user/getFriends`,
+            {
+              withCredentials: true,
+            },
+          ),
+          axios.get(
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/user/pendingRequests`,
+            {
+              withCredentials: true,
+            },
+          ),
+          axios.get(
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/user/requestSent`,
+            {
+              withCredentials: true,
+            },
+          ),
+        ]);
 
-                dispatch(setFriendList({ friendList: friendsRes.data.friendList }));
-                dispatch(setPendingRequest({ pending_requests: pendingRes.data.pending_requests }));
-                dispatch(setRequestSent({ request_sent: sentRes.data.requests_sent }));
-            } catch (err) {
-                console.error(err);
-            }
-        };
-
-        fetchAll();
-    }, []);
-
-    const getFriends = async () => {
-        try {
-            const res = await axios.get("http://localhost:5000/user/getFriends", {
-                withCredentials: true
-            });
-            dispatch(setFriendList({ friendList: res.data.friendList }));
-        } catch (err) {
-            console.log(err);
-        }
+        dispatch(setFriendList({ friendList: friendsRes.data.friendList }));
+        dispatch(
+          setPendingRequest({
+            pending_requests: pendingRes.data.pending_requests,
+          }),
+        );
+        dispatch(setRequestSent({ request_sent: sentRes.data.requests_sent }));
+      } catch (err) {
+        console.error(err);
+      }
     };
 
-    const getPendingRequests = async () => {
-        try {
-            const res = await axios.get("http://localhost:5000/user/pendingRequests", {
-                withCredentials: true
-            });
-            dispatch(setPendingRequest({ pending_requests: res.data.pending_requests }));
-        } catch (err) {
-            console.log(err);
-        }
-    };
+    fetchAll();
+  }, []);
 
-    const getRequestSent = async () => {
-        try {
-            const res = await axios.get("http://localhost:5000/user/requestSent", {
-                withCredentials: true
-            });
-            dispatch(setRequestSent({ request_sent: res.data.requests_sent }));
-        } catch (err) {
-            console.log(err);
-        }
-    };
+  const getFriends = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/getFriends`,
+        {
+          withCredentials: true,
+        },
+      );
+      dispatch(setFriendList({ friendList: res.data.friendList }));
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-    return (
-        <div className="min-h-screen flex flex-col bg-[#141414]">
-            <Navbar />
+  const getPendingRequests = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/pendingRequests`,
+        {
+          withCredentials: true,
+        },
+      );
+      dispatch(
+        setPendingRequest({ pending_requests: res.data.pending_requests }),
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-            <div className="flex flex-col my-8 gap-10 ml-10">
-                {/* Trending Section - Netflix-style Scroll */}
-                <MediaCarousel
-                    title="Trending Shows"
-                    endpoint={trendingEndPoint}
-                    navigateTo="/trending"
-                    flag={false}
-                    normalizeData={(data) => data}
-                    cacheKey="trendingWebSeries"
-                />
+  const getRequestSent = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/requestSent`,
+        {
+          withCredentials: true,
+        },
+      );
+      dispatch(setRequestSent({ request_sent: res.data.requests_sent }));
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-                {/* Upcoming Section */}
-                <MediaCarousel
-                    title="Upcoming"
-                    endpoint={upcomingEndPoint}
-                    params={{
-                        countryCode: 'IN',
-                        type: 'TV'
-                    }}
-                    navigateTo="/upcoming"
-                    flag={true}
-                    normalizeData={(data) =>
-                        Object.values(data)
-                            .flatMap((group) => group.titles || [])
-                            .filter((item) => item && item.id)
-                    }
-                    cacheKey="upcomingWebSeries"
-                />
+  return (
+    <div className="min-h-screen flex flex-col bg-[#141414]">
+      <Navbar />
 
+      <div className="flex flex-col my-8 gap-10 ml-10">
+        {/* Trending Section - Netflix-style Scroll */}
+        <MediaCarousel
+          title="Trending Shows"
+          endpoint={trendingEndPoint}
+          navigateTo="/trending"
+          flag={false}
+          normalizeData={(data) => data}
+          cacheKey="trendingWebSeries"
+        />
 
-                {/* Latest Section */}
-                <MediaCarousel
-                    title="Top Tv Shows"
-                    endpoint={topmoviesEndPoint}
-                    navigateTo="/top-movies-shows"
-                    flag={false}
-                    normalizeData={(data) => data}
-                    cacheKey="topWebSeries"
-                />
-            </div>
+        {/* Upcoming Section */}
+        <MediaCarousel
+          title="Upcoming"
+          endpoint={upcomingEndPoint}
+          params={{
+            countryCode: "IN",
+            type: "TV",
+          }}
+          navigateTo="/upcoming"
+          flag={true}
+          normalizeData={(data) =>
+            Object.values(data)
+              .flatMap((group) => group.titles || [])
+              .filter((item) => item && item.id)
+          }
+          cacheKey="upcomingWebSeries"
+        />
 
-            <Footer />
-        </div>
-    );
+        {/* Latest Section */}
+        <MediaCarousel
+          title="Top Tv Shows"
+          endpoint={topmoviesEndPoint}
+          navigateTo="/top-movies-shows"
+          flag={false}
+          normalizeData={(data) => data}
+          cacheKey="topWebSeries"
+        />
+      </div>
+
+      <Footer />
+    </div>
+  );
 }
 
 export default TVShows;

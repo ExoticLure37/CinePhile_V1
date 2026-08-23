@@ -28,9 +28,9 @@ export default function EditPersonalDetailsModal({ onClose, user, onUpdate }) {
 
     try {
       const { data } = await axios.patch(
-        "http://localhost:5000/user/updatePersonalDetails",
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/updatePersonalDetails`,
         formData,
-        { withCredentials: true }
+        { withCredentials: true },
       );
       onUpdate(data);
       onClose();

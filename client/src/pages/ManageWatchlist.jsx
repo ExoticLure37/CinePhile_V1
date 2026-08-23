@@ -37,9 +37,12 @@ function ManageWatchlist() {
 
   const getFriends = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/user/getFriends", {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/getFriends`,
+        {
+          withCredentials: true,
+        },
+      );
       setFriendList(res.data.friendList);
     } catch (err) {
       console.log(err.response);
@@ -49,10 +52,10 @@ function ManageWatchlist() {
   const getWatchlistDetail = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/watchlist/${watchlist.watchlist_id}`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/watchlist/${watchlist.watchlist_id}`,
         {
           withCredentials: true,
-        }
+        },
       );
       setCurrentWatchlist(res.data.watchList.items);
       setMemberList(res.data.watchList.members);
@@ -65,10 +68,10 @@ function ManageWatchlist() {
   const getComments = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/comments/${watchlist.watchlist_id}`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/comments/${watchlist.watchlist_id}`,
         {
           withCredentials: true,
-        }
+        },
       );
 
       console.log(res.data);
@@ -81,22 +84,22 @@ function ManageWatchlist() {
     try {
       if (showPermissionModal === "Add") {
         await axios.patch(
-          `http://localhost:5000/watchlist/shared/${watchlist.watchlist_id}/members`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/watchlist/shared/${watchlist.watchlist_id}/members`,
           {
             memberId: selectedFriend._id._id,
             permissions,
           },
           {
             withCredentials: true,
-          }
+          },
         );
       } else {
         await axios.patch(
-          `http://localhost:5000/watchlist/shared/${watchlist.watchlist_id}/members/${memberId}/permissions`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/watchlist/shared/${watchlist.watchlist_id}/members/${memberId}/permissions`,
           { permissions },
           {
             withCredentials: true,
-          }
+          },
         );
       }
 
@@ -110,11 +113,11 @@ function ManageWatchlist() {
   const removeMember = async (memberId) => {
     try {
       await axios.patch(
-        `http://localhost:5000/watchlist/shared/${watchlist.watchlist_id}/members/${memberId}`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/watchlist/shared/${watchlist.watchlist_id}/members/${memberId}`,
         {},
         {
           withCredentials: true,
-        }
+        },
       );
 
       getWatchlistDetail();

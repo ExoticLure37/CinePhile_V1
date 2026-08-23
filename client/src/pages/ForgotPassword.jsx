@@ -10,9 +10,9 @@ function ForgotPassword() {
     e.preventDefault();
     try {
       await axios.post(
-        "http://localhost:5000/user/forgot-password",
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/forgot-password`,
         { email },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       toast.success("Password reset link sent to your email!", {
         theme: "dark",

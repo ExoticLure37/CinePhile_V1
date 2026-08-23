@@ -32,17 +32,17 @@ function FriendRequests() {
   const getPendingRequests = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/user/pendingRequests",
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/pendingRequests`,
         {
           withCredentials: true,
-        }
+        },
       );
 
       // console.log(res);
 
       setPRequest(res.data.pending_requests);
       dispatch(
-        setPendingRequest({ pending_requests: res.data.pending_requests })
+        setPendingRequest({ pending_requests: res.data.pending_requests }),
       );
     } catch (err) {
       console.log(err);
@@ -51,9 +51,12 @@ function FriendRequests() {
 
   const getRequestSent = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/user/requestSent", {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/requestSent`,
+        {
+          withCredentials: true,
+        },
+      );
 
       // console.log(res);
 
@@ -73,9 +76,9 @@ function FriendRequests() {
         return;
       }
       const res = await axios.patch(
-        "http://localhost:5000/user/addFriend",
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/addFriend`,
         { friendsId: friendUsername },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setMessage(res.data.message);
       setShowModal(true);
@@ -90,11 +93,11 @@ function FriendRequests() {
     try {
       console.log(id);
       const res = await axios.patch(
-        "http://localhost:5000/user/cancelFriendRequest",
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/cancelFriendRequest`,
         {
           friendId: id,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       setMessage(res.data.message);
@@ -110,11 +113,11 @@ function FriendRequests() {
   const acceptFriendRequest = async (id) => {
     try {
       const res = await axios.patch(
-        "http://localhost:5000/user/acceptFriendRequest",
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/acceptFriendRequest`,
         {
           friendId: id,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setMessage(res.data.message);
       setShowModal(true);
@@ -128,9 +131,12 @@ function FriendRequests() {
 
   const getFriends = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/user/getFriends", {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/getFriends`,
+        {
+          withCredentials: true,
+        },
+      );
 
       dispatch(setFriendList({ friendList: res.data.friendList }));
       // setFriendsList(res.data.friendList)
@@ -142,11 +148,11 @@ function FriendRequests() {
   const rejectFriendRequest = async (id) => {
     try {
       const res = await axios.patch(
-        "http://localhost:5000/user/rejectFriendRequest",
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/rejectFriendRequest`,
         {
           friendId: id,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       setMessage(res.data.message);

@@ -15,7 +15,7 @@ function SignUp() {
   });
 
   const navigate = useNavigate();
-  const backendUrl = "http://localhost:5000/user/register";
+  const backendUrl = `${process.env.REACT_APP_BACKEND_BASE_URL}/user/register`;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

@@ -4,7 +4,9 @@ import axios from "axios";
 export default function EditEmailModal({ onClose, user }) {
   const [newEmail, setNewEmail] = useState(user.email);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [verificationStatus, setVerificationStatus] = useState(user.isEmailVerified);
+  const [verificationStatus, setVerificationStatus] = useState(
+    user.isEmailVerified,
+  );
   const [error, setError] = useState(null); // To handle any errors
 
   const handleSave = async (e) => {
@@ -15,16 +17,15 @@ export default function EditEmailModal({ onClose, user }) {
         setIsVerifying(true);
         setError(null);
 
-        // error 
+        // error
         const response = await axios.post(
-          `http://localhost:5000/user/updateEmail`,
-          {newEmail},
-          {withCredentials:true}
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/user/updateEmail`,
+          { newEmail },
+          { withCredentials: true },
         );
         alert("Verification link sent to new email!");
 
         setVerificationStatus(false);
-
       } catch (error) {
         setError("Error updating email. Please try again.");
         console.error("Error updating email:", error);
@@ -41,7 +42,9 @@ export default function EditEmailModal({ onClose, user }) {
 
         <form onSubmit={handleSave} className="space-y-6">
           <div>
-            <label className="block text-sm text-gray-400 mb-2">New Email Address</label>
+            <label className="block text-sm text-gray-400 mb-2">
+              New Email Address
+            </label>
             <input
               type="email"
               value={newEmail}
@@ -83,5 +86,4 @@ export default function EditEmailModal({ onClose, user }) {
       </div>
     </div>
   );
-
 }

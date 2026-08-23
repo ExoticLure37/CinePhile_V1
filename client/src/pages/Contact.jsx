@@ -21,7 +21,7 @@ const Contact = () => {
     e.preventDefault();
 
     const { name, email, message } = formData;
-    const backendUrl = "http://localhost:5000/user/contact";
+    const backendUrl = `${process.env.REACT_APP_BACKEND_BASE_URL}/user/contact`;
 
     if (!name || !email || !message) {
       toast.error("All fields are required!");
@@ -32,7 +32,7 @@ const Contact = () => {
       const response = await axios.post(
         backendUrl,
         { name, email, message },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       toast.success(response.data.message || "Message sent successfully!");

@@ -10,7 +10,7 @@ const VerifyUpdatedEmail = () => {
     const verifyUser = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/user/verify/${newEmail}/${userId}`
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/user/verify/${newEmail}/${userId}`,
         );
         console.log("Verification successful:", response.data);
       } catch (error) {

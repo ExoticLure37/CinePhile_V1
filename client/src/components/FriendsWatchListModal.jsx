@@ -6,15 +6,14 @@ import FriendsWatchListMovieModal from "./FriendsWatchListMovieModal";
 const FriendsWatchListModal = ({ friendId, closeModal, friendName }) => {
   const [watchlists, setWatchLists] = useState([]);
   const [openMovie, setOpenMovie] = useState(false);
-  const [watchlistId,setwatchlistId]= useState('');
-  const [watchlistName,setwatchlistName]= useState('')
-
+  const [watchlistId, setwatchlistId] = useState("");
+  const [watchlistName, setwatchlistName] = useState("");
 
   const getAllWatchList = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/watchlist/friends-watchlist/${friendId}`,
-        { withCredentials: true }
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/watchlist/friends-watchlist/${friendId}`,
+        { withCredentials: true },
       );
       //console.log(typeof res.data.watchlists.watchlists)
       // console.log("hello")
@@ -25,21 +24,21 @@ const FriendsWatchListModal = ({ friendId, closeModal, friendName }) => {
     }
   };
 
-  const closeMovieModal = async()=>{
-    setOpenMovie(false)
-    setwatchlistId('')
-    setwatchlistName('')
-  }
+  const closeMovieModal = async () => {
+    setOpenMovie(false);
+    setwatchlistId("");
+    setwatchlistName("");
+  };
 
-  const openMovieModal= async(watchlistIdd,watchlistNamee)=>{
-    setOpenMovie(true)
-    setwatchlistId(watchlistIdd)
-    setwatchlistName(watchlistNamee)
-  }
+  const openMovieModal = async (watchlistIdd, watchlistNamee) => {
+    setOpenMovie(true);
+    setwatchlistId(watchlistIdd);
+    setwatchlistName(watchlistNamee);
+  };
 
   /*const getWatchlistDetail = async (id) => {
         try {
-            const res = await axios.get(`http://localhost:5000/watchlist/${id}`, { withCredentials: true });
+            const res = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/watchlist/${id}`, { withCredentials: true });
             setCurrentWatchlist(res.data.items);
         } catch (err) {
             console.log(err);
@@ -71,7 +70,9 @@ const FriendsWatchListModal = ({ friendId, closeModal, friendName }) => {
       >
         CLOSE
       </button>*/}
-      <div className={`fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center ${openMovie?"-z-10":"z-30"}`}>
+      <div
+        className={`fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center ${openMovie ? "-z-10" : "z-30"}`}
+      >
         <div className="bg-[#1a1a1a] rounded-2xl max-w-[110vh] w-full shadow-2xl relative max-h-[90vh] overflow-y-auto overflow-auto scrollbar-hide">
           <button
             className="absolute top-3 right-4 text-white font-bold text-xl z-10 hover:text-red-600 transition"
@@ -99,7 +100,9 @@ const FriendsWatchListModal = ({ friendId, closeModal, friendName }) => {
                           {watchlist.title}
                         </p>
                         <div
-                          onClick={() => openMovieModal(watchlist._id,watchlist.title)}
+                          onClick={() =>
+                            openMovieModal(watchlist._id, watchlist.title)
+                          }
                           className="ml-auto"
                         >
                           <IconBtn text="View" />
@@ -118,14 +121,14 @@ const FriendsWatchListModal = ({ friendId, closeModal, friendName }) => {
         </div>
       </div>
 
-      {openMovie && 
+      {openMovie && (
         <FriendsWatchListMovieModal
-            watchlistId={watchlistId}
-            closeModal={closeMovieModal}
-            watchlistName={watchlistName}
-            friendId={friendId}/>
-        }
-
+          watchlistId={watchlistId}
+          closeModal={closeMovieModal}
+          watchlistName={watchlistName}
+          friendId={friendId}
+        />
+      )}
 
       {/*<div>
         {watchlists ? (

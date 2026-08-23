@@ -13,8 +13,8 @@ const FriendsWatchListMovieModal = ({
   const getAllWatchListMovie = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/watchlist/friends-watchlist-movie/${friendId}/${watchlistId}`,
-        { withCredentials: true }
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/watchlist/friends-watchlist-movie/${friendId}/${watchlistId}`,
+        { withCredentials: true },
       );
       //console.log(typeof res.data.watchlists.watchlists)
       // console.log("hello")
@@ -27,7 +27,7 @@ const FriendsWatchListMovieModal = ({
 
   /*const getWatchlistDetail = async (id) => {
         try {
-            const res = await axios.get(`http://localhost:5000/watchlist/${id}`, { withCredentials: true });
+            const res = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/watchlist/${id}`, { withCredentials: true });
             setCurrentWatchlist(res.data.items);
         } catch (err) {
             console.log(err);
@@ -42,7 +42,7 @@ const FriendsWatchListMovieModal = ({
     //console.log("WATCHLIST");
     //console.log(watchlists);
     //console.log(friendId)
-    console.log(movies)
+    console.log(movies);
   }, []);
 
   useEffect(() => {
@@ -69,18 +69,24 @@ const FriendsWatchListMovieModal = ({
               {watchlistName}
             </h1>
             <div className="w-full max-w-[150vh] gap-14 flex flex-row flex-wrap  bg-[#1F1F1F] p-6 rounded-xl shadow-xl border border-gray-700">
-                {movies && movies.length > 0 ? (
-                  movies.map((movie, index) => (
-                    <>
-                      <Card key={movie.imdb_id} imageUrl={movie.imageUrl} name={movie.name} url={movie.url} trailer={movie.trailer} />
-                      {/*<li
+              {movies && movies.length > 0 ? (
+                movies.map((movie, index) => (
+                  <>
+                    <Card
+                      key={movie.imdb_id}
+                      imageUrl={movie.imageUrl}
+                      name={movie.name}
+                      url={movie.url}
+                      trailer={movie.trailer}
+                    />
+                    {/*<li
                         key={movie.imdb_id}
                         className="flex items-center p-4 bg-[#2A2A2A] rounded-lg hover:bg-[#3A3A3A] transition-all shadow-sm border border-gray-600"
                       >
                         {/*<span className="text-lg font-semibold text-gray-300">
                           {index + 1}.
                         </span>*/}
-                       {/*} <img src={movie.imageUrl} alt="" />
+                    {/*} <img src={movie.imageUrl} alt="" />
                         <p className="ml-3 text-lg font-medium text-gray-100 hover:text-blue-400 transition-all">
                           {movie.name}
                         </p>
@@ -92,14 +98,12 @@ const FriendsWatchListMovieModal = ({
                         >
                           <IconBtn text="View" />
                         </div>*/}
-                      {/*</></li>*/}
-                    </>
-                  ))
-                ) : (
-                  <p className="text-center text-gray-400">
-                    No Movies found.
-                  </p>
-                )}
+                    {/*</></li>*/}
+                  </>
+                ))
+              ) : (
+                <p className="text-center text-gray-400">No Movies found.</p>
+              )}
             </div>
           </div>
         </div>

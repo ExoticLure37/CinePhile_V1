@@ -21,8 +21,8 @@ const Comments = ({ watchlist_id }) => {
   const fetchComments = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/comments/${watchlist_id}?contentType=Watchlist`,
-        { withCredentials: true }
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/comments/${watchlist_id}?contentType=Watchlist`,
+        { withCredentials: true },
       );
       setComments(res.data.comments);
     } catch (error) {
@@ -34,14 +34,14 @@ const Comments = ({ watchlist_id }) => {
     if (!text.trim()) return;
     try {
       await axios.post(
-        `http://localhost:5000/comments/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/comments/`,
         {
           contentType: "Watchlist",
           contentId: watchlist_id,
           parentComment: parentId,
           text,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       fetchComments();
       parentId
@@ -54,9 +54,12 @@ const Comments = ({ watchlist_id }) => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/comments/${id}`, {
-        withCredentials: true,
-      });
+      await axios.delete(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/comments/${id}`,
+        {
+          withCredentials: true,
+        },
+      );
       setComments(comments.filter((comment) => comment._id !== id));
     } catch (error) {
       console.error("Error deleting comment:", error);
@@ -66,14 +69,14 @@ const Comments = ({ watchlist_id }) => {
   const handleEdit = async (id) => {
     try {
       const res = await axios.put(
-        `http://localhost:5000/comments/${id}`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/comments/${id}`,
         { text: editedText },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setComments(
         comments.map((c) =>
-          c._id === id ? { ...c, text: res.data.comment.text } : c
-        )
+          c._id === id ? { ...c, text: res.data.comment.text } : c,
+        ),
       );
       setEditingCommentId(null);
     } catch (error) {
@@ -83,7 +86,7 @@ const Comments = ({ watchlist_id }) => {
 
   const renderComments = (parentId = null) => {
     const filtered = comments.filter(
-      (c) => c.parentComment === parentId || c.parentComment?._id === parentId
+      (c) => c.parentComment === parentId || c.parentComment?._id === parentId,
     );
 
     return filtered.map((comment) => (

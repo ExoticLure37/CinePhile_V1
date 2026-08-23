@@ -37,9 +37,9 @@ const HomeCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
     // console.log(id)
     try {
       await axios.patch(
-        `http://localhost:5000/watchlist/addToWatchlist/${id}`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/watchlist/addToWatchlist/${id}`,
         { item: media },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       setFeedback({ type: "success", message: "Added to watchlist ✅" });
     } catch (err) {
@@ -59,9 +59,12 @@ const HomeCard = ({ media, mediaId, activeModalId, setActiveModalId }) => {
 
   const getAllWatchList = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/watchlist/", {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/watchlist/`,
+        {
+          withCredentials: true,
+        },
+      );
       setWatchlists(res.data.watchlists);
     } catch (err) {
       console.log(err.response.data);

@@ -11,27 +11,48 @@ import axios from "axios";
 import {
   setFriendList,
   setPendingRequest,
-  setRequestSent
+  setRequestSent,
 } from "../redux/user/userSlice";
 import HomeCard from "../components/HomeCard";
 
 function Movies() {
   const currentUser = useSelector((state) => state.userProfile);
   const dispatch = useDispatch();
-  const trendingEndPoint = "https://imdb236.p.rapidapi.com/imdb/most-popular-movies";
-  const upcomingEndPoint = "https://imdb236.p.rapidapi.com/imdb/upcoming-releases";
+  const trendingEndPoint =
+    "https://imdb236.p.rapidapi.com/imdb/most-popular-movies";
+  const upcomingEndPoint =
+    "https://imdb236.p.rapidapi.com/imdb/upcoming-releases";
   const topmoviesEndPoint = "https://imdb236.p.rapidapi.com/imdb/top250-movies";
   useEffect(() => {
     const fetchAll = async () => {
       try {
         const [friendsRes, pendingRes, sentRes] = await Promise.all([
-          axios.get("http://localhost:5000/user/getFriends", { withCredentials: true }),
-          axios.get("http://localhost:5000/user/pendingRequests", { withCredentials: true }),
-          axios.get("http://localhost:5000/user/requestSent", { withCredentials: true })
+          axios.get(
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/user/getFriends`,
+            {
+              withCredentials: true,
+            },
+          ),
+          axios.get(
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/user/pendingRequests`,
+            {
+              withCredentials: true,
+            },
+          ),
+          axios.get(
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/user/requestSent`,
+            {
+              withCredentials: true,
+            },
+          ),
         ]);
 
         dispatch(setFriendList({ friendList: friendsRes.data.friendList }));
-        dispatch(setPendingRequest({ pending_requests: pendingRes.data.pending_requests }));
+        dispatch(
+          setPendingRequest({
+            pending_requests: pendingRes.data.pending_requests,
+          }),
+        );
         dispatch(setRequestSent({ request_sent: sentRes.data.requests_sent }));
       } catch (err) {
         console.error(err);
@@ -43,9 +64,12 @@ function Movies() {
 
   const getFriends = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/user/getFriends", {
-        withCredentials: true
-      });
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/getFriends`,
+        {
+          withCredentials: true,
+        },
+      );
       dispatch(setFriendList({ friendList: res.data.friendList }));
     } catch (err) {
       console.log(err);
@@ -54,10 +78,15 @@ function Movies() {
 
   const getPendingRequests = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/user/pendingRequests", {
-        withCredentials: true
-      });
-      dispatch(setPendingRequest({ pending_requests: res.data.pending_requests }));
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/pendingRequests`,
+        {
+          withCredentials: true,
+        },
+      );
+      dispatch(
+        setPendingRequest({ pending_requests: res.data.pending_requests }),
+      );
     } catch (err) {
       console.log(err);
     }
@@ -65,9 +94,12 @@ function Movies() {
 
   const getRequestSent = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/user/requestSent", {
-        withCredentials: true
-      });
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/requestSent`,
+        {
+          withCredentials: true,
+        },
+      );
       dispatch(setRequestSent({ request_sent: res.data.requests_sent }));
     } catch (err) {
       console.log(err);
@@ -93,8 +125,8 @@ function Movies() {
           title="Upcoming"
           endpoint={upcomingEndPoint}
           params={{
-            countryCode: 'IN',
-            type: 'MOVIE'
+            countryCode: "IN",
+            type: "MOVIE",
           }}
           navigateTo="/upcoming"
           flag={true}
@@ -106,7 +138,6 @@ function Movies() {
           cacheKey="upcomingMovies"
         />
 
-
         {/* Latest Section */}
         <MediaCarousel
           title="Top Movies"
@@ -116,7 +147,6 @@ function Movies() {
           normalizeData={(data) => data}
           cacheKey="topMovies"
         />
-
       </div>
 
       <Footer />

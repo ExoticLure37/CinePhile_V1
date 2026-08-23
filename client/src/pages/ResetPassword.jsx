@@ -23,9 +23,9 @@ function ResetPassword() {
 
     try {
       await axios.post(
-        `http://localhost:5000/user/reset-password/${token}`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/reset-password/${token}`,
         { password },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       toast.success("Password reset successfully!", { theme: "dark" });
       navigate("/signin");

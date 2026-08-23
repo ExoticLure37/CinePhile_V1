@@ -23,9 +23,12 @@ const FriendsWatchList = () => {
 
   const getFriends = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/user/getFriends", {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/getFriends`,
+        {
+          withCredentials: true,
+        },
+      );
       dispatch(setFriendList({ friendList: res.data.friendList }));
     } catch (err) {
       console.log(err);
